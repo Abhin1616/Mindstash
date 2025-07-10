@@ -1,7 +1,7 @@
 # Mindstash KTU
 
 ## Description
-A web platform where students and teachers under KTU can upload, share, and access study materials.
+A university-specific platform designed to streamline access to study materials by students and faculty. Currently tailored for KTU (Kerala Technical University), but easily extendable to any university or institution through dynamic filtering and flexible backend configuration.
 
 ## Tech Stack
 - MERN Stack (MongoDB, Express.js, React, Node.js)
