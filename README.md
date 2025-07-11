@@ -35,7 +35,7 @@ MindStash supports **PDFs and image uploads** (e.g. screenshots, lecture slides)
 ## 🧱 Architecture Overview
 
 MindStash avoids over-engineering and uses a centralized, easy-to-edit array to define academic programs.  
-You can modify this to suit **any university structure** by editing one array inside `models/User.js`:
+You can modify this to suit **any university structure** by editing one array inside `config/programs.js`:
 
 ```js
 const PROGRAMS = [
