@@ -1,16 +1,19 @@
 import mongoose from "mongoose";
+import passportLocalMongoose from "passport-local-mongoose";
 
 
-const mongoose = require("mongoose");
-const passportLocalMongoose = require("passport-local-mongoose");
-
-// 🔁 Allowed values
-const BRANCHES = ['CSE', 'ECE', 'EEE', 'ME', 'CE'];
+// 🔐 Role options
 const ROLES = ['user', 'moderator', 'admin'];
 
-// Helper to clean up name input (removes extra spaces)
+// 🧼 Helper to sanitize and format names
 function cleanName(value) {
-    return value.replace(/\s+/g, ' ').trim();
+    return value
+        .replace(/[^\p{L} ]+/gu, '')         // Remove non-letter characters (emojis, symbols, numbers)
+        .replace(/\s+/g, ' ')                // Collapse multiple spaces to one
+        .trim()                              // Trim leading/trailing spaces
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
+        .join(' ');
 }
 
 const userSchema = new mongoose.Schema({
@@ -18,7 +21,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        lowercase: false,
         minlength: 2,
         maxlength: 40,
         set: cleanName,
@@ -37,16 +39,19 @@ const userSchema = new mongoose.Schema({
         enum: ROLES,
         default: 'user'
     },
+    program: {
+        type: String,
+        required: true
+    },
     branch: {
         type: String,
-        enum: BRANCHES,
         required: true
     },
     semester: {
         type: Number,
         required: true,
         min: 1,
-        max: 8
+        max: 12
     },
     createdAt: {
         type: Date,
@@ -54,8 +59,10 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+// Use email for login instead of username
 userSchema.plugin(passportLocalMongoose, {
     usernameField: 'email'
 });
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+export default User;
