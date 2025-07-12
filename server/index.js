@@ -8,7 +8,8 @@ import loginSchema from "./joiSchemas/loginSchema.js";
 import registerSchema from "./joiSchemas/registerSchema.js";
 import UserModel from "./models/User.js";
 import asyncHandler from "./utils/asyncHander.js";
-
+import Material from "./models/Material.js";
+import uploadSchema from "./joiSchemas/uploadSchema.js";
 
 if (process.env.NODE_ENV !== "production") {
     dotenv.config();
@@ -154,9 +155,26 @@ app.get("/profile", verifyToken, asyncHandler(async (req, res) => {
 }))
 
 app.patch("/profile", verifyToken, asyncHandler(async (req, res) => {
-    const { name, program, branch, semester } = req.body;
-    const user = await UserModel.findByIdAndUpdate(user.sub, { name, program, branch, semester });
-    res.status(200).message("User details updated successfully!");
+    const { error, value } = editSchema.validate(req.body);
+    if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+    }
+    const { name, program, branch, semester } = value;
+    const updatedUser = await UserModel.findByIdAndUpdate(
+        req.user.sub,
+        { $set: value }, // only set provided fields
+        { new: true, runValidators: true }
+    ).lean();
+
+    if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+    }
+
+    const { email } = updatedUser;
+    res.status(200).json({
+        message: "Profile updated successfully",
+        user: { name, email, program, branch, semester }
+    });
 }));
 
 

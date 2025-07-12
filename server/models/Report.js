@@ -1,5 +1,3 @@
-// models/Report.js
-
 import mongoose from "mongoose";
 
 const reportSchema = new mongoose.Schema({
