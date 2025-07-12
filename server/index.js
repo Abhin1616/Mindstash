@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import loginSchema from "./joiSchemas/loginSchema.js";
 import registerSchema from "./joiSchemas/registerSchema.js";
 import UserModel from "./models/User.js";
+import asyncHandler from "./utils/asyncHander.js";
 
 
 if (process.env.NODE_ENV !== "production") {
@@ -42,7 +43,7 @@ const generateToken = (user) => {
 };
 
 // 📝 Register Route
-app.post("/register", async (req, res) => {
+app.post("/register", asyncHandler(async (req, res) => {
     try {
         if (!req.body || Object.keys(req.body).length === 0) {
             return res.status(400).json({ error: "Request body is empty!" });
@@ -82,10 +83,10 @@ app.post("/register", async (req, res) => {
         }
         return res.status(400).json({ error: err.message });
     }
-});
+}));
 
 //Login Route
-app.post("/login", async (req, res) => {
+app.post("/login", asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const { error } = loginSchema.validate(req.body);
     if (error) {
@@ -93,7 +94,7 @@ app.post("/login", async (req, res) => {
     }
 
     const user = await UserModel.findOne({ email })
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
     user.authenticate(password, (err, authenticatedUser) => {
         if (err || !authenticatedUser) {
@@ -108,7 +109,7 @@ app.post("/login", async (req, res) => {
         });
         res.status(200).json({ message: "Login successful" });
     });
-});
+}));
 
 // ✅ JWT Middleware
 const verifyToken = (req, res, next) => {
@@ -141,6 +142,31 @@ app.get('/logout', verifyToken, (req, res) => {
     res.status(200).json({ message: 'Logout successful' });
 });
 
+
+//Profile Routes
+app.get("/profile", verifyToken, asyncHandler(async (req, res) => {
+    const user = await UserModel.findById(req.user.sub).lean();
+    if (!user) {
+        return res.status(404).json({ error: "User not found" });
+    }
+    const { name, email, program, branch, semester } = user;
+    res.status(200).json({ name, email, program, branch, semester });
+}))
+
+app.patch("/profile", verifyToken, asyncHandler(async (req, res) => {
+    const { name, program, branch, semester } = req.body;
+    const user = await UserModel.findByIdAndUpdate(user.sub, { name, program, branch, semester });
+    res.status(200).message("User details updated successfully!");
+}));
+
+
+
+app.use((err, req, res, next) => {
+    console.error("Unhandled Error:", err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+});
+
+
 mongoose.connect(MONGODB_URL)
     .then(() => {
         console.log("Database connected successfully!");
@@ -151,3 +177,4 @@ mongoose.connect(MONGODB_URL)
     .catch((err) => {
         console.log(" DB Connection Error:", err);
     });
+
