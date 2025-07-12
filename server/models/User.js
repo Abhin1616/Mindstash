@@ -1,20 +1,9 @@
 import mongoose from "mongoose";
 import passportLocalMongoose from "passport-local-mongoose";
+import PROGRAMS from "../config/programs.js";
+import cleanName from "../utils/cleanName.js";
 
-
-// 🔐 Role options
 const ROLES = ['user', 'moderator', 'admin'];
-
-// 🧼 Helper to sanitize and format names
-function cleanName(value) {
-    return value
-        .replace(/[^\p{L} ]+/gu, '')         // Remove non-letter characters (emojis, symbols, numbers)
-        .replace(/\s+/g, ' ')                // Collapse multiple spaces to one
-        .trim()                              // Trim leading/trailing spaces
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
-        .join(' ');
-}
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -24,7 +13,8 @@ const userSchema = new mongoose.Schema({
         minlength: 2,
         maxlength: 40,
         set: cleanName,
-        match: /^[A-Za-z]{2,}(?: [A-Za-z]{2,}){0,3}$/
+        match: /^[A-Za-z]+(?: [A-Za-z]+){0,3}$/
+
     },
     email: {
         type: String,
@@ -41,17 +31,34 @@ const userSchema = new mongoose.Schema({
     },
     program: {
         type: String,
-        required: true
+        required: true,
+        validate: {
+            validator: value => PROGRAMS.some(p => p.name === value),
+            message: "Invalid program"
+        }
     },
     branch: {
         type: String,
-        required: true
+        required: true,
+        validate: {
+            validator: function (value) {
+                const program = PROGRAMS.find(p => p.name === this.program);
+                return program?.branches.some(b => b.name === value);
+            },
+            message: "Invalid branch for selected program"
+        }
     },
     semester: {
         type: Number,
         required: true,
-        min: 1,
-        max: 12
+        validate: {
+            validator: function (value) {
+                const program = PROGRAMS.find(p => p.name === this.program);
+                const branch = program?.branches.find(b => b.name === this.branch);
+                return branch && value >= 1 && value <= branch.semesters;
+            },
+            message: "Invalid semester for selected program and branch"
+        }
     },
     createdAt: {
         type: Date,
@@ -59,7 +66,6 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// Use email for login instead of username
 userSchema.plugin(passportLocalMongoose, {
     usernameField: 'email'
 });
