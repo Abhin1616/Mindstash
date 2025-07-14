@@ -60,11 +60,7 @@ const userSchema = new mongoose.Schema({
             message: "Invalid semester for selected program and branch"
         }
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-});
+}, { timestamps: true });
 
 userSchema.plugin(passportLocalMongoose, {
     usernameField: 'email'

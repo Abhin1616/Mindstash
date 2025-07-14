@@ -44,11 +44,8 @@ const materialSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }],
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-});
+
+}, { timestamps: true });
 
 const Material = mongoose.model("Material", materialSchema);
 export default Material;
