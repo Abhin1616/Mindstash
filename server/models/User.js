@@ -3,7 +3,7 @@ import passportLocalMongoose from "passport-local-mongoose";
 import PROGRAMS from "../config/programs.js";
 import cleanName from "../utils/cleanName.js";
 
-const ROLES = ['user', 'moderator', 'admin'];
+const ROLES = ['user', 'moderator'];
 
 const userSchema = new mongoose.Schema({
     name: {

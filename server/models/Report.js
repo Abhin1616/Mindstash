@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const reportSchema = new mongoose.Schema({
     material: {
         type: mongoose.Schema.Types.ObjectId,
@@ -9,17 +11,16 @@ const reportSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
-    reportType: {
-        type: String,
-        enum: ['duplicate', 'irrelevant', 'incorrect_content', 'offensive', 'spam', 'other'],
-        required: true
-    },
     reason: {
         type: String,
         required: true,
         maxlength: 200,
         trim: true
     },
+    brokenRules: [{
+        type: String,
+        default: []
+    }],
     status: {
         type: String,
         enum: ['pending', 'accepted', 'rejected'],
@@ -37,6 +38,7 @@ const reportSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
+// 🔒 Ensure only one report per user per material
 reportSchema.index({ material: 1, reportedBy: 1 }, { unique: true });
 
 const Report = mongoose.model("Report", reportSchema);
