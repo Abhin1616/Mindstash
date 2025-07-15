@@ -144,4 +144,4 @@ Feel free to fork and modify for your university or organization!
 
 ## 🙌 Credits
 
-Made with 💻 by Abhin Raj R 
+Made with 💻 by Abhin Raj R
