@@ -101,8 +101,8 @@ MindStash comes with a built-in AI Assistant powered by **Gemini Pro**.
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/yourusername/mindstash.git
-cd mindstash
+git clone https://github.com/Abhin1616/MindStash.git
+cd MindStash
 ```
 
 ### 2. Backend Setup
