@@ -25,6 +25,13 @@ const reportSchema = Joi.object({
 
     brokenRules: Joi.array()
         .items(Joi.string().valid(...allowedRuleIds))
-        .default([])
+        .min(1)
+        .required()
+        .messages({
+            "array.base": "Broken rules must be an array",
+            "array.includes": "Invalid rule selected",
+            "any.required": "At least one broken rule must be selected"
+        })
 });
+
 export default reportSchema;

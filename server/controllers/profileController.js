@@ -3,7 +3,7 @@ import validate from "../utils/validate.js";
 import editSchema from "../joiSchemas/editSchema.js";
 
 export const getProfile = async (req, res) => {
-    const user = await UserModel.findById(req.user.sub).lean();
+    const user = await UserModel.findById(req.user.id).lean();
     if (!user) return res.status(404).json({ error: "User not found" });
 
     const { name, email, program, branch, semester } = user;
@@ -14,7 +14,7 @@ export const updateProfile = async (req, res) => {
     const { valid, error, value } = validate(editSchema, req.body);
     if (!valid) return res.status(400).json({ error });
 
-    const updatedUser = await UserModel.findByIdAndUpdate(req.user.sub, { $set: value }, { new: true, runValidators: true }).lean();
+    const updatedUser = await UserModel.findByIdAndUpdate(req.user.is, { $set: value }, { new: true, runValidators: true }).lean();
     if (!updatedUser) return res.status(404).json({ error: "User not found" });
 
     const { name, email, program, branch, semester } = updatedUser;

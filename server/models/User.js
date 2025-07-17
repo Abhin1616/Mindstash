@@ -31,7 +31,9 @@ const userSchema = new mongoose.Schema({
     },
     program: {
         type: String,
-        required: true,
+        required: function () {
+            return this.profileCompleted;
+        },
         validate: {
             validator: value => PROGRAMS.some(p => p.name === value),
             message: "Invalid program"
@@ -39,7 +41,9 @@ const userSchema = new mongoose.Schema({
     },
     branch: {
         type: String,
-        required: true,
+        required: function () {
+            return this.profileCompleted;
+        },
         validate: {
             validator: function (value) {
                 const program = PROGRAMS.find(p => p.name === this.program);
@@ -50,7 +54,9 @@ const userSchema = new mongoose.Schema({
     },
     semester: {
         type: Number,
-        required: true,
+        required: function () {
+            return this.profileCompleted;
+        },
         validate: {
             validator: function (value) {
                 const program = PROGRAMS.find(p => p.name === this.program);
@@ -60,6 +66,11 @@ const userSchema = new mongoose.Schema({
             message: "Invalid semester for selected program and branch"
         }
     },
+    profileCompleted: {
+        type: Boolean,
+        default: false
+    }
+
 }, { timestamps: true });
 
 userSchema.plugin(passportLocalMongoose, {

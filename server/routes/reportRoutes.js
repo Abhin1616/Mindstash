@@ -6,7 +6,7 @@ import requireRole from "../utils/requireRole.js";
 import {
     submitReport,
     getMyReports,
-    getPendingReports,
+    getModerationReports,
     handleReport
 } from "../controllers/reportController.js";
 
@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.post("/reports", verifyToken, asyncHandler(submitReport));
 router.get("/reports/myreports", verifyToken, asyncHandler(getMyReports));
-router.get("/reports/pending", verifyToken, requireRole("moderator"), asyncHandler(getPendingReports));
+router.get("/reports/moderation", verifyToken, requireRole("moderator"), asyncHandler(getModerationReports));
 router.patch("/reports/:id/handle", verifyToken, requireRole("moderator"), asyncHandler(handleReport));
 
 export default router;

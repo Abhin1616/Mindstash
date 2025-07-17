@@ -4,14 +4,20 @@ import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import multer from "multer";
-
+import passport from "passport"; // ✅ NEW
+import RULES from "./config/rules.js";
 import routes from "./routes/index.js";
 import { storage } from "./cloudinary/index.js";
+
+
 
 // Load env variables
 if (process.env.NODE_ENV !== "production") {
     dotenv.config();
 }
+import "./googleAuth/index.js";
+import completeProfileRoutes from "./routes/completeProfileRoutes.js";
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,23 +28,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(cookieParser());
+app.use(passport.initialize()); // ✅ NEW
 
 // Multer config (shared globally)
 const upload = multer({
     storage,
-    limits: {
-        fileSize: 10 * 1024 * 1024, // 10MB
-    },
+    limits: { fileSize: 10 * 1024 * 1024 },
 });
 app.use((req, res, next) => {
     req.upload = upload;
     next();
 });
 
-// All routes
+// Routes
+app.get("/rules", (req, res) => {
+    res.status(200).json(RULES);
+})
+app.use(completeProfileRoutes);
 app.use(routes);
 
-// Error handler
+// Error Handler
 app.use((err, req, res, next) => {
     if (err.message?.includes("Unexpected field")) {
         return res.status(400).json({ error: "File upload failed", message: "Multiple files not allowed." });
@@ -64,3 +73,11 @@ mongoose
     .catch((err) => {
         console.log("❌ MongoDB connection error:", err);
     });
+
+process.on("uncaughtException", (err) => {
+    console.error("Uncaught Exception:", err);
+});
+
+process.on("unhandledRejection", (err) => {
+    console.error("Unhandled Rejection:", err);
+});

@@ -75,6 +75,6 @@ const registerSchema = Joi.object({
             }
             return value;
         })
-});
+}).required();
 
 export default registerSchema;

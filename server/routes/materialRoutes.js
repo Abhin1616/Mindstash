@@ -10,6 +10,7 @@ import {
     getMyUploads,
     toggleUpvote
 } from "../controllers/materialController.js";
+import requireCompletedProfile from "../utils/requireCompletedProfile.js";
 
 const router = express.Router();
 const upload = multer({
@@ -19,10 +20,10 @@ const upload = multer({
     }
 });
 
-router.post("/materials", verifyToken, upload.single("file"), asyncHandler(uploadMaterial));
-router.delete("/materials/:id", verifyToken, asyncHandler(deleteMaterial));
+router.post("/materials", verifyToken, requireCompletedProfile, upload.single("file"), asyncHandler(uploadMaterial));
+router.delete("/materials/:id", verifyToken, requireCompletedProfile, asyncHandler(deleteMaterial));
 router.get("/materials", asyncHandler(getMaterials));
-router.get("/materials/myuploads", verifyToken, asyncHandler(getMyUploads));
-router.post("/materials/:id/upvote", verifyToken, asyncHandler(toggleUpvote));
+router.get("/materials/myuploads", verifyToken, requireCompletedProfile, asyncHandler(getMyUploads));
+router.post("/materials/:id/upvote", verifyToken, requireCompletedProfile, asyncHandler(toggleUpvote));
 
 export default router;

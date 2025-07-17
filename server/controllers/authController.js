@@ -13,14 +13,23 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
 const generateToken = (user) =>
-    jwt.sign({ sub: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
 export const register = async (req, res) => {
+    if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ error: "Request body cannot be empty" });
+    }
     const { valid, error } = validate(registerSchema, req.body);
     if (!valid) return res.status(400).json({ error });
 
     const { name, email, password, program, branch, semester } = req.body;
-    const user = new UserModel({ name, email, program, branch, semester });
+    const existingUser = await UserModel.findOne({ email });
+    if (existingUser) {
+        return res.status(400).json({
+            error: "Email is already registered",
+        });
+    }
+    const user = new UserModel({ name, email, program, branch, semester, profileCompleted: true });
     const registeredUser = await UserModel.register(user, password);
     const token = generateToken(registeredUser);
 

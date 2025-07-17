@@ -23,7 +23,7 @@ export const uploadMaterial = async (req, res) => {
         return res.status(400).json({ error: "File upload missing or failed" });
 
     const fileType = req.file.mimetype === 'application/pdf' ? 'pdf' : 'image';
-    const user = await UserModel.findById(req.user.sub).lean();
+    const user = await UserModel.findById(req.user.id).lean();
     if (!user) return res.status(404).json({ error: "User not found" });
 
     const material = await Material.create({
@@ -41,7 +41,7 @@ export const uploadMaterial = async (req, res) => {
 };
 
 export const deleteMaterial = async (req, res) => {
-    const material = await findOwnedMaterial(req.params.id, req.user.sub);
+    const material = await findOwnedMaterial(req.params.id, req.user.id);
     if (!material) return res.status(404).json({ error: "Material not found or not owned by you" });
 
     const publicId = getPublicId(material.fileUrl);
@@ -129,7 +129,7 @@ export const getMaterials = async (req, res) => {
 };
 
 export const getMyUploads = async (req, res) => {
-    const myUploads = await Material.find({ uploadedBy: req.user.sub }).lean();
+    const myUploads = await Material.find({ uploadedBy: req.user.id }).lean();
     res.status(200).json(myUploads);
 };
 
@@ -137,7 +137,7 @@ export const toggleUpvote = async (req, res) => {
     const material = await Material.findById(req.params.id);
     if (!material) return res.status(404).json({ error: "Material not found" });
 
-    const userId = req.user.sub;
+    const userId = req.user.id;
     const alreadyUpvoted = material.upvotes.includes(userId);
 
     material.upvotes = alreadyUpvoted

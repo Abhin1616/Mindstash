@@ -1,9 +1,42 @@
 import mongoose from "mongoose";
 
+const materialSnapshotSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    program: {
+        type: String,
+        required: true
+    },
+    branch: {
+        type: String,
+        required: true
+    },
+    semester: {
+        type: String,
+        required: true
+    },
+    uploadedBy: {
+        _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        }
+    }
+}, { _id: false });
+
 const reportSchema = new mongoose.Schema({
     material: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Material",
+        required: true
+    },
+    materialSnapshot: {
+        type: materialSnapshotSchema,
         required: true
     },
     reportedBy: {
@@ -19,7 +52,7 @@ const reportSchema = new mongoose.Schema({
     },
     brokenRules: [{
         type: String,
-        default: []
+        required: true
     }],
     status: {
         type: String,
@@ -38,7 +71,6 @@ const reportSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// 🔒 Ensure only one report per user per material
 reportSchema.index({ material: 1, reportedBy: 1 }, { unique: true });
 
 const Report = mongoose.model("Report", reportSchema);
