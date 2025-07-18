@@ -10,7 +10,7 @@ const materialSchema = new mongoose.Schema({
     description: {
         type: String,
         trim: true,
-        maxlength: 300
+        maxlength: 500
     },
     fileUrl: {
         type: String,

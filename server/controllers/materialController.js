@@ -6,6 +6,7 @@ import uploadSchema from "../joiSchemas/uploadSchema.js";
 import { isValidProgram, isValidBranch, isValidSemester } from "../utils/configValidate.js";
 import getPublicId from "../utils/getPublicId.js";
 import findOwnedMaterial from "../utils/findOwnedMaterial.js";
+import Notification from "../models/Notification.js";
 
 const normalize = val => val && val.toLowerCase() !== 'all' ? val : undefined;
 
@@ -50,6 +51,28 @@ export const deleteMaterial = async (req, res) => {
 
     res.status(200).json({ message: "Material deleted successfully" });
 };
+
+export const deleteMaterialAsModerator = async (req, res) => {
+    const material = await Material.findById(req.params.id);
+    if (!material) return res.status(404).json({ error: "Material not found" });
+
+    try {
+        const publicId = getPublicId(material.fileUrl);
+        await cloudinary.uploader.destroy(publicId);
+        await Material.deleteOne({ _id: material._id });
+
+        await Notification.create({
+            user: material.uploadedBy,
+            message: `Your upload titled "${material.title}" was removed by a moderator for violating community guidelines.`,
+        });
+
+        return res.status(200).json({ message: "Material deleted successfully by moderator" });
+    } catch (err) {
+        console.error("Error deleting material:", err);
+        return res.status(500).json({ error: "Failed to delete material" });
+    }
+};
+
 
 export const getMaterials = async (req, res) => {
     const { program, branch, semester, search, sort = 'recent', page = 1, limit = 10 } = req.query;
