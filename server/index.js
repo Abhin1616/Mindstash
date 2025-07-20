@@ -8,7 +8,7 @@ import passport from "passport"; // ✅ NEW
 import RULES from "./config/rules.js";
 import routes from "./routes/index.js";
 import { storage } from "./cloudinary/index.js";
-
+import PROGRAMS from "./config/programs.js";
 
 
 // Load env variables
@@ -17,6 +17,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 import "./googleAuth/index.js";
 import completeProfileRoutes from "./routes/completeProfileRoutes.js";
+
 
 
 const app = express();
@@ -43,6 +44,9 @@ app.use((req, res, next) => {
 // Routes
 app.get("/rules", (req, res) => {
     res.status(200).json(RULES);
+})
+app.get("/programs", (req, res) => {
+    res.status(200).json(PROGRAMS);
 })
 app.use(completeProfileRoutes);
 app.use(routes);

@@ -9,10 +9,10 @@ import {
     deleteMaterial,
     getMaterials,
     getMyUploads,
-    toggleUpvote
+    toggleUpvote,
+    deleteMaterialAsModerator
 } from "../controllers/materialController.js";
 import requireCompletedProfile from "../utils/requireCompletedProfile.js";
-import requireRole from "../utils/requireRole.js";
 
 const router = express.Router();
 const upload = multer({

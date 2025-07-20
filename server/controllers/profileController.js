@@ -11,10 +11,13 @@ export const getProfile = async (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
+    if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ error: "Request body cannot be empty" });
+    }
     const { valid, error, value } = validate(editSchema, req.body);
     if (!valid) return res.status(400).json({ error });
 
-    const updatedUser = await UserModel.findByIdAndUpdate(req.user.is, { $set: value }, { new: true, runValidators: true }).lean();
+    const updatedUser = await UserModel.findByIdAndUpdate(req.user.id, { $set: value }, { new: true, runValidators: true }).lean();
     if (!updatedUser) return res.status(404).json({ error: "User not found" });
 
     const { name, email, program, branch, semester } = updatedUser;

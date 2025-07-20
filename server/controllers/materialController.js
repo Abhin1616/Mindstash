@@ -11,35 +11,54 @@ import Notification from "../models/Notification.js";
 const normalize = val => val && val.toLowerCase() !== 'all' ? val : undefined;
 
 export const uploadMaterial = async (req, res) => {
+    if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ error: "Request body cannot be empty" });
+    }
+
     const { valid, error, value } = validate(uploadSchema, req.body);
     if (!valid) {
         if (req.file?.filename) await cloudinary.uploader.destroy(req.file.filename);
-        return res.status(400).json({
-            error: "Validation failed",
-            details: [{ message: error, field: value?.context?.key }]
-        });
+        return res.status(400).json({ error });
     }
 
-    if (!req.file?.path || !req.file?.mimetype)
+    if (!req.file?.path || !req.file?.mimetype) {
         return res.status(400).json({ error: "File upload missing or failed" });
+    }
 
-    const fileType = req.file.mimetype === 'application/pdf' ? 'pdf' : 'image';
-    const user = await UserModel.findById(req.user.id).lean();
-    if (!user) return res.status(404).json({ error: "User not found" });
+    try {
+        const fileType = req.file.mimetype === 'application/pdf' ? 'pdf' : 'image';
 
-    const material = await Material.create({
-        title: value.title,
-        description: value.description || "",
-        fileUrl: req.file.path,
-        fileType,
-        program: user.program,
-        branch: user.branch,
-        semester: user.semester,
-        uploadedBy: user._id
-    });
+        const user = await UserModel.findById(req.user.id).lean();
+        if (!user) throw new Error("User not found");
 
-    res.status(201).json({ message: "Material uploaded successfully", material });
+        const material = await Material.create({
+            title: value.title,
+            description: value.description || "",
+            fileUrl: req.file.path,
+            fileType,
+            program: user.program,
+            branch: user.branch,
+            semester: user.semester,
+            uploadedBy: user._id
+        });
+
+        return res.status(201).json({ message: "Material uploaded successfully", material });
+
+    } catch (err) {
+        // 🧹 Clean up uploaded file if something failed after upload
+        if (req.file?.filename) {
+            try {
+                await cloudinary.uploader.destroy(req.file.filename);
+            } catch (cloudErr) {
+                console.error("Failed to clean up uploaded file:", cloudErr.message);
+            }
+        }
+
+        console.error("Upload error:", err.message);
+        return res.status(500).json({ error: "Internal server error" });
+    }
 };
+
 
 export const deleteMaterial = async (req, res) => {
     const material = await findOwnedMaterial(req.params.id, req.user.id);
@@ -159,14 +178,11 @@ export const getMyUploads = async (req, res) => {
 export const toggleUpvote = async (req, res) => {
     const material = await Material.findById(req.params.id);
     if (!material) return res.status(404).json({ error: "Material not found" });
-
     const userId = req.user.id;
     const alreadyUpvoted = material.upvotes.includes(userId);
-
     material.upvotes = alreadyUpvoted
         ? material.upvotes.filter(uid => uid.toString() !== userId)
         : [...material.upvotes, userId];
-
     await material.save();
     res.status(200).json({
         message: alreadyUpvoted ? "Upvote removed" : "Upvoted successfully",
