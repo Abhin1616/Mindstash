@@ -56,6 +56,6 @@ const editSchema = Joi.object({
         .messages({
             "number.base": "Semester must be a number"
         })
-});
+}).required();
 
 export default editSchema;
