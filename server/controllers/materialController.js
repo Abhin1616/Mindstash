@@ -151,9 +151,13 @@ export const getMaterials = async (req, res) => {
                 $project: {
                     title: 1, description: 1, fileUrl: 1, fileType: 1,
                     program: 1, branch: 1, semester: 1, createdAt: 1, upvotes: 1,
-                    uploadedBy: { name: "$uploadedBy.name" }
+                    uploadedBy: {
+                        _id: "$uploadedBy._id",
+                        name: "$uploadedBy.name"
+                    }
                 }
             }
+
         ];
 
         const [materials, totalCount] = await Promise.all([
