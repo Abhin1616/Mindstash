@@ -79,7 +79,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn }) {
                                 navigate("/auth", { replace: true });
                             }
                         }}
-                        className={`text-sm font-medium ${isActive("/uploads")
+                        className={`text-sm font-medium ${isActive("/reports")
                             ? "text-blue-600 font-semibold"
                             : "text-gray-700 hover:text-blue-600"
                             }`}

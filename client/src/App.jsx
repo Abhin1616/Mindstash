@@ -6,8 +6,8 @@ import axios from 'axios';
 import AuthPage from './pages/AuthPage.jsx';
 import GoogleAuthSuccess from './pages/GoogleAuthSuccess.jsx';
 import CompleteProfile from './components/CompleteProfile.jsx';
+import MyUploads from './pages/MyUploads.jsx';
 
-const MyUploads = () => <div className="p-4">Uploads Page</div>;
 const Chat = () => <div className="p-4">AI Chat Page</div>;
 const Notifications = () => <div className="p-4">Notifications Page</div>;
 
@@ -83,7 +83,7 @@ const App = () => {
             }
           />
           <Route path="/google-auth-success" element={<GoogleAuthSuccess />} />
-          <Route path="/uploads" element={<MyUploads />} />
+          <Route path="/uploads" element={<MyUploads currentUserId={currentUserId} />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/auth" element={<AuthPage programs={programs} setLoggedIn={setLoggedIn} setCurrentUserId={setCurrentUserId} />} />
