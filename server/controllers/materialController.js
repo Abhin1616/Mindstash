@@ -65,12 +65,19 @@ export const deleteMaterial = async (req, res) => {
     if (!material) return res.status(404).json({ error: "Material not found or not owned by you" });
 
     const publicId = getPublicId(material.fileUrl);
-    await cloudinary.uploader.destroy(publicId);
-    await material.deleteOne();
 
+    const result = await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+
+    if (result.result !== 'ok') {
+        return res.status(500).json({
+            error: "Failed to delete file from Cloudinary. Database unchanged.",
+            cloudinaryResponse: result,
+        });
+    }
+
+    await material.deleteOne();
     res.status(200).json({ message: "Material deleted successfully" });
 };
-
 export const deleteMaterialAsModerator = async (req, res) => {
     const material = await Material.findById(req.params.id);
     if (!material) return res.status(404).json({ error: "Material not found" });
