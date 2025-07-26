@@ -5,21 +5,27 @@ import cleanName from "../utils/cleanName.js";
 
 const registerSchema = Joi.object({
     name: Joi.string()
+        .trim()
         .custom((value, helpers) => {
             const cleaned = cleanName(value);
             if (cleaned.length < 2 || cleaned.length > 40) {
                 return helpers.message("Name must be 2–40 characters after cleaning");
             }
-            const namePattern = /^[A-Za-z]+(?: [A-Za-z]+){0,3}$/;
+
+            const namePattern = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
             if (!namePattern.test(cleaned)) {
-                return helpers.message("Name must contain only alphabetic words (1–4 words)");
+                return helpers.message("Name must contain only alphabetic words");
             }
+
             return cleaned;
         })
         .required()
         .messages({
+            "string.base": "Name must be a string",
+            "string.empty": "Name cannot be empty",
             "any.required": "Name is required"
         }),
+
 
     email: Joi.string()
         .trim()

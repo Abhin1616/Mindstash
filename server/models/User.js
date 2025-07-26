@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
         minlength: 2,
         maxlength: 40,
         set: cleanName,
-        match: /^[A-Za-z]+(?: [A-Za-z]+){0,3}$/
+        match: /^[A-Za-z]+(?: [A-Za-z]+)*$/
 
     },
     email: {

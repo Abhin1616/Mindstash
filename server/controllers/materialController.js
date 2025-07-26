@@ -122,9 +122,16 @@ export const getMaterials = async (req, res) => {
     if (normalizedProgram) filter.program = normalizedProgram;
     if (normalizedBranch) filter.branch = normalizedBranch;
     if (!isNaN(semesterNum)) filter.semester = semesterNum;
+
     if (search) {
-        const regex = new RegExp(search, 'i');
-        filter.$or = [{ title: regex }, { description: regex }];
+        const searchWords = search.trim().split(/\s+/); // Split on spaces
+        const searchRegexes = searchWords.map(word => ({
+            $or: [
+                { title: { $regex: word, $options: 'i' } },
+                { description: { $regex: word, $options: 'i' } }
+            ]
+        }));
+        filter.$and = searchRegexes;
     }
 
     const pageNum = Number(page);
@@ -157,7 +164,6 @@ export const getMaterials = async (req, res) => {
                     }
                 }
             }
-
         ];
 
         const [materials, totalCount] = await Promise.all([
@@ -165,7 +171,12 @@ export const getMaterials = async (req, res) => {
             Material.countDocuments(filter)
         ]);
 
-        return res.status(200).json({ materials, totalCount, page: pageNum, totalPages: Math.ceil(totalCount / limitNum) });
+        return res.status(200).json({
+            materials,
+            totalCount,
+            page: pageNum,
+            totalPages: Math.ceil(totalCount / limitNum)
+        });
     }
 
     const [materials, totalCount] = await Promise.all([
@@ -178,12 +189,24 @@ export const getMaterials = async (req, res) => {
         Material.countDocuments(filter)
     ]);
 
-    res.status(200).json({ materials, totalCount, page: pageNum, totalPages: Math.ceil(totalCount / limitNum) });
+    res.status(200).json({
+        materials,
+        totalCount,
+        page: pageNum,
+        totalPages: Math.ceil(totalCount / limitNum)
+    });
 };
 
 export const getMyUploads = async (req, res) => {
-    const myUploads = await Material.find({ uploadedBy: req.user.id }).lean();
-    res.status(200).json(myUploads);
+    const myUploads = await Material.find({ uploadedBy: req.user.id })
+        .sort({ createdAt: -1 })
+        .populate('uploadedBy', 'name')
+        .lean();
+    res.status(200).json({
+        materialCount: myUploads.length,
+        materials: myUploads
+    });
+
 };
 
 export const toggleUpvote = async (req, res) => {

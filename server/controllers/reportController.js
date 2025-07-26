@@ -6,13 +6,13 @@ import reportSchema from "../joiSchemas/reportSchema.js";
 import getPublicId from "../utils/getPublicId.js";
 import cloudinary from "cloudinary";
 import handleReportSchema from "../joiSchemas/handleReportSchema.js";
+import RULES from "../config/rules.js";
 
 
 export const getMyReports = async (req, res) => {
     const reports = await Report.find({ reportedBy: req.user.id })
         .sort({ createdAt: -1 })
         .populate("material");
-
     const result = reports.map(report => ({
         _id: report._id,
         status: report.status,
@@ -21,7 +21,9 @@ export const getMyReports = async (req, res) => {
         materialTitle: report.material?.title || report.materialSnapshot?.title || "Unknown",
         snapshot: report.materialSnapshot,
         createdAt: report.createdAt,
-        updatedAt: report.updatedAt
+        reason: report.reason,
+        brokenRules: report.brokenRules,
+        moderatorComment: report.moderatorComment
     }));
 
     res.status(200).json(result);
@@ -45,10 +47,10 @@ export const submitReport = async (req, res) => {
     const lastReport = await Report.findOne({ reportedBy: req.user.id })
         .sort({ createdAt: -1 })
         .select("createdAt");
-
+    console.log(lastReport)
     if (lastReport) {
         const secondsDiff = (Date.now() - new Date(lastReport.createdAt)) / 1000;
-        if (secondsDiff < 120) {
+        if (secondsDiff < 180) {
             return res.status(429).json({ error: "Please wait before reporting again." });
         }
     }
@@ -115,14 +117,12 @@ export const getModerationReports = async (req, res) => {
 
     res.status(200).json(result);
 };
-
 export const handleReport = async (req, res) => {
-
     const { valid, error, value } = validate(handleReportSchema, req.body);
     if (!valid) return res.status(400).json({ error });
+
     const { action, comment } = req.body;
     const validActions = ["accept", "reject"];
-
     if (!validActions.includes(action)) {
         return res.status(400).json({ error: "Invalid action. Use 'accept' or 'reject'." });
     }
@@ -141,30 +141,43 @@ export const handleReport = async (req, res) => {
         try {
             const material = report.material;
             const publicId = getPublicId(material.fileUrl);
-            await cloudinary.uploader.destroy(publicId);
+            if (publicId) {
+                await cloudinary.uploader.destroy(publicId);
+            }
             await Material.deleteOne({ _id: material._id });
+
+            const brokenRuleTitles = report.brokenRules?.map(id => {
+                const rule = RULES.find(r => r.id === id);
+                return rule ? rule.title : null;
+            }).filter(Boolean);
+            const ruleList = brokenRuleTitles.length ? ` Violated rules: ${brokenRuleTitles.join(", ")}.` : "";
+            const message = `Your upload titled "${material.title}" was removed for violating community guidelines.${ruleList}`;
 
             await Notification.create({
                 user: material.uploadedBy,
                 type: "material_deleted",
-                message: `Your upload titled "${material.title}" was removed for violating community guidelines.`,
+                message,
                 relatedMaterial: material._id
             });
+
         } catch (err) {
             console.error("Error deleting material:", err);
         }
     }
 
-    // Always notify the reporter
+    // Always notify the reporter (if present)
     const materialTitle = report.material?.title || report.materialSnapshot?.title || "a material";
     const relatedMaterialId = report.material?._id || null;
 
-    await Notification.create({
-        user: report.reportedBy._id,
-        type: `report_${action}`,
-        message: `Your report for "${materialTitle}" was ${action}ed.`,
-        relatedMaterial: relatedMaterialId
-    });
+    if (report.reportedBy?._id) {
+        await Notification.create({
+            user: report.reportedBy._id,
+            type: `report_${action}`,
+            message: `Your report for "${materialTitle}" was ${action}ed.`,
+            relatedMaterial: relatedMaterialId
+        });
+    }
 
     res.status(200).json({ message: `Report ${action}ed successfully` });
 };
+

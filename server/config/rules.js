@@ -28,6 +28,11 @@ const RULES = [
         id: "respectful",
         title: "Be Respectful",
         description: "No offensive, misleading, or disrespectful content is allowed."
+    },
+    {
+        id: "relevant_content",
+        title: "Upload Relevant Material Only",
+        description: "Only upload study material that matches your selected program, branch, and semester."
     }
 ];
 
