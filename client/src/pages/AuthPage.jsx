@@ -45,9 +45,15 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
         if (!isLogin) {
             if (!formData.name.trim()) {
                 errs.name = 'Name is required';
-            } else if (formData.name.trim().length < 2 || formData.name.trim().length > 50) {
-                errs.name = 'Name must be between 2 and 50 characters';
+            } else if (formData.name.trim().length < 2 || formData.name.trim().length > 40) {
+                errs.name = 'Name must be between 2 and 40 characters';
+            } else if (/\s{2,}/.test(formData.name)) {
+                errs.name = 'Multiple spaces are not allowed between words';
+            } else if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(formData.name.trim())) {
+                errs.name = 'Name must contain only alphabetic characters and single spaces';
             }
+
+
         }
 
         // Email validation (apply for both)
@@ -255,10 +261,12 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded shadow transition transform hover:scale-[1.01]"
+                        disabled={loading}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded shadow transition transform hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isLogin ? 'Login' : 'Register'}
                     </button>
+
                 </form>
 
                 {/* Google */}
@@ -266,7 +274,8 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">or</p>
                     <button
                         onClick={handleGoogleAuth}
-                        className="w-full flex items-center justify-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 dark:bg-red-900 dark:hover:bg-red-800 dark:text-red-300 font-medium py-2 rounded transition transform hover:scale-[1.01]"
+                        disabled={loading}
+                        className="w-full flex items-center justify-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 dark:bg-red-900 dark:hover:bg-red-800 dark:text-red-300 font-medium py-2 rounded transition transform hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {loading ? (
                             <svg className="animate-spin h-5 w-5 mr-2 text-red-700 dark:text-red-300" viewBox="0 0 24 24">
@@ -278,6 +287,7 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                         )}
                         Continue with Google
                     </button>
+
                 </div>
             </motion.div>
         </div>

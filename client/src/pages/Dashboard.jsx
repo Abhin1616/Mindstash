@@ -3,6 +3,7 @@ import MaterialCard from '../components/MaterialCard.jsx';
 import MaterialFilters from '../components/MaterialFilters.jsx';
 import axios from 'axios';
 import MaterialPreviewModal from '../components/MaterialPreviewModal.jsx';
+import ReportMaterial from './ReportMaterial.jsx';
 
 const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, currentUserId }) => {
     const [page, setPage] = useState(1);
@@ -10,6 +11,8 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     const [loading, setLoading] = useState(false);
     const [materialList, setMaterialList] = useState([]);
     const [previewMaterial, setPreviewMaterial] = useState(null);
+
+    const [reportingMaterialId, setReportingMaterialId] = useState(null);
 
     const observerRef = useRef();
     const lastMaterialRef = useRef();
@@ -75,7 +78,10 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
 
     // Fetch paginated materials
     useEffect(() => {
-        const query = `program=${filters.program}&branch=${filters.branch}&semester=${filters.semester}&sort=${sortByRecent ? 'recent' : 'top'}&page=${page}`;
+        let query = `program=${filters.program}&branch=${filters.branch}&semester=${filters.semester}&sort=${sortByRecent ? 'recent' : 'top'}&page=${page}`;
+        if (filters.search.trim()) {
+            query += `&search=${encodeURIComponent(filters.search.trim())}`;
+        }
         activeQueryRef.current = query;
         const fetchMaterials = async () => {
             setLoading(true);
@@ -137,6 +143,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 onClose={() => setPreviewMaterial(null)}
                 material={previewMaterial}
                 onUpvote={handleUpvote}
+                currentUserId={currentUserId}
             />
             <div className="grid grid-cols-1 gap-6">
                 {currentUserId !== undefined &&
@@ -146,6 +153,8 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                             ref={index === materialList.length - 1 ? lastMaterialRef : null}
                         >
                             <MaterialCard
+                                key={material._id}
+                                onReport={() => setReportingMaterialId(material._id)}
                                 material={material}
                                 currentUserId={currentUserId}
                                 onUpvote={handleUpvote}
@@ -153,7 +162,6 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                                 confirmingDeleteId={confirmingDeleteId}
                                 setConfirmingDeleteId={setConfirmingDeleteId}
                                 onDelete={onDelete}
-                                isDeleting={deletingId === material._id}
                             />
                         </div>
                     ))}
@@ -162,6 +170,13 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
             {loading && <p className="text-center text-gray-500">Loading...</p>}
             {!hasMore && !loading && (
                 <p className="text-center text-gray-400">No more materials.</p>
+            )}
+            {/*Report Modal*/}
+            {reportingMaterialId && (
+                <ReportMaterial
+                    materialId={reportingMaterialId}
+                    onClose={() => setReportingMaterialId(null)}
+                />
             )}
         </div>
     );

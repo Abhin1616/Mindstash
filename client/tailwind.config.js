@@ -14,8 +14,12 @@ export default {
       },
       animation: {
         'slide-down': 'slide-down 0.2s ease-out',
-      }
-    }
+      },
+      screens: {
+        mdnav: '1050px',
+        mdmat: '850px',
+      },
+    },
   },
   plugins: [],
-}
+};
