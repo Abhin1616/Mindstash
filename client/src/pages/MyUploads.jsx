@@ -13,7 +13,7 @@ const MyUploads = ({ currentUserId }) => {
     const [previewMaterial, setPreviewMaterial] = useState(null);
     const [confirmingDeleteId, setConfirmingDeleteId] = useState(null);
     const [deletingId, setDeletingId] = useState(null);
-
+    const [materialCount, setMaterialCount] = useState()
     const lastMaterialRef = useRef(null);
     const seenIdsRef = useRef(new Set());
     const activeQueryRef = useRef('');
@@ -32,7 +32,7 @@ const MyUploads = ({ currentUserId }) => {
             // cancel if query changed mid-request
             if (activeQueryRef.current !== query) return;
 
-            const newMaterials = res.data.filter(m => !seenIdsRef.current.has(m._id));
+            const newMaterials = res.data.materials.filter(m => !seenIdsRef.current.has(m._id));
             newMaterials.forEach(m => seenIdsRef.current.add(m._id));
 
             setMaterialList(prev => [...prev, ...newMaterials]);
@@ -40,6 +40,7 @@ const MyUploads = ({ currentUserId }) => {
             if (newMaterials.length < 10) {
                 setHasMore(false);
             }
+            setMaterialCount(res.data.materialCount)
         } catch (err) {
             console.error('Fetch error:', err.response?.data || err);
         } finally {
@@ -104,6 +105,7 @@ const MyUploads = ({ currentUserId }) => {
                 setMaterialList((prev) => prev.filter((m) => m._id !== id));
                 seenIdsRef.current.delete(id);
                 console.log('Deleted:', id);
+                setMaterialCount(materialCount - 1)
             }
         } catch (error) {
             console.error('Delete error:', error.response?.data || error);
@@ -120,7 +122,6 @@ const MyUploads = ({ currentUserId }) => {
         seenIdsRef.current.clear();
         lastMaterialRef.current = null;
     }, [currentUserId]);
-
     return (
         <div className="p-4 space-y-6">
             {/* Use the same grid for heading/button and cards */}
@@ -130,7 +131,7 @@ const MyUploads = ({ currentUserId }) => {
                     <div className="flex items-center justify-between flex-wrap gap-3">
                         <div>
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                Your Uploaded Materials
+                                Your Uploaded Materials{materialCount > 0 && ` (${materialCount})`}
                             </h2>
                         </div>
                         <Link
@@ -160,6 +161,13 @@ const MyUploads = ({ currentUserId }) => {
                         />
                     </div>
                 ))}
+                {currentUserId && <MaterialPreviewModal
+                    isOpen={!!previewMaterial}
+                    onClose={() => setPreviewMaterial(null)}
+                    material={previewMaterial}
+                    onUpvote={handleUpvote}
+                    currentUserId={currentUserId}
+                />}
             </div>
 
             {/* Status section stays outside the grid */}
