@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, Flag, ThumbsUp } from 'lucide-react';
 import getDownloadUrl from '../utils/getDownloadUrl';
 
-const MaterialPreviewModal = ({ isOpen, onClose, material, onReport }) => {
+const MaterialPreviewModal = ({ isOpen, onClose, material, onReport, currentUserId }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [previewKey, setPreviewKey] = useState(0);
 
@@ -16,7 +16,7 @@ const MaterialPreviewModal = ({ isOpen, onClose, material, onReport }) => {
 
     if (!material) return null;
 
-    const { _id, title, description, fileUrl, fileType, program, branch, semester } = material;
+    const { _id, title, description, fileUrl, fileType, program, uploadedBy, branch, semester } = material;
     const isPDF = fileType === 'pdf';
 
     return (
@@ -92,12 +92,14 @@ const MaterialPreviewModal = ({ isOpen, onClose, material, onReport }) => {
                                     >
                                         <Download size={16} /> Download
                                     </button>
-                                    <button
+                                    {uploadedBy._id != currentUserId && <button
                                         onClick={() => onReport(_id)}
-                                        className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm"
+                                        disabled={currentUserId == null}
+                                        className={`flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm transition
+  ${currentUserId == null ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
                                         <Flag size={16} /> Report
-                                    </button>
+                                    </button>}
                                 </div>
                             </div>
 

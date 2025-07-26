@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Download, Flag, ThumbsUp, Trash2 } from 'lucide-react';
 import dayjs from 'dayjs';
@@ -15,6 +15,7 @@ const MaterialCard = ({
     confirmingDeleteId,
     setConfirmingDeleteId,
     isDeleting,
+    onReport
 }) => {
     const {
         title,
@@ -31,10 +32,9 @@ const MaterialCard = ({
     } = material;
 
     const isConfirming = confirmingDeleteId === _id;
-    const isUploader = currentUserId === uploadedBy?._id;
+    const isUploader = currentUserId === uploadedBy._id;
     const hasUpvoted = upvotes.includes(currentUserId);
     const [isLocked, setIsLocked] = React.useState(false);
-
     const formatNumber = (num) => {
         if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
         if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, "") + "K";
@@ -54,7 +54,7 @@ const MaterialCard = ({
 
                 {/* Title */}
                 <div className="flex justify-between items-start">
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-white max-w-[80%] leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-white max-w-[80%] leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300 break-words">
                         {title}
                     </h3>
                     <span className="text-[10px] sm:text-xs bg-gray-800 text-white px-2 py-1 rounded-full uppercase tracking-wide font-medium">
@@ -63,7 +63,7 @@ const MaterialCard = ({
                 </div>
 
                 {/* Description */}
-                <div className="text-sm text-gray-600 dark:text-gray-300 mt-2 mb-4 max-h-[84px] overflow-y-auto pr-1 leading-relaxed scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-zinc-700">
+                <div className="text-sm text-gray-600 dark:text-gray-300 mt-2 mb-4 max-h-[84px] overflow-y-auto pr-1 leading-relaxed scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-zinc-700 break-words overflow-x-hidden">
                     {description}
                 </div>
 
@@ -108,12 +108,17 @@ const MaterialCard = ({
                             <Download size={16} /> Download
                         </button>
 
-                        {uploadedBy?._id !== currentUserId && uploadedBy !== currentUserId && <button
-                            disabled={currentUserId == null || isDeleting}
-                            className={`flex items-center gap-2 px-3 py-2 text-sm rounded-xl bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 focus:ring-2 focus:ring-red-300 dark:focus:ring-red-600 transition ${currentUserId == null || isDeleting ? "cursor-not-allowed opacity-50" : ""}`}
-                        >
-                            <Flag size={16} /> Report
-                        </button>}
+                        {!isUploader && (
+                            <button
+                                disabled={currentUserId == null || isDeleting}
+                                onClick={onReport}
+                                className={`flex items-center gap-2 px-3 py-2 text-sm rounded-xl bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 focus:ring-2 focus:ring-red-300 dark:focus:ring-red-600 transition ${currentUserId == null || isDeleting ? "cursor-not-allowed opacity-50" : ""
+                                    }`}
+                            >
+                                <Flag size={16} /> Report
+                            </button>
+                        )}
+
 
                         {/* Delete Button */}
                         {isUploader && (
@@ -185,8 +190,10 @@ const MaterialCard = ({
                         </p>
                     </div>
                 )}
+
             </div>
         </motion.div>
+
     );
 };
 export default MaterialCard;

@@ -55,7 +55,7 @@ const MaterialFilters = ({ filters, setFilters, sortByRecent, toggleSort, progra
     }, [showMobileFilters]);
 
     const CustomDropdown = ({ label, field, options, disabled = false }) => (
-        <div className="relative w-full md:w-48">
+        <div className="relative w-full mdmat:w-48">
             <label className="text-sm text-gray-600">{label}</label>
             <button
                 disabled={disabled}
@@ -93,7 +93,7 @@ const MaterialFilters = ({ filters, setFilters, sortByRecent, toggleSort, progra
     return (
         <div className="w-full relative">
             {/* Mobile Filters */}
-            <div className="md:hidden flex justify-between items-center mb-2 relative z-30">
+            <div className="mdmat:hidden flex justify-between items-center mb-2 relative z-30">
                 <button
                     ref={buttonRef}
                     className={`text-sm font-medium border px-3 py-1 rounded flex items-center gap-1 transition ${showMobileFilters
@@ -139,7 +139,7 @@ const MaterialFilters = ({ filters, setFilters, sortByRecent, toggleSort, progra
             )}
 
             {/* Desktop Filters */}
-            <div className="hidden md:block px-4 md:px-6">
+            <div className="hidden mdmat:block px-4 mdmat:px-6">
                 <div className="flex flex-wrap items-end justify-between gap-4">
                     <div className="flex gap-4 flex-wrap items-end">
                         <div className="w-[200px]">
