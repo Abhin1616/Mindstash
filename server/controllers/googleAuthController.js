@@ -26,7 +26,6 @@ export const handleGoogleRedirect = (req, res) => {
     }
 
     // Frontend handles redirection logic
-    const redirectURL = `${process.env.VITE_API_URL}/google-auth-success?profileCompleted=${user.profileCompleted}&userId=${user._id}`;
-
+    const redirectURL = `${process.env.CLIENT_ORIGIN}/google-auth-success?profileCompleted=${user.profileCompleted}&userId=${user._id}`;
     res.redirect(redirectURL);
 };
