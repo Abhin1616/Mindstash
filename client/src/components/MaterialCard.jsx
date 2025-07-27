@@ -15,7 +15,9 @@ const MaterialCard = ({
     confirmingDeleteId,
     setConfirmingDeleteId,
     isDeleting,
-    onReport
+    onReport,
+    role,
+    setModRemoveMaterialId
 }) => {
     const {
         title,
@@ -30,6 +32,7 @@ const MaterialCard = ({
         upvotes = [],
         _id,
     } = material;
+
 
     const isConfirming = confirmingDeleteId === _id;
     const isUploader = currentUserId === uploadedBy._id;
@@ -108,7 +111,7 @@ const MaterialCard = ({
                             <Download size={16} /> Download
                         </button>
 
-                        {!isUploader && (
+                        {!isUploader && !role == 'moderator' && (
                             <button
                                 disabled={currentUserId == null || isDeleting}
                                 onClick={onReport}
@@ -119,6 +122,16 @@ const MaterialCard = ({
                             </button>
                         )}
 
+                        {role === "moderator" && (
+                            <button
+                                onClick={() => setModRemoveMaterialId(_id)}
+                                disabled={isDeleting}
+                                className="flex items-center gap-2 px-3 py-2 text-sm rounded-xl bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-300 dark:focus:ring-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <Trash2 size={16} /> Remove
+                            </button>
+
+                        )}
 
                         {/* Delete Button */}
                         {isUploader && (
@@ -190,6 +203,7 @@ const MaterialCard = ({
                         </p>
                     </div>
                 )}
+
 
             </div>
         </motion.div>

@@ -4,7 +4,7 @@ import { FiBell } from "react-icons/fi";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Search } from 'lucide-react'
-export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notifications, filters, setFilters }) {
+export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notifications, filters, setFilters, role, setRole }) {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
@@ -18,6 +18,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                 });
                 if (res.status === 200 && res.data?.user) {
                     setLoggedIn(true);
+                    setRole(res.data?.user.role)
                 } else {
                     setLoggedIn(false);
                 }
@@ -44,6 +45,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
 
     const handleSearchClick = () => {
         setFilters(prev => ({ ...prev, search: localSearch.trim() }));
+        setLocalSearch("");
     };
     return (
         <header className="bg-white/90 backdrop-blur border-b border-gray-200 shadow-md fixed top-0 left-0 right-0 z-50">
@@ -112,7 +114,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                         My Uploads
                     </Link>
                     <Link
-                        to={loggedIn ? "/reports" : "#"}
+                        to={loggedIn ? (role == "moderator" ? "/report-moderation" : "/reports") : "#"}
                         onClick={(e) => {
                             if (!loggedIn) {
                                 e.preventDefault();
@@ -120,9 +122,12 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                                 navigate("/auth", { replace: true });
                             }
                         }}
-                        className={`text-sm font-medium ${isActive("/reports") ? "text-blue-600 font-semibold" : "text-gray-700 hover:text-blue-600"}`}
+                        className={`text-sm font-medium ${isActive("/reports") || isActive("/report-moderation")
+                            ? "text-blue-600 font-semibold"
+                            : "text-gray-700 hover:text-blue-600"
+                            }`}
                     >
-                        My Reports
+                        {role == "moderator" ? "Moderation" : "My Reports"}
                     </Link>
                     <Link
                         to="/chat"
@@ -152,7 +157,10 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
 
                     {loggedIn ? (
                         <button
-                            onClick={handleLogout}
+                            onClick={() => {
+                                handleLogout()
+                                setLoggedIn(false)
+                            }}
                             className="ml-4 px-4 py-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition active:scale-95"
                         >
                             Logout
@@ -208,7 +216,10 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                             className="w-full pl-4 pr-10 py-2 rounded-md border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-900 dark:text-white"
                         />
                         <button
-                            onClick={handleSearchClick}
+                            onClick={() => {
+                                handleSearchClick()
+                                setIsOpen(false)
+                            }}
                             className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"
                         >
                             <Search className="w-5 h-5" />
@@ -239,11 +250,15 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                         My Uploads
                     </button>
                     <button
-                        onClick={(e) => handleMobileNav(e, "/reports", true)}
-                        className={`block w-full text-left px-3 py-2 rounded-md transition-all active:scale-95 ${isActive("/reports") ? "bg-blue-100 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}`}
+                        onClick={(e) => handleMobileNav(e, role === "moderator" ? "/report-moderation" : "/reports", true)}
+                        className={`block w-full text-left px-3 py-2 rounded-md transition-all active:scale-95 ${isActive("/reports") || isActive("/report-moderation")
+                            ? "bg-blue-100 text-blue-600 font-semibold"
+                            : "text-gray-700 hover:text-blue-600"
+                            }`}
                     >
-                        My Reports
+                        {role === "moderator" ? "Moderation" : "My Reports"}
                     </button>
+
                     <button
                         onClick={(e) => handleMobileNav(e, "/chat", false)}
                         className={`block w-full text-left px-3 py-2 rounded-md transition-all active:scale-95 ${isActive("/chat") ? "bg-blue-100 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}`}
@@ -253,14 +268,22 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
 
                     {loggedIn ? (
                         <button
-                            onClick={handleLogout}
+                            onClick={() => {
+                                handleLogout()
+                                setLoggedIn(false)
+                            }}
+                            to="/"
                             className="w-full mt-2 py-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition active:scale-95"
                         >
                             Logout
+
                         </button>
                     ) : (
                         <Link
                             to="/auth"
+                            onClick={() => {
+                                setIsOpen(false)
+                            }}
                             className="block w-full mt-2 text-center py-2 bg-blue-100 text-blue-600 hover:bg-blue-200 rounded-lg transition active:scale-95"
                         >
                             Login

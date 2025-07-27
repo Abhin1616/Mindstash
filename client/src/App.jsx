@@ -12,8 +12,9 @@ import Profile from './pages/Profile.jsx';
 import MyReports from './pages/MyReports.jsx';
 import MyNotifications from './pages/MyNotifications.jsx';
 import Rules from './pages/Rules.jsx';
+import ModerationReports from './pages/ModerationReports.jsx';
+import Chat from './pages/Chat.jsx';
 
-const Chat = () => <div className="p-4">AI Chat Page</div>;
 
 const App = () => {
   const navigate = useNavigate()
@@ -28,6 +29,7 @@ const App = () => {
   });
   const [currentUserId, setCurrentUserId] = useState(null);
   const [notifications, setNotifications] = useState([]);
+  const [role, setRole] = useState([]);
   const toggleSort = () => {
     setSortByRecent(prev => !prev);
   };
@@ -46,19 +48,22 @@ const App = () => {
 
         if (authRes.status === 200 && authRes.data?.user) {
           setCurrentUserId(authRes.data.user.id);
+          setRole(authRes.data.user.role)
           setLoggedIn(true);
         } else {
           setCurrentUserId(null);
           setLoggedIn(false);
+          setRole(null)
         }
       } catch (err) {
         setCurrentUserId(null);
         setLoggedIn(false);
+        setRole(null)
       }
     };
 
     fetchInitialData();
-  }, []);
+  }, [role, loggedIn]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -83,6 +88,7 @@ const App = () => {
       await axios.get("http://localhost:3000/logout", {
         withCredentials: true
       });
+      setRole(null)
       setLoggedIn(false);
       setCurrentUserId(null);
       navigate('/', { replace: true })
@@ -94,13 +100,15 @@ const App = () => {
 
   return (
     <>
-      <Navbar handleLogout={handleLogout} setLoggedIn={setLoggedIn} loggedIn={loggedIn} notifications={notifications} filters={filters} setFilters={setFilters} />
+      <Navbar key={role} handleLogout={handleLogout} setLoggedIn={setLoggedIn} loggedIn={loggedIn} notifications={notifications} filters={filters} setFilters={setFilters} role={role} setRole={setRole} />
       <main className="bg-gray-50 min-h-screen pt-16">
         <Routes>
           <Route
             path="/"
             element={
               <Dashboard
+                key={role}
+                role={role}
                 programs={programs}
                 filters={filters}
                 sortByRecent={sortByRecent}
@@ -120,6 +128,8 @@ const App = () => {
           {notifications && <Route path="/notifications" element={<MyNotifications notifications={notifications} setNotifications={setNotifications} />} />}
           <Route path="/auth" element={<AuthPage programs={programs} setLoggedIn={setLoggedIn} setCurrentUserId={setCurrentUserId} />} />
           <Route path="/complete-profile" element={<CompleteProfile programs={programs} setLoggedIn={setLoggedIn} setCurrentUserId={setCurrentUserId} />} />
+          <Route path="/report-moderation" element={<ModerationReports />} />
+          <Route path="/ask-ai" element={<Chat />} />
 
         </Routes>
       </main>

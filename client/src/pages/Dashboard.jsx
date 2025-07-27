@@ -4,8 +4,9 @@ import MaterialFilters from '../components/MaterialFilters.jsx';
 import axios from 'axios';
 import MaterialPreviewModal from '../components/MaterialPreviewModal.jsx';
 import ReportMaterial from './ReportMaterial.jsx';
+import ModeratorRemoveModal from '../components/ModeratorRemoveModal.jsx';
 
-const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, currentUserId }) => {
+const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, currentUserId, role }) => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
@@ -13,6 +14,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     const [previewMaterial, setPreviewMaterial] = useState(null);
 
     const [reportingMaterialId, setReportingMaterialId] = useState(null);
+    const [modRemoveMaterialId, setModRemoveMaterialId] = useState(null);
 
     const observerRef = useRef();
     const lastMaterialRef = useRef();
@@ -146,14 +148,31 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 currentUserId={currentUserId}
             />
             <div className="grid grid-cols-1 gap-6">
-                {currentUserId !== undefined &&
+                {materialList.length === 0 ? (
+                    <div className="text-center py-10 col-span-full">
+                        <p className="text-gray-600">
+                            No materials found{filters.search ? ` for "${filters.search}"` : ""}.
+                        </p>
+                        {filters.search && (
+                            <button
+                                onClick={() => {
+                                    setFilters(prev => ({ ...prev, search: "" }));
+                                }}
+                                className="mt-3 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg"
+                            >
+                                Clear Search
+                            </button>
+                        )}
+                    </div>
+                ) : (
                     materialList.map((material, index) => (
                         <div
                             key={material._id}
                             ref={index === materialList.length - 1 ? lastMaterialRef : null}
                         >
                             <MaterialCard
-                                key={material._id}
+                                setModRemoveMaterialId={setModRemoveMaterialId}
+                                role={role}
                                 onReport={() => setReportingMaterialId(material._id)}
                                 material={material}
                                 currentUserId={currentUserId}
@@ -164,8 +183,10 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                                 onDelete={onDelete}
                             />
                         </div>
-                    ))}
+                    ))
+                )}
             </div>
+
 
             {loading && <p className="text-center text-gray-500">Loading...</p>}
             {!hasMore && !loading && (
@@ -178,6 +199,17 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                     onClose={() => setReportingMaterialId(null)}
                 />
             )}
+            {modRemoveMaterialId && (
+                <ModeratorRemoveModal
+                    materialId={modRemoveMaterialId}
+                    onClose={() => setModRemoveMaterialId(null)}
+                    onRemoved={(id) => {
+                        setModRemoveMaterialId(null);
+                        onDelete(id);
+                    }}
+                />
+            )}
+
         </div>
     );
 };
