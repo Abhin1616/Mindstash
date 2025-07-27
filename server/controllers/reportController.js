@@ -47,7 +47,6 @@ export const submitReport = async (req, res) => {
     const lastReport = await Report.findOne({ reportedBy: req.user.id })
         .sort({ createdAt: -1 })
         .select("createdAt");
-    console.log(lastReport)
     if (lastReport) {
         const secondsDiff = (Date.now() - new Date(lastReport.createdAt)) / 1000;
         if (secondsDiff < 180) {
