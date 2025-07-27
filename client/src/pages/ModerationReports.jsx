@@ -7,7 +7,7 @@ const ModerationReports = () => {
     const [statusFilter, setStatusFilter] = useState("pending");
     const [loading, setLoading] = useState(false);
     const [handlingId, setHandlingId] = useState(null);
-    const [comment, setComment] = useState("");
+    const [comments, setComments] = useState({});
     const [previewMaterial, setPreviewMaterial] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -17,7 +17,7 @@ const ModerationReports = () => {
                 const res = await axios.get("http://localhost:3000/auth/verify", {
                     withCredentials: true,
                 });
-                setCurrentUserId(res.data.user.id);
+                // setCurrentUserId(res.data.user.id); // remove if unused
             } catch (err) {
                 console.error("Failed to get user:", err);
             }
@@ -44,12 +44,17 @@ const ModerationReports = () => {
     }, [statusFilter]);
 
     const handleReport = async (id, action) => {
-        if (!comment.trim()) return alert("Please add a comment before submitting.");
+        const comment = comments[id] || "";
         setHandlingId(id);
         try {
-            await axios.patch(`http://localhost:3000/reports/${id}/handle`, { action, comment }, { withCredentials: true });
-            setComment("");
+            await axios.patch(
+                `http://localhost:3000/reports/${id}/handle`,
+                { action, comment },
+                { withCredentials: true }
+            );
+            setComments((prev) => ({ ...prev, [id]: "" }));
             fetchReports();
+            toast.success("Report Handled");
         } catch (err) {
             console.error("Failed to handle report:", err);
         } finally {
@@ -65,7 +70,7 @@ const ModerationReports = () => {
             setPreviewMaterial(data);
             setModalOpen(true);
         } catch (err) {
-            toast.error("Failed to fetch material.")
+            toast.error("Failed to fetch material.");
         }
     };
 
@@ -131,9 +136,14 @@ const ModerationReports = () => {
                                 <div className="space-y-2">
                                     <textarea
                                         className="w-full border rounded p-2 text-sm"
-                                        placeholder="Add moderator comment..."
-                                        value={handlingId === report._id ? comment : ""}
-                                        onChange={(e) => setComment(e.target.value)}
+                                        placeholder="Add moderator comment... (optional)"
+                                        value={comments[report._id] || ""}
+                                        onChange={(e) =>
+                                            setComments((prev) => ({
+                                                ...prev,
+                                                [report._id]: e.target.value,
+                                            }))
+                                        }
                                     />
                                     <div className="flex gap-2">
                                         <button

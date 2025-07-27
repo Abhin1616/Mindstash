@@ -111,7 +111,7 @@ const MaterialCard = ({
                             <Download size={16} /> Download
                         </button>
 
-                        {!isUploader && !role == 'moderator' && (
+                        {!isUploader && role !== 'moderator' && (
                             <button
                                 disabled={currentUserId == null || isDeleting}
                                 onClick={onReport}
