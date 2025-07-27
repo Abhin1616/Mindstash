@@ -119,7 +119,7 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
     const handleGoogleAuth = async () => {
         setLoading(true);
         try {
-            window.location.href = '/auth/google';
+            window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
         } catch (err) {
             console.error('Google Auth failed:', err);
             setLoading(false);
