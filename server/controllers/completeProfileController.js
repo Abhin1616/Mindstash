@@ -38,8 +38,8 @@ export const completeProfile = async (req, res) => {
 
     res.cookie("acc_token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        secure: true,
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.status(200).json({ message: "Profile completed successfully" });

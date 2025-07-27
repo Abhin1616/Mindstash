@@ -1,6 +1,6 @@
 const authCookieOptions = {
     httpOnly: true,
-    sameSite: "Lax",
-    secure: process.env.NODE_ENV === "production"
+    sameSite: "None",
+    secure: true
 };
 export default authCookieOptions;
