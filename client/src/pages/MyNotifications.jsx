@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import axios from "axios";
-import { FiBell } from "react-icons/fi";
+import api from '../config/api.js';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
@@ -9,7 +8,7 @@ const MyNotifications = ({ notifications, setNotifications }) => {
     useEffect(() => {
         const markAllSeen = async () => {
             try {
-                await axios.patch(
+                await api.patch(
                     "http://localhost:3000/notifications/mark-all-seen",
                     {},
                     { withCredentials: true }

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import axios from 'axios';
 import { Upload, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import api from '../config/api';
 
 const UploadMaterial = ({ currentUserId }) => {
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ const UploadMaterial = ({ currentUserId }) => {
     const [errors, setErrors] = useState({});
     const [uploading, setUploading] = useState(false);
     useEffect(() => {
-        axios.get("http://localhost:3000/profile", { withCredentials: true })
+        api.get("http://localhost:3000/profile", { withCredentials: true })
             .then((res) => {
                 console.log(res)
                 setCurrentUser(res.data);
@@ -53,7 +53,7 @@ const UploadMaterial = ({ currentUserId }) => {
         formData.append('file', file);
 
         try {
-            const res = await axios.post('http://localhost:3000/materials', formData, { withCredentials: true });
+            const res = await api.post('http://localhost:3000/materials', formData, { withCredentials: true });
             console.log(res)
             setTitle('');
             setDescription('');

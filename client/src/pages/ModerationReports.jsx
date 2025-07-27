@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from '../config/api.js';
 import toast from "react-hot-toast";
 
 const ModerationReports = () => {
@@ -14,7 +14,7 @@ const ModerationReports = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/auth/verify", {
+                const res = await api.get("http://localhost:3000/auth/verify", {
                     withCredentials: true,
                 });
                 // setCurrentUserId(res.data.user.id); // remove if unused
@@ -28,7 +28,7 @@ const ModerationReports = () => {
     const fetchReports = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get(`http://localhost:3000/reports/moderation?status=${statusFilter}`, {
+            const { data } = await api.get(`http://localhost:3000/reports/moderation?status=${statusFilter}`, {
                 withCredentials: true,
             });
             setReports(data);
@@ -47,7 +47,7 @@ const ModerationReports = () => {
         const comment = comments[id] || "";
         setHandlingId(id);
         try {
-            await axios.patch(
+            await api.patch(
                 `http://localhost:3000/reports/${id}/handle`,
                 { action, comment },
                 { withCredentials: true }
@@ -64,7 +64,7 @@ const ModerationReports = () => {
 
     const handlePreview = async (materialId) => {
         try {
-            const { data } = await axios.get(`http://localhost:3000/materials/${materialId}`, {
+            const { data } = await api.get(`http://localhost:3000/materials/${materialId}`, {
                 withCredentials: true,
             });
             setPreviewMaterial(data);

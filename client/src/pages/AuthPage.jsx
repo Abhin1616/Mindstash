@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 import { FcGoogle } from 'react-icons/fc';
 import classNames from 'classnames';
 import { BsChevronDown } from 'react-icons/bs';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import api from '../config/api';
 
 
 
@@ -99,7 +99,7 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
         if (!validate()) return;
         setLoading(true);
         try {
-            const { data } = await axios.post(`http://localhost:3000${endpoint}`, payload, {
+            const { data } = await api.post(`http://localhost:3000${endpoint}`, payload, {
                 withCredentials: true,
             });
             setLoggedIn(true);

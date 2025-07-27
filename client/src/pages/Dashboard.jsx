@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import MaterialCard from '../components/MaterialCard.jsx';
 import MaterialFilters from '../components/MaterialFilters.jsx';
-import axios from 'axios';
 import MaterialPreviewModal from '../components/MaterialPreviewModal.jsx';
 import ReportMaterial from './ReportMaterial.jsx';
 import ModeratorRemoveModal from '../components/ModeratorRemoveModal.jsx';
+import api from '../config/api.js';
 
 const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, currentUserId, role }) => {
     const [page, setPage] = useState(1);
@@ -25,7 +25,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     const [deletingId, setDeletingId] = useState(null);
     const handleUpvote = async (materialId) => {
         try {
-            const res = await axios.post(
+            const res = await api.post(
                 `http://localhost:3000/materials/${materialId}/upvote`,
                 {},
                 { withCredentials: true }
@@ -62,14 +62,13 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     const onDelete = async (id) => {
         try {
             setDeletingId(id); // 👈 lock that card
-            const res = await axios.delete(`http://localhost:3000/materials/${id}`, {
+            const res = await api.delete(`http://localhost:3000/materials/${id}`, {
                 withCredentials: true,
             });
 
             if (res.status === 200) {
                 setMaterialList(prev => prev.filter(material => material._id !== id));
                 seenIdsRef.current.delete(id);
-                console.log("Deleted:", id);
             }
         } catch (error) {
             console.error("Delete error:", error.response?.data || error);
@@ -88,7 +87,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
         const fetchMaterials = async () => {
             setLoading(true);
             try {
-                const res = await axios.get(`http://localhost:3000/materials?${query}`);
+                const res = await api.get(`http://localhost:3000/materials?${query}`);
 
                 // cancel if query changed mid-request
                 if (activeQueryRef.current !== query) return;

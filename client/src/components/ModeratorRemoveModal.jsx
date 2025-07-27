@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import api from '../config/api';
 
 const ModeratorRemoveModal = ({ materialId, onClose, onRemoved }) => {
     const [availableRules, setAvailableRules] = useState([]);
@@ -13,7 +13,7 @@ const ModeratorRemoveModal = ({ materialId, onClose, onRemoved }) => {
     useEffect(() => {
         const fetchRules = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/rules');
+                const res = await api.get('http://localhost:3000/rules');
                 setAvailableRules(res.data || []);
             } catch {
                 toast.error('Failed to load rules');
@@ -38,7 +38,7 @@ const ModeratorRemoveModal = ({ materialId, onClose, onRemoved }) => {
 
         setLoading(true);
         try {
-            await axios.delete(`http://localhost:3000/materials/${materialId}/mod`, {
+            await api.delete(`http://localhost:3000/materials/${materialId}/mod`, {
                 data: { brokenRules },
                 withCredentials: true,
             });

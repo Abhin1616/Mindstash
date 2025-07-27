@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
-import axios from "axios";
 import { SendHorizonal, Bot } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import api from "../config/api";
 
 const Chat = () => {
     const [messages, setMessages] = useState([]);
@@ -36,7 +36,7 @@ const Chat = () => {
         setLoading(true);
 
         try {
-            const res = await axios.post("http://localhost:3000/ask-ai", { message: trimmed }, { withCredentials: true });
+            const res = await api.post("http://localhost:3000/ask-ai", { message: trimmed }, { withCredentials: true });
             const botReply = res.data?.reply || "Hmm... I'm not sure how to respond to that.";
 
             simulateTyping(botReply, () => {

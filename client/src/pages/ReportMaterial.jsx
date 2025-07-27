@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../config/api.js';
 import { X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -19,7 +19,7 @@ const ReportMaterial = ({ materialId, onClose }) => {
     useEffect(() => {
         const fetchRules = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/rules');
+                const res = await api.get('http://localhost:3000/rules');
                 setAvailableRules(res.data || []);
             } catch (err) {
                 console.error('Failed to fetch rules:', err);
@@ -69,7 +69,7 @@ const ReportMaterial = ({ materialId, onClose }) => {
 
         setLoading(true);
         try {
-            const res = await axios.post('http://localhost:3000/reports', {
+            const res = await api.post('http://localhost:3000/reports', {
                 materialId,
                 reason: reason.trim(),
                 brokenRules,

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { BsChevronDown } from 'react-icons/bs';
+import api from '../config/api';
 
 const Profile = ({ programs }) => {
     const [userData, setUserData] = useState(null);
@@ -12,7 +12,7 @@ const Profile = ({ programs }) => {
     const [openDropdown, setOpenDropdown] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:3000/profile', { withCredentials: true })
+        api.get('http://localhost:3000/profile', { withCredentials: true })
             .then(res => {
                 setUserData(res.data);
                 setFormData({
@@ -66,7 +66,7 @@ const Profile = ({ programs }) => {
     const handleSave = async () => {
         if (!validate()) return;
         try {
-            await axios.patch('http://localhost:3000/profile', formData, { withCredentials: true });
+            await api.patch('http://localhost:3000/profile', formData, { withCredentials: true });
             toast.success('Profile updated');
             setUserData(prev => ({ ...prev, ...formData, semester: Number(formData.semester) }));
             setIsEditing(false);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from '../config/api.js';
 import { ShieldAlert } from "lucide-react";
 
 const Rules = () => {
@@ -8,7 +8,7 @@ const Rules = () => {
     useEffect(() => {
         const fetchRules = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/rules", {
+                const res = await api.get("http://localhost:3000/rules", {
                     withCredentials: true,
                 });
                 setRules(res.data);

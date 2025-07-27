@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Ensure axios is imported
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import api from "../config/api";
 
 const CompleteProfile = ({ programs, setLoggedIn, setCurrentUserId }) => {
     const params = new URLSearchParams(window.location.search);
@@ -51,7 +51,7 @@ const CompleteProfile = ({ programs, setLoggedIn, setCurrentUserId }) => {
 
         try {
             const userId = params.get("userId");
-            await axios.post(`http://localhost:3000/complete-profile?userId=${userId}`, formData, { withCredentials: true });
+            await api.post(`http://localhost:3000/complete-profile?userId=${userId}`, formData, { withCredentials: true });
             setLoggedIn(true);
             setCurrentUserId(userId);
             navigate("/", { replace: true });

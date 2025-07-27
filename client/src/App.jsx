@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate, replace } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard.jsx';
-import axios from 'axios';
 import AuthPage from './pages/AuthPage.jsx';
 import GoogleAuthSuccess from './pages/GoogleAuthSuccess.jsx';
 import CompleteProfile from './components/CompleteProfile.jsx';
@@ -14,6 +13,7 @@ import MyNotifications from './pages/MyNotifications.jsx';
 import Rules from './pages/Rules.jsx';
 import ModerationReports from './pages/ModerationReports.jsx';
 import Chat from './pages/Chat.jsx';
+import api from './config/api.js';
 
 
 const App = () => {
@@ -38,11 +38,11 @@ const App = () => {
     const fetchInitialData = async () => {
       try {
         // Fetch programs
-        const progRes = await axios.get('http://localhost:3000/programs');
+        const progRes = await api.get('http://localhost:3000/programs');
         setPrograms(progRes.data);
 
         // Verify token and get user
-        const authRes = await axios.get('http://localhost:3000/verify-token', {
+        const authRes = await api.get('http://localhost:3000/verify-token', {
           withCredentials: true,
         });
 
@@ -68,7 +68,7 @@ const App = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/notifications', {
+        const res = await api.get('http://localhost:3000/notifications', {
           withCredentials: true,
         });
         setNotifications(res.data.notifications);
@@ -85,7 +85,7 @@ const App = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.get("http://localhost:3000/logout", {
+      await api.get("http://localhost:3000/logout", {
         withCredentials: true
       });
       setRole(null)

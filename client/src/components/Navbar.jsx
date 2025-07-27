@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FiBell } from "react-icons/fi";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { Search } from 'lucide-react'
+import api from "../config/api";
 export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notifications, filters, setFilters, role, setRole }) {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +13,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/verify-token", {
+                const res = await api.get("http://localhost:3000/verify-token", {
                     withCredentials: true,
                 });
                 if (res.status === 200 && res.data?.user) {

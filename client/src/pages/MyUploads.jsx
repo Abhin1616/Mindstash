@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
+import api from '../config/api.js';
 import { Link } from 'react-router-dom';
 import MaterialCard from '../components/MaterialCard.jsx';
 import MaterialPreviewModal from '../components/MaterialPreviewModal.jsx';
@@ -24,7 +24,7 @@ const MyUploads = ({ currentUserId }) => {
         activeQueryRef.current = query;
 
         try {
-            const res = await axios.get(
+            const res = await api.get(
                 `http://localhost:3000/materials/myuploads?page=${page}&limit=10`,
                 { withCredentials: true }
             );
@@ -71,7 +71,7 @@ const MyUploads = ({ currentUserId }) => {
 
     const handleUpvote = async (materialId) => {
         try {
-            await axios.post(
+            await api.post(
                 `http://localhost:3000/materials/${materialId}/upvote`,
                 {},
                 { withCredentials: true }
@@ -97,7 +97,7 @@ const MyUploads = ({ currentUserId }) => {
     const onDelete = async (id) => {
         try {
             setDeletingId(id);
-            const res = await axios.delete(`http://localhost:3000/materials/${id}`, {
+            const res = await api.delete(`http://localhost:3000/materials/${id}`, {
                 withCredentials: true,
             });
 
