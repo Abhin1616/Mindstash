@@ -131,6 +131,13 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                     </Link>
                     <Link
                         to="/chat"
+                        onClick={(e) => {
+                            if (!loggedIn) {
+                                e.preventDefault();
+                                toast.error("Log in first!");
+                                navigate("/auth", { replace: true });
+                            }
+                        }}
                         className={`text-sm font-medium ${isActive("/chat") ? "text-blue-600 font-semibold" : "text-gray-700 hover:text-blue-600"}`}
                     >
                         AI Chat
@@ -260,7 +267,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                     </button>
 
                     <button
-                        onClick={(e) => handleMobileNav(e, "/chat", false)}
+                        onClick={(e) => handleMobileNav(e, "/chat", true)}
                         className={`block w-full text-left px-3 py-2 rounded-md transition-all active:scale-95 ${isActive("/chat") ? "bg-blue-100 text-blue-600 font-semibold" : "text-gray-700 hover:bg-gray-100"}`}
                     >
                         AI Chat
