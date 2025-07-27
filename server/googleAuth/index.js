@@ -13,7 +13,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: "/auth/google/callback",
+            callbackURL: "https://mindstash-backend.onrender.com/auth/google/callback",
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
@@ -22,7 +22,6 @@ passport.use(
                 const existingUser = await User.findOne({ email });
 
                 if (existingUser) {
-                    // ✅ If manually registered (has password hash), block Google login
                     if (existingUser.hash) {
                         return done(
                             null,

@@ -34,6 +34,7 @@ app.use(cors({
     origin: allowedOrigins,
     credentials: true
 }))
+app.set("trust proxy", 1);
 
 app.use(cookieParser());
 app.use(passport.initialize());
