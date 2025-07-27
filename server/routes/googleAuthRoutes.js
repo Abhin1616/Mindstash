@@ -1,4 +1,8 @@
 import express from "express";
+import dotenv from "dotenv";
+if (process.env.NODE_ENV !== "production") {
+    dotenv.config();
+}
 import passport from "passport";
 import { handleGoogleRedirect } from "../controllers/googleAuthController.js";
 
@@ -12,7 +16,7 @@ router.get(
 router.get(
     "/auth/google/callback",
     passport.authenticate("google", {
-        failureRedirect: "http://localhost:5173/login?error=email_already_registered",
+        failureRedirect: `${process.env.VITE_API_URL}/login?error=email_already_registered`,
         session: false,
     }),
     handleGoogleRedirect
