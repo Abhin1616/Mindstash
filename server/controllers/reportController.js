@@ -91,11 +91,20 @@ export const getModerationReports = async (req, res) => {
     }
 
     const filter = status === "all" ? {} : { status };
+
     const reports = await Report.find(filter)
         .sort({ createdAt: -1 })
         .populate("material reportedBy reviewedBy");
 
-    const result = reports.map(report => ({
+    const filteredReports = reports.filter(report => {
+        // Always exclude reports with deleted materials if their status is "pending"
+        if (report.status === "pending" && !report.material) {
+            return false;
+        }
+        return true;
+    });
+
+    const result = filteredReports.map(report => ({
         _id: report._id,
         status: report.status,
         reportedBy: {
@@ -117,6 +126,8 @@ export const getModerationReports = async (req, res) => {
 
     res.status(200).json(result);
 };
+
+
 export const handleReport = async (req, res) => {
     const { valid, error, value } = validate(handleReportSchema, req.body);
     if (!valid) return res.status(400).json({ error });

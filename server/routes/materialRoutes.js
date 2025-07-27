@@ -10,7 +10,8 @@ import {
     getMaterials,
     getMyUploads,
     toggleUpvote,
-    deleteMaterialAsModerator
+    deleteMaterialAsModerator,
+    getMaterialById
 } from "../controllers/materialController.js";
 import requireCompletedProfile from "../utils/requireCompletedProfile.js";
 
@@ -26,7 +27,8 @@ router.post("/materials", verifyToken, requireCompletedProfile, upload.single("f
 router.delete("/materials/:id", verifyToken, requireCompletedProfile, asyncHandler(deleteMaterial));
 router.get("/materials", asyncHandler(getMaterials));
 router.get("/materials/myuploads", verifyToken, requireCompletedProfile, asyncHandler(getMyUploads));
+router.get("/materials/:id", verifyToken, requireCompletedProfile, requireRole("moderator"), asyncHandler(getMaterialById));
 router.post("/materials/:id/upvote", verifyToken, requireCompletedProfile, asyncHandler(toggleUpvote));
-router.delete("materials/:id/mod", verifyToken, requireCompletedProfile, requireRole("moderator"), asyncHandler(deleteMaterialAsModerator));
+router.delete("/materials/:id/mod", verifyToken, requireCompletedProfile, requireRole("moderator"), asyncHandler(deleteMaterialAsModerator));
 
 export default router;

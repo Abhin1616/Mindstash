@@ -60,8 +60,11 @@ export const login = async (req, res) => {
     });
 };
 
-export const verifyTokenSuccess = (req, res) => {
-    res.status(200).json({ message: "Token valid", user: req.user });
+export const verifyTokenSuccess = async (req, res) => {
+    const curUser = await UserModel.findById(req.user.id);
+    const user = req.user;
+    user.role = curUser.role;
+    res.status(200).json({ message: "Token valid", user: user });
 };
 
 export const logout = (req, res) => {

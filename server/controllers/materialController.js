@@ -7,6 +7,8 @@ import { isValidProgram, isValidBranch, isValidSemester } from "../utils/configV
 import getPublicId from "../utils/getPublicId.js";
 import findOwnedMaterial from "../utils/findOwnedMaterial.js";
 import Notification from "../models/Notification.js";
+import RULES from "../config/rules.js";
+import modDeleteSchema from "../joiSchemas/modDeleteSchema.js";
 
 const normalize = val => val && val.toLowerCase() !== 'all' ? val : undefined;
 
@@ -79,17 +81,33 @@ export const deleteMaterial = async (req, res) => {
     res.status(200).json({ message: "Material deleted successfully" });
 };
 export const deleteMaterialAsModerator = async (req, res) => {
+    const { error } = modDeleteSchema.validate(req.body);
+    if (error) return res.status(400).json({ error: error.details[0].message });
+
     const material = await Material.findById(req.params.id);
     if (!material) return res.status(404).json({ error: "Material not found" });
+
+    const { brokenRules } = req.body;
 
     try {
         const publicId = getPublicId(material.fileUrl);
         await cloudinary.uploader.destroy(publicId);
         await Material.deleteOne({ _id: material._id });
 
+        const brokenRuleTitles = brokenRules.map(id => {
+            const rule = RULES.find(r => r.id === id);
+            return rule ? rule.title : null;
+        }).filter(Boolean);
+
+        const ruleList = brokenRuleTitles.length
+            ? ` Violated rules: ${brokenRuleTitles.join(", ")}.`
+            : "";
+
+        const message = `Your upload titled "${material.title}" was removed by a moderator for violating community guidelines.${ruleList}`;
+
         await Notification.create({
             user: material.uploadedBy,
-            message: `Your upload titled "${material.title}" was removed by a moderator for violating community guidelines.`,
+            message
         });
 
         return res.status(200).json({ message: "Material deleted successfully by moderator" });
@@ -98,7 +116,6 @@ export const deleteMaterialAsModerator = async (req, res) => {
         return res.status(500).json({ error: "Failed to delete material" });
     }
 };
-
 
 export const getMaterials = async (req, res) => {
     const { program, branch, semester, search, sort = 'recent', page = 1, limit = 10 } = req.query;
@@ -196,7 +213,17 @@ export const getMaterials = async (req, res) => {
         totalPages: Math.ceil(totalCount / limitNum)
     });
 };
+export const getMaterialById = async (req, res) => {
+    const { id } = req.params;
 
+    const material = await Material.findById(id).populate("uploadedBy", "name");
+
+    if (!material) {
+        return res.status(404).json({ message: "Material not found" });
+    }
+
+    res.json(material);
+};
 export const getMyUploads = async (req, res) => {
     const myUploads = await Material.find({ uploadedBy: req.user.id })
         .sort({ createdAt: -1 })
