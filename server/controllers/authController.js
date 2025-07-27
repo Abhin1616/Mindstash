@@ -68,6 +68,11 @@ export const verifyTokenSuccess = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-    res.clearCookie("acc_token");
+    res.clearCookie("acc_token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+    });
+
     res.status(200).json({ message: "Logout successful" });
 };
