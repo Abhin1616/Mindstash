@@ -27,9 +27,16 @@ const MONGODB_URL = process.env.MONGODB_URL;
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+
+const allowedOrigins = [process.env.CLIENT_ORIGIN, 'http://localhost:5173']
+
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true
+}))
+
 app.use(cookieParser());
-app.use(passport.initialize()); // ✅ NEW
+app.use(passport.initialize());
 
 // Multer config (shared globally)
 const upload = multer({
