@@ -12,7 +12,7 @@ const Profile = ({ programs }) => {
     const [openDropdown, setOpenDropdown] = useState(null);
 
     useEffect(() => {
-        api.get('http://localhost:3000/profile', { withCredentials: true })
+        api.get('/profile', { withCredentials: true })
             .then(res => {
                 setUserData(res.data);
                 setFormData({
@@ -66,7 +66,7 @@ const Profile = ({ programs }) => {
     const handleSave = async () => {
         if (!validate()) return;
         try {
-            await api.patch('http://localhost:3000/profile', formData, { withCredentials: true });
+            await api.patch('/profile', formData, { withCredentials: true });
             toast.success('Profile updated');
             setUserData(prev => ({ ...prev, ...formData, semester: Number(formData.semester) }));
             setIsEditing(false);

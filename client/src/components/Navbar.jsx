@@ -13,7 +13,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const res = await api.get("http://localhost:3000/verify-token", {
+                const res = await api.get("/verify-token", {
                     withCredentials: true,
                 });
                 if (res.status === 200 && res.data?.user) {

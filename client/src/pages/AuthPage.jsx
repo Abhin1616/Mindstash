@@ -99,7 +99,7 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
         if (!validate()) return;
         setLoading(true);
         try {
-            const { data } = await api.post(`http://localhost:3000${endpoint}`, payload, {
+            const { data } = await api.post(`${endpoint}`, payload, {
                 withCredentials: true,
             });
             setLoggedIn(true);
@@ -119,7 +119,7 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
     const handleGoogleAuth = async () => {
         setLoading(true);
         try {
-            window.location.href = 'http://localhost:3000/auth/google';
+            window.location.href = '/auth/google';
         } catch (err) {
             console.error('Google Auth failed:', err);
             setLoading(false);

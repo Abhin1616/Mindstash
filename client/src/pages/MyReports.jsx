@@ -14,8 +14,8 @@ const MyReports = () => {
         const fetchAll = async () => {
             try {
                 const [rulesRes, reportsRes] = await Promise.all([
-                    axios.get("http://localhost:3000/rules"),
-                    axios.get("http://localhost:3000/reports/myreports", { withCredentials: true })
+                    axios.get("/rules"),
+                    axios.get("/reports/myreports", { withCredentials: true })
                 ]);
                 setRules(rulesRes.data);
                 setReports(reportsRes.data);

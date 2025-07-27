@@ -14,7 +14,7 @@ const UploadMaterial = ({ currentUserId }) => {
     const [errors, setErrors] = useState({});
     const [uploading, setUploading] = useState(false);
     useEffect(() => {
-        api.get("http://localhost:3000/profile", { withCredentials: true })
+        api.get("/profile", { withCredentials: true })
             .then((res) => {
                 console.log(res)
                 setCurrentUser(res.data);
@@ -53,7 +53,7 @@ const UploadMaterial = ({ currentUserId }) => {
         formData.append('file', file);
 
         try {
-            const res = await api.post('http://localhost:3000/materials', formData, { withCredentials: true });
+            const res = await api.post('/materials', formData, { withCredentials: true });
             console.log(res)
             setTitle('');
             setDescription('');

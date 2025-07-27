@@ -19,7 +19,7 @@ const ReportMaterial = ({ materialId, onClose }) => {
     useEffect(() => {
         const fetchRules = async () => {
             try {
-                const res = await api.get('http://localhost:3000/rules');
+                const res = await api.get('/rules');
                 setAvailableRules(res.data || []);
             } catch (err) {
                 console.error('Failed to fetch rules:', err);
@@ -69,7 +69,7 @@ const ReportMaterial = ({ materialId, onClose }) => {
 
         setLoading(true);
         try {
-            const res = await api.post('http://localhost:3000/reports', {
+            const res = await api.post('/reports', {
                 materialId,
                 reason: reason.trim(),
                 brokenRules,

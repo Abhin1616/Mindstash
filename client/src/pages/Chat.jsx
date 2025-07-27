@@ -36,7 +36,7 @@ const Chat = () => {
         setLoading(true);
 
         try {
-            const res = await api.post("http://localhost:3000/ask-ai", { message: trimmed }, { withCredentials: true });
+            const res = await api.post("/ask-ai", { message: trimmed }, { withCredentials: true });
             const botReply = res.data?.reply || "Hmm... I'm not sure how to respond to that.";
 
             simulateTyping(botReply, () => {

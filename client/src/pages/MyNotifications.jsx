@@ -9,7 +9,7 @@ const MyNotifications = ({ notifications, setNotifications }) => {
         const markAllSeen = async () => {
             try {
                 await api.patch(
-                    "http://localhost:3000/notifications/mark-all-seen",
+                    "/notifications/mark-all-seen",
                     {},
                     { withCredentials: true }
                 );

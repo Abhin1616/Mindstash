@@ -26,7 +26,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     const handleUpvote = async (materialId) => {
         try {
             const res = await api.post(
-                `http://localhost:3000/materials/${materialId}/upvote`,
+                `/materials/${materialId}/upvote`,
                 {},
                 { withCredentials: true }
             );
@@ -62,7 +62,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     const onDelete = async (id) => {
         try {
             setDeletingId(id); // 👈 lock that card
-            const res = await api.delete(`http://localhost:3000/materials/${id}`, {
+            const res = await api.delete(`/materials/${id}`, {
                 withCredentials: true,
             });
 
@@ -87,7 +87,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
         const fetchMaterials = async () => {
             setLoading(true);
             try {
-                const res = await api.get(`http://localhost:3000/materials?${query}`);
+                const res = await api.get(`/materials?${query}`);
 
                 // cancel if query changed mid-request
                 if (activeQueryRef.current !== query) return;

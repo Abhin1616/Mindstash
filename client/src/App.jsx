@@ -38,11 +38,11 @@ const App = () => {
     const fetchInitialData = async () => {
       try {
         // Fetch programs
-        const progRes = await api.get('http://localhost:3000/programs');
+        const progRes = await api.get('/programs');
         setPrograms(progRes.data);
 
         // Verify token and get user
-        const authRes = await api.get('http://localhost:3000/verify-token', {
+        const authRes = await api.get('/verify-token', {
           withCredentials: true,
         });
 
@@ -68,7 +68,7 @@ const App = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await api.get('http://localhost:3000/notifications', {
+        const res = await api.get('/notifications', {
           withCredentials: true,
         });
         setNotifications(res.data.notifications);
@@ -85,7 +85,7 @@ const App = () => {
 
   const handleLogout = async () => {
     try {
-      await api.get("http://localhost:3000/logout", {
+      await api.get("/logout", {
         withCredentials: true
       });
       setRole(null)

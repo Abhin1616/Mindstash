@@ -13,7 +13,7 @@ const ModeratorRemoveModal = ({ materialId, onClose, onRemoved }) => {
     useEffect(() => {
         const fetchRules = async () => {
             try {
-                const res = await api.get('http://localhost:3000/rules');
+                const res = await api.get('/rules');
                 setAvailableRules(res.data || []);
             } catch {
                 toast.error('Failed to load rules');
@@ -38,7 +38,7 @@ const ModeratorRemoveModal = ({ materialId, onClose, onRemoved }) => {
 
         setLoading(true);
         try {
-            await api.delete(`http://localhost:3000/materials/${materialId}/mod`, {
+            await api.delete(`/materials/${materialId}/mod`, {
                 data: { brokenRules },
                 withCredentials: true,
             });

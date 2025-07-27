@@ -14,7 +14,7 @@ const ModerationReports = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const res = await api.get("http://localhost:3000/auth/verify", {
+                const res = await api.get("/auth/verify", {
                     withCredentials: true,
                 });
                 // setCurrentUserId(res.data.user.id); // remove if unused
@@ -28,7 +28,7 @@ const ModerationReports = () => {
     const fetchReports = async () => {
         setLoading(true);
         try {
-            const { data } = await api.get(`http://localhost:3000/reports/moderation?status=${statusFilter}`, {
+            const { data } = await api.get(`/reports/moderation?status=${statusFilter}`, {
                 withCredentials: true,
             });
             setReports(data);
@@ -48,7 +48,7 @@ const ModerationReports = () => {
         setHandlingId(id);
         try {
             await api.patch(
-                `http://localhost:3000/reports/${id}/handle`,
+                `/reports/${id}/handle`,
                 { action, comment },
                 { withCredentials: true }
             );
@@ -64,7 +64,7 @@ const ModerationReports = () => {
 
     const handlePreview = async (materialId) => {
         try {
-            const { data } = await api.get(`http://localhost:3000/materials/${materialId}`, {
+            const { data } = await api.get(`/materials/${materialId}`, {
                 withCredentials: true,
             });
             setPreviewMaterial(data);

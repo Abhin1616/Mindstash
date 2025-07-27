@@ -8,7 +8,7 @@ const Rules = () => {
     useEffect(() => {
         const fetchRules = async () => {
             try {
-                const res = await api.get("http://localhost:3000/rules", {
+                const res = await api.get("/rules", {
                     withCredentials: true,
                 });
                 setRules(res.data);

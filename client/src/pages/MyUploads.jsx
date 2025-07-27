@@ -25,7 +25,7 @@ const MyUploads = ({ currentUserId }) => {
 
         try {
             const res = await api.get(
-                `http://localhost:3000/materials/myuploads?page=${page}&limit=10`,
+                `/materials/myuploads?page=${page}&limit=10`,
                 { withCredentials: true }
             );
 
@@ -72,7 +72,7 @@ const MyUploads = ({ currentUserId }) => {
     const handleUpvote = async (materialId) => {
         try {
             await api.post(
-                `http://localhost:3000/materials/${materialId}/upvote`,
+                `/materials/${materialId}/upvote`,
                 {},
                 { withCredentials: true }
             );
@@ -97,7 +97,7 @@ const MyUploads = ({ currentUserId }) => {
     const onDelete = async (id) => {
         try {
             setDeletingId(id);
-            const res = await api.delete(`http://localhost:3000/materials/${id}`, {
+            const res = await api.delete(`/materials/${id}`, {
                 withCredentials: true,
             });
 
