@@ -148,7 +148,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 currentUserId={currentUserId}
             />
             <div className="grid grid-cols-1 gap-6">
-                {materialList.length === 0 ? (
+                {!loading && materialList.length === 0 ? (
                     <div className="text-center py-10 col-span-full">
                         <p className="text-gray-600">
                             No materials found{filters.search ? ` for "${filters.search}"` : ""}.
