@@ -21,14 +21,7 @@ export const uploadMaterial = async (req, res) => {
         const user = await UserModel.findById(req.user.id).lean();
         if (!user) throw new Error("User not found");
 
-        const { valid, error, value } = validate(uploadSchema, req.body, {
-            context: {
-                user: {
-                    program: user.program,
-                    branch: user.branch
-                }
-            }
-        });
+        const { valid, error, value } = validate(uploadSchema, req.body);
 
         if (!valid) {
             if (req.file?.filename) await cloudinary.uploader.destroy(req.file.filename);
@@ -46,8 +39,8 @@ export const uploadMaterial = async (req, res) => {
             description: value.description || "",
             fileUrl: req.file.path,
             fileType,
-            program: user.program,
-            branch: user.branch,
+            program: value.program,
+            branch: value.branch,
             semester: value.semester,
             uploadedBy: user._id
         });

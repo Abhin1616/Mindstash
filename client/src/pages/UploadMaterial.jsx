@@ -55,6 +55,8 @@ const UploadMaterial = ({ currentUserId, programs }) => {
         formData.append('title', title.trim());
         formData.append('description', description.trim());
         formData.append('file', file);
+        formData.append('program', currentUser.program);
+        formData.append('branch', currentUser.branch);
         formData.append('semester', editableSemester);
 
         try {
@@ -97,7 +99,7 @@ const UploadMaterial = ({ currentUserId, programs }) => {
                             onChange={(e) => setTitle(e.target.value)}
                             maxLength={100}
                             placeholder="Title of the material..."
-                            className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-white focus:ring-blue-500 focus:outline-none"
+                            className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                         />
                         {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
                     </div>
@@ -111,7 +113,7 @@ const UploadMaterial = ({ currentUserId, programs }) => {
                             maxLength={500}
                             rows={4}
                             placeholder="Brief summary about the material..."
-                            className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-white focus:ring-blue-500 focus:outline-none resize-none"
+                            className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none resize-none"
                         />
                         {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
                     </div>
@@ -123,7 +125,7 @@ const UploadMaterial = ({ currentUserId, programs }) => {
                             type="file"
                             accept=".pdf, .jpg, .jpeg, .png"
                             onChange={(e) => setFile(e.target.files[0])}
-                            className="block w-full text-sm file:px-4 file:py-2 file:rounded-md file:border-0 file:bg-blue-100 dark:file:bg-blue-800 file:text-blue-800 dark:file:text-blue-200 hover:file:bg-blue-200 dark:hover:file:bg-blue-700"
+                            className="block w-full text-sm file:px-4 file:py-2 file:rounded-md file:border-0 file:bg-blue-100 dark:file:bg-blue-800 file:text-blue-800 dark:file:text-blue-200 hover:file:bg-blue-200 dark:hover:file:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                         />
                         {errors.file && <p className="text-red-500 text-sm mt-1">{errors.file}</p>}
                     </div>
@@ -149,7 +151,7 @@ const UploadMaterial = ({ currentUserId, programs }) => {
                             <select
                                 value={editableSemester}
                                 onChange={(e) => setEditableSemester(e.target.value)}
-                                className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-white focus:ring-blue-500 focus:outline-none"
+                                className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                             >
                                 {semesterOptions.map((sem) => (
                                     <option key={sem} value={sem}>{sem}</option>
