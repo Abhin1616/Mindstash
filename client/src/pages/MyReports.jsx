@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { AlertTriangle } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import api from "../config/api";
 dayjs.extend(relativeTime);
 
 const MyReports = () => {
@@ -14,10 +14,11 @@ const MyReports = () => {
         const fetchAll = async () => {
             try {
                 const [rulesRes, reportsRes] = await Promise.all([
-                    axios.get("/rules"),
-                    axios.get("/reports/myreports", { withCredentials: true })
+                    api.get("/rules"),
+                    api.get("/reports/myreports", { withCredentials: true })
                 ]);
-                console.log(rulesRes.data, reportsRes.data)
+                setRules(rulesRes.data);
+                setReports(reportsRes.data);
             } catch (err) {
                 console.error("Failed to fetch reports or rules", err);
             } finally {
