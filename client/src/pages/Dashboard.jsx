@@ -140,10 +140,10 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 programs={programs}
             />
             <MaterialPreviewModal
+                onReport={() => setReportingMaterialId(material._id)}
                 isOpen={!!previewMaterial}
                 onClose={() => setPreviewMaterial(null)}
                 material={previewMaterial}
-                onUpvote={handleUpvote}
                 currentUserId={currentUserId}
             />
             <div className="grid grid-cols-1 gap-6">
