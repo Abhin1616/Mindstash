@@ -13,7 +13,7 @@ const CompleteProfile = ({ programs, setLoggedIn, setCurrentUserId }) => {
     });
     const [errors, setErrors] = useState({});
     const [openDropdown, setOpenDropdown] = useState(null);
-    const navigate = useNavigate(); // Initialize useNavigate hook
+    const navigate = useNavigate();
 
     const branches = programs.find(p => p.name === formData.program)?.branches || [];
     const semesters = branches.find(b => b.name === formData.branch)?.semesters || 0;
@@ -55,7 +55,6 @@ const CompleteProfile = ({ programs, setLoggedIn, setCurrentUserId }) => {
             setLoggedIn(true);
             setCurrentUserId(userId);
             navigate("/", { replace: true });
-
         } catch (err) {
             console.error("Profile completion failed:", err);
             const msg = err.response?.data?.error || "Failed to complete profile. Please try again.";
@@ -83,14 +82,18 @@ const CompleteProfile = ({ programs, setLoggedIn, setCurrentUserId }) => {
                     type="button"
                     disabled={disabled}
                     onClick={() => setOpenDropdown(openDropdown === field ? null : field)}
-                    className={`w-full p-2 flex justify-between items-center rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white bg-white text-left focus:outline-none ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`w-full p-2 flex justify-between items-center rounded border bg-white dark:bg-zinc-800 dark:text-white text-left focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition
+                        ${disabled ? "opacity-50 cursor-not-allowed" : "hover:shadow-sm"}
+                        dark:border-white/10 border-gray-300`}
                 >
                     <span className="truncate">{formData[field] || `Select ${label}`}</span>
-                    <ChevronDown className={`w-4 h-4 opacity-50 transform transition-transform duration-200 ${openDropdown === field ? 'rotate-180' : 'rotate-0'}`} />
+                    <ChevronDown
+                        className={`w-4 h-4 opacity-50 transform transition-transform duration-200 ${openDropdown === field ? 'rotate-180' : 'rotate-0'}`}
+                    />
                 </button>
                 {openDropdown === field && (
                     <div
-                        className="absolute z-40 mt-1 w-full overflow-y-auto bg-white dark:bg-zinc-700 border border-gray-300 dark:border-white/10 rounded shadow"
+                        className="absolute z-40 mt-1 w-full overflow-y-auto bg-white dark:bg-zinc-900 border border-gray-300 dark:border-white/10 rounded shadow"
                         style={{ maxHeight: '10rem' }}
                     >
                         {options.length > 0 ? (
@@ -98,7 +101,8 @@ const CompleteProfile = ({ programs, setLoggedIn, setCurrentUserId }) => {
                                 <div
                                     key={i}
                                     onClick={() => handleChange(field, val)}
-                                    className={`px-3 py-2 cursor-pointer text-sm hover:bg-blue-100 dark:hover:bg-zinc-600 ${formData[field] === val ? "bg-blue-100 dark:bg-zinc-600 font-semibold" : ""}`}
+                                    className={`px-3 py-2 cursor-pointer text-sm text-gray-800 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-zinc-700
+                                        ${formData[field] === val ? "bg-blue-100 dark:bg-zinc-700 font-semibold" : ""}`}
                                 >
                                     {val}
                                 </div>
@@ -113,12 +117,11 @@ const CompleteProfile = ({ programs, setLoggedIn, setCurrentUserId }) => {
         );
     };
 
-
     return (
         <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
             {/* Background glow */}
             <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-                <div className="w-[600px] h-[600px] bg-gradient-to-br from-blue-500 to-purple-500 opacity-20 dark:from-blue-700 dark:to-purple-700 rounded-full blur-3xl" />
+                <div className="w-[600px] h-[600px] bg-gradient-to-br from-blue-500 to-purple-500 opacity-20 dark:opacity-15 rounded-full blur-3xl" />
             </div>
 
             <motion.form
@@ -140,7 +143,7 @@ const CompleteProfile = ({ programs, setLoggedIn, setCurrentUserId }) => {
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded shadow transition transform hover:scale-[1.01]"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded shadow transition hover:scale-[1.01]"
                 >
                     Finish Profile
                 </button>
