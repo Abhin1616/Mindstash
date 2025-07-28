@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-
 const MaterialFilters = ({ filters, setFilters, sortByRecent, toggleSort, programs }) => {
-
     const PROGRAMS = programs.map((p) => p.name);
     const BRANCHES = programs.reduce((acc, program) => {
         acc[program.name] = program.branches.map((b) => b.name);
@@ -56,22 +54,24 @@ const MaterialFilters = ({ filters, setFilters, sortByRecent, toggleSort, progra
 
     const CustomDropdown = ({ label, field, options, disabled = false }) => (
         <div className="relative w-full mdmat:w-48">
-            <label className="text-sm text-gray-600">{label}</label>
+            <label className="text-sm text-gray-600 dark:text-gray-300">{label}</label>
             <button
                 disabled={disabled}
-                className={`w-full p-2 mt-1 text-left bg-white border rounded shadow-sm flex justify-between items-center transition hover:bg-gray-50 active:bg-gray-100 ${disabled ? 'opacity-50' : ''}`}
+                className={`w-full p-2 mt-1 text-left bg-white dark:bg-[#1f2937] border dark:border-gray-600 rounded shadow-sm flex justify-between items-center transition hover:bg-gray-50 dark:hover:bg-[#2a3342] active:bg-gray-100 dark:active:bg-[#374151] ${disabled ? 'opacity-50' : ''
+                    }`}
                 onClick={() => setOpenDropdown(openDropdown === field ? null : field)}
             >
-                <span>{filters[field] === 'all' ? `All ${label}` : filters[field]}</span>
-                <svg className="w-4 h-4 ml-2 text-gray-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <span className="text-gray-800 dark:text-gray-100">{filters[field] === 'all' ? `All ${label}` : filters[field]}</span>
+                <svg className="w-4 h-4 ml-2 text-gray-500 dark:text-gray-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
 
             {openDropdown === field && (
-                <div className="absolute z-30 mt-1 w-full max-h-40 overflow-y-auto bg-white border border-gray-300 rounded shadow-lg">
+                <div className="absolute z-30 mt-1 w-full max-h-40 overflow-y-auto bg-white dark:bg-[#1e293b] border border-gray-300 dark:border-gray-600 rounded shadow-lg">
                     <div
-                        className={`px-3 py-2 cursor-pointer text-sm hover:bg-blue-100 ${filters[field] === 'all' ? 'bg-blue-100 text-blue-700 font-semibold' : ''}`}
+                        className={`px-3 py-2 cursor-pointer text-sm hover:bg-blue-100 dark:hover:bg-[#334155] ${filters[field] === 'all' ? 'bg-blue-100 dark:bg-[#334155] text-blue-700 dark:text-blue-400 font-semibold' : 'dark:text-gray-200'
+                            }`}
                         onClick={() => handleChange(field, 'all')}
                     >
                         All {label}
@@ -79,7 +79,8 @@ const MaterialFilters = ({ filters, setFilters, sortByRecent, toggleSort, progra
                     {options.map((val, i) => (
                         <div
                             key={i}
-                            className={`px-3 py-2 cursor-pointer text-sm hover:bg-blue-100 ${filters[field] === val ? 'bg-blue-100 text-blue-700 font-semibold' : ''}`}
+                            className={`px-3 py-2 cursor-pointer text-sm hover:bg-blue-100 dark:hover:bg-[#334155] ${filters[field] === val ? 'bg-blue-100 dark:bg-[#334155] text-blue-700 dark:text-blue-400 font-semibold' : 'dark:text-gray-200'
+                                }`}
                             onClick={() => handleChange(field, val)}
                         >
                             {val}
@@ -98,7 +99,7 @@ const MaterialFilters = ({ filters, setFilters, sortByRecent, toggleSort, progra
                     ref={buttonRef}
                     className={`text-sm font-medium border px-3 py-1 rounded flex items-center gap-1 transition ${showMobileFilters
                         ? 'bg-blue-600 text-white border-blue-600 shadow'
-                        : 'text-blue-600 bg-white border-blue-600 hover:bg-blue-50'
+                        : 'text-blue-600 bg-white dark:bg-[#1f2937] dark:text-blue-400 border-blue-600 hover:bg-blue-50 dark:hover:bg-[#2a3342]'
                         }`}
                     onClick={() => setShowMobileFilters(prev => !prev)}
                 >
@@ -109,28 +110,33 @@ const MaterialFilters = ({ filters, setFilters, sortByRecent, toggleSort, progra
                 </button>
 
                 <div className={`flex items-center gap-1 transition-all duration-200 ${showMobileFilters ? 'blur-[2px] pointer-events-none' : ''}`}>
-
                     <button
                         onClick={() => !sortByRecent && toggleSort()}
-                        className={`px-2.5 py-1 text-xs rounded font-medium border ${sortByRecent ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                        className={`px-2.5 py-1 text-xs rounded font-medium border ${sortByRecent
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : 'bg-white dark:bg-[#1f2937] text-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-600'
+                            }`}
                     >
                         Recent
                     </button>
                     <button
                         onClick={() => sortByRecent && toggleSort()}
-                        className={`px-2.5 py-1 text-xs rounded font-medium border ${!sortByRecent ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                        className={`px-2.5 py-1 text-xs rounded font-medium border ${!sortByRecent
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : 'bg-white dark:bg-[#1f2937] text-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-600'
+                            }`}
                     >
                         Top
                     </button>
                 </div>
             </div>
 
-            {showMobileFilters && <div className="fixed inset-0 z-10 backdrop-blur-[2px] bg-black/10 transition-opacity duration-150" />}
+            {showMobileFilters && <div className="fixed inset-0 z-10 backdrop-blur-[2px] bg-black/10 dark:bg-black/20 transition-opacity duration-150" />}
 
             {showMobileFilters && (
                 <div
                     ref={filterRef}
-                    className="absolute left-0 right-0 mt-2 z-20 bg-white rounded-xl shadow-xl border border-gray-200 p-4 flex flex-col gap-3 mx-2 animate-slide-down origin-top ml-0"
+                    className="absolute left-0 right-0 mt-2 z-20 bg-white dark:bg-[#111827] rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 flex flex-col gap-3 mx-2 animate-slide-down origin-top ml-0"
                 >
                     <CustomDropdown label="Programs" field="program" options={PROGRAMS} />
                     <CustomDropdown label="Branches" field="branch" options={BRANCHES[filters.program] || []} disabled={filters.program === 'all'} />
@@ -156,13 +162,19 @@ const MaterialFilters = ({ filters, setFilters, sortByRecent, toggleSort, progra
                     <div className="flex items-end gap-2">
                         <button
                             onClick={() => !sortByRecent && toggleSort()}
-                            className={`px-4 py-2 text-sm rounded font-medium border ${sortByRecent ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                            className={`px-4 py-2 text-sm rounded font-medium border ${sortByRecent
+                                ? 'bg-blue-600 text-white border-blue-600'
+                                : 'bg-white dark:bg-[#1f2937] text-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-600'
+                                }`}
                         >
                             Recent
                         </button>
                         <button
                             onClick={() => sortByRecent && toggleSort()}
-                            className={`px-4 py-2 text-sm rounded font-medium border ${!sortByRecent ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-800 border-gray-300'}`}
+                            className={`px-4 py-2 text-sm rounded font-medium border ${!sortByRecent
+                                ? 'bg-blue-600 text-white border-blue-600'
+                                : 'bg-white dark:bg-[#1f2937] text-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-600'
+                                }`}
                         >
                             Top
                         </button>
