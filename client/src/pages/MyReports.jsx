@@ -18,8 +18,6 @@ const MyReports = () => {
                     axios.get("/reports/myreports", { withCredentials: true })
                 ]);
                 console.log(rulesRes.data, reportsRes.data)
-                setRules(rulesRes.data.data);
-                setReports(reportsRes.data.data);
             } catch (err) {
                 console.error("Failed to fetch reports or rules", err);
             } finally {
