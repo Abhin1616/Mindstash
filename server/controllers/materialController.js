@@ -13,25 +13,33 @@ import modDeleteSchema from "../joiSchemas/modDeleteSchema.js";
 const normalize = val => val && val.toLowerCase() !== 'all' ? val : undefined;
 
 export const uploadMaterial = async (req, res) => {
-
     if (!req.body || Object.keys(req.body).length === 0) {
         return res.status(400).json({ error: "Request body cannot be empty" });
     }
 
-    const { valid, error, value } = validate(uploadSchema, req.body);
-    if (!valid) {
-        if (req.file?.filename) await cloudinary.uploader.destroy(req.file.filename);
-        return res.status(400).json({ error });
-    }
-
-    if (!req.file?.path || !req.file?.mimetype) {
-        return res.status(400).json({ error: "File upload missing or failed" });
-    }
     try {
-        const fileType = req.file.mimetype === 'application/pdf' ? 'pdf' : 'image';
-
         const user = await UserModel.findById(req.user.id).lean();
         if (!user) throw new Error("User not found");
+
+        const { valid, error, value } = validate(uploadSchema, req.body, {
+            context: {
+                user: {
+                    program: user.program,
+                    branch: user.branch
+                }
+            }
+        });
+
+        if (!valid) {
+            if (req.file?.filename) await cloudinary.uploader.destroy(req.file.filename);
+            return res.status(400).json({ error });
+        }
+
+        if (!req.file?.path || !req.file?.mimetype) {
+            return res.status(400).json({ error: "File upload missing or failed" });
+        }
+
+        const fileType = req.file.mimetype === "application/pdf" ? "pdf" : "image";
 
         const material = await Material.create({
             title: value.title,
@@ -40,14 +48,13 @@ export const uploadMaterial = async (req, res) => {
             fileType,
             program: user.program,
             branch: user.branch,
-            semester: user.semester,
+            semester: value.semester,
             uploadedBy: user._id
         });
 
         return res.status(201).json({ message: "Material uploaded successfully", material });
 
     } catch (err) {
-        // 🧹 Clean up uploaded file if something failed after upload
         if (req.file?.filename) {
             try {
                 await cloudinary.uploader.destroy(req.file.filename);
