@@ -12,17 +12,15 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     const [loading, setLoading] = useState(false);
     const [materialList, setMaterialList] = useState([]);
     const [previewMaterial, setPreviewMaterial] = useState(null);
-
     const [reportingMaterialId, setReportingMaterialId] = useState(null);
     const [modRemoveMaterialId, setModRemoveMaterialId] = useState(null);
-
     const observerRef = useRef();
     const lastMaterialRef = useRef();
-
     const seenIdsRef = useRef(new Set());
     const activeQueryRef = useRef('');
     const [confirmingDeleteId, setConfirmingDeleteId] = useState(null);
     const [deletingId, setDeletingId] = useState(null);
+
     const handleUpvote = async (materialId) => {
         try {
             const res = await api.post(
@@ -48,14 +46,11 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
         }
     };
 
-    // Reset materials when filters or sort change
     useEffect(() => {
         setPage(1);
         setMaterialList([]);
         setHasMore(true);
         seenIdsRef.current.clear();
-
-        // 👇 Reset lastMaterialRef manually
         lastMaterialRef.current = null;
     }, [filters, sortByRecent]);
 
@@ -77,22 +72,20 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
         }
     };
 
-    // Fetch paginated materials
     useEffect(() => {
         let query = `program=${filters.program}&branch=${filters.branch}&semester=${filters.semester}&sort=${sortByRecent ? 'recent' : 'top'}&page=${page}`;
         if (filters.search.trim()) {
             query += `&search=${encodeURIComponent(filters.search.trim())}`;
         }
         activeQueryRef.current = query;
+
         const fetchMaterials = async () => {
             setLoading(true);
             try {
                 const res = await api.get(`/materials?${query}`);
-
                 if (activeQueryRef.current !== query) return;
 
                 const newMaterials = res.data.materials.filter(m => !seenIdsRef.current.has(m._id));
-
                 newMaterials.forEach(m => seenIdsRef.current.add(m._id));
 
                 if (newMaterials.length === 0) {
@@ -107,11 +100,9 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
             }
         };
 
-
         fetchMaterials();
     }, [page, filters, sortByRecent]);
 
-    // Debounced infinite scroll observer
     useEffect(() => {
         if (loading || !hasMore || !lastMaterialRef.current) return;
 
@@ -127,12 +118,11 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
         );
 
         observer.observe(lastMaterialRef.current);
-
         return () => observer.disconnect();
-    }, [loading, hasMore, materialList]); // 👈 react to list changes
+    }, [loading, hasMore, materialList]);
 
     return (
-        <div className="p-4 space-y-6">
+        <div className="p-4 space-y-6 bg-zinc-50 dark:bg-zinc-900 min-h-screen transition-colors duration-300">
             <MaterialFilters
                 filters={filters}
                 setFilters={setFilters}
@@ -140,6 +130,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 toggleSort={toggleSort}
                 programs={programs}
             />
+
             <MaterialPreviewModal
                 onReport={() => setReportingMaterialId(previewMaterial?._id)}
                 isOpen={!!previewMaterial}
@@ -147,10 +138,11 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 material={previewMaterial}
                 currentUserId={currentUserId}
             />
+
             <div className="grid grid-cols-1 gap-6">
                 {!loading && materialList.length === 0 ? (
-                    <div className="text-center py-10 col-span-full">
-                        <p className="text-gray-600">
+                    <div className="text-center py-10 col-span-full bg-white dark:bg-zinc-800 rounded-xl shadow-md">
+                        <p className="text-gray-600 dark:text-gray-300">
                             No materials found{filters.search ? ` for "${filters.search}"` : ""}.
                         </p>
                         {filters.search && (
@@ -158,7 +150,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                                 onClick={() => {
                                     setFilters(prev => ({ ...prev, search: "" }));
                                 }}
-                                className="mt-3 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg"
+                                className="mt-3 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-gray-700 dark:text-gray-100 rounded-lg"
                             >
                                 Clear Search
                             </button>
@@ -187,18 +179,18 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 )}
             </div>
 
-
-            {loading && <p className="text-center text-gray-500">Loading...</p>}
+            {loading && <p className="text-center text-gray-500 dark:text-gray-400">Loading...</p>}
             {!hasMore && !loading && (
-                <p className="text-center text-gray-400">No more materials.</p>
+                <p className="text-center text-gray-400 dark:text-gray-500">No more materials.</p>
             )}
-            {/*Report Modal*/}
+
             {reportingMaterialId && (
                 <ReportMaterial
                     materialId={reportingMaterialId}
                     onClose={() => setReportingMaterialId(null)}
                 />
             )}
+
             {modRemoveMaterialId && (
                 <ModeratorRemoveModal
                     materialId={modRemoveMaterialId}
@@ -209,7 +201,6 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                     }}
                 />
             )}
-
         </div>
     );
 };
