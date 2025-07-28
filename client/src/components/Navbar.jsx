@@ -219,7 +219,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                                 handleLogout();
                                 setLoggedIn(false);
                             }}
-                            className="w-full mt-2 py-2 bg-red-100 dark:bg-red-800/20 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-700/30 rounded-lg transition active:scale-95"
+                            className="w-full mt-2 py-2 bg-red-100 dark:bg-red-800/20 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-700/30 rounded-lg transition active:scale-95 mb-3"
                         >
                             Logout
                         </button>
@@ -227,7 +227,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                         <Link
                             to="/auth"
                             onClick={() => setIsOpen(false)}
-                            className="block w-full mt-2 text-center py-2 bg-blue-100 dark:bg-blue-800/20 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-700/30 rounded-lg transition active:scale-95"
+                            className="block w-full mt-2 text-center py-2 bg-blue-100 dark:bg-blue-800/20 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-700/30 rounded-lg transition active:scale-95 mb-3"
                         >
                             Login
                         </Link>

@@ -215,6 +215,7 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                             value={formData.email}
                             onChange={(e) => handleChange('email', e.target.value)}
                             className="w-full p-2 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter your email"
                         />
                         {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                     </div>
