@@ -13,6 +13,10 @@ import modDeleteSchema from "../joiSchemas/modDeleteSchema.js";
 const normalize = val => val && val.toLowerCase() !== 'all' ? val : undefined;
 
 export const uploadMaterial = async (req, res) => {
+    console.log("[DEBUG] Upload route hit");
+    console.log("File info:", req.file);
+    console.log("Body fields:", req.body);
+
     if (!req.body || Object.keys(req.body).length === 0) {
         return res.status(400).json({ error: "Request body cannot be empty" });
     }
@@ -119,7 +123,6 @@ export const deleteMaterialAsModerator = async (req, res) => {
 };
 
 export const getMaterials = async (req, res) => {
-    console.log("Check");
     const { program, branch, semester, search, sort = 'recent', page = 1, limit = 10 } = req.query;
     const normalizedProgram = normalize(program);
     const normalizedBranch = normalize(branch);
