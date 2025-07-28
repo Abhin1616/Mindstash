@@ -49,10 +49,15 @@ const UploadMaterial = ({ currentUserId, programs }) => {
         if (!description.trim()) errs.description = 'Description is required';
         else if (description.length > 500) errs.description = 'Max 500 characters allowed';
 
-        if (!file) errs.file = 'Please upload a file';
-        else {
+        if (!file) {
+            errs.file = 'Please upload a file';
+        } else {
             const allowed = ['application/pdf', 'image/png', 'image/jpg', 'image/jpeg'];
-            if (!allowed.includes(file.type)) errs.file = 'Only PDF, PNG, JPG, JPEG allowed';
+            if (!allowed.includes(file.type)) {
+                errs.file = 'Only PDF, PNG, JPG, JPEG allowed';
+            } else if (file.size > 10 * 1024 * 1024) {
+                errs.file = 'File size must be under 10MB';
+            }
         }
 
         if (!editableSemester) errs.semester = 'Semester is required';
@@ -175,7 +180,9 @@ const UploadMaterial = ({ currentUserId, programs }) => {
 
                     {/* File Upload */}
                     <div>
-                        <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Upload File</label>
+                        <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            Upload File <span className="text-xs text-zinc-500 dark:text-zinc-400 ml-1">(Max 10MB)</span>
+                        </label>
                         <input
                             type="file"
                             accept=".pdf, .jpg, .jpeg, .png"
