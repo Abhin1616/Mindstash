@@ -26,7 +26,8 @@ export const uploadMaterial = async (req, res) => {
     if (!req.file?.path || !req.file?.mimetype) {
         return res.status(400).json({ error: "File upload missing or failed" });
     }
-
+    console.log(valid);
+    console.log(req.file)
     try {
         const fileType = req.file.mimetype === 'application/pdf' ? 'pdf' : 'image';
 
