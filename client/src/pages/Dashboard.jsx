@@ -89,23 +89,24 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
             try {
                 const res = await api.get(`/materials?${query}`);
 
-                // cancel if query changed mid-request
                 if (activeQueryRef.current !== query) return;
 
                 const newMaterials = res.data.materials.filter(m => !seenIdsRef.current.has(m._id));
+
                 newMaterials.forEach(m => seenIdsRef.current.add(m._id));
 
-                setMaterialList(prev => [...prev, ...newMaterials]);
-
-                if (res.data.materials.length === 0 || newMaterials.length === 0) {
+                if (newMaterials.length === 0) {
                     setHasMore(false);
                 }
+
+                setMaterialList(prev => [...prev, ...newMaterials]);
             } catch (err) {
                 console.error(err);
             } finally {
                 setLoading(false);
             }
         };
+
 
         fetchMaterials();
     }, [page, filters, sortByRecent]);
