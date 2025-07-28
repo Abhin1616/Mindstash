@@ -49,6 +49,10 @@ app.use((req, res, next) => {
     next();
 });
 app.use((req, res, next) => {
+    console.log("[DEBUG] Raw headers:", req.headers);
+    next();
+});
+app.use((req, res, next) => {
     console.log("[DEBUG] Incoming content-type:", req.headers["content-type"]);
     next();
 });
