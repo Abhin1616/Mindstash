@@ -58,7 +58,7 @@ app.get("/programs", (req, res) => {
 })
 
 // ✅ Debug Upload Route — bypasses auth for testing uploads
-app.post("/upload", (req, res, next) => {
+app.post("/materials", (req, res, next) => {
     req.upload.single("file")(req, res, (err) => {
         if (err) return next(err);
 
