@@ -187,20 +187,29 @@ const UploadMaterial = ({ currentUserId, programs }) => {
 
                     {/* Info Tags + Custom Semester Dropdown */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {/* Program */}
                         <div>
                             <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Program</label>
-                            <div className="mt-1 px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-800 dark:text-white">
+                            <div className="mt-1 px-3 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 select-none cursor-not-allowed">
                                 {currentUser.program || '—'}
                             </div>
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 italic">
+                                Program is fixed and can't be edited here.
+                            </p>
                         </div>
 
+                        {/* Branch */}
                         <div>
                             <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Branch</label>
-                            <div className="mt-1 px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-800 dark:text-white">
+                            <div className="mt-1 px-3 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 select-none cursor-not-allowed">
                                 {currentUser.branch || '—'}
                             </div>
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 italic">
+                                Branch is based on your profile and not editable.
+                            </p>
                         </div>
 
+                        {/* Semester Dropdown */}
                         <div>{renderDropdown()}</div>
                     </div>
 
