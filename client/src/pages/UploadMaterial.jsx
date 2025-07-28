@@ -65,6 +65,7 @@ const UploadMaterial = ({ currentUserId }) => {
             toast.success("Material uploaded")
             navigate("/uploads", { replace: true })
         } catch (err) {
+            console.log(err);
             const msg = err?.response?.data?.error || 'Upload failed';
             setErrors({ file: msg });
         } finally {
