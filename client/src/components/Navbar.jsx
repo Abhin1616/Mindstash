@@ -49,7 +49,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
     };
 
     return (
-        <header className="bg-white/80 dark:bg-[#111827cc] backdrop-blur border-b border-gray-200 dark:border-gray-700 shadow-md fixed top-0 left-0 right-0 z-50">
+        <header className="bg-white/90 dark:bg-[#111827E6] backdrop-blur border-b border-gray-200 dark:border-gray-700 shadow-md fixed top-0 left-0 right-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <Link to="/" className="text-xl font-bold text-blue-600 dark:text-blue-400 tracking-tight">
                     MindStash
