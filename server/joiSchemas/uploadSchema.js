@@ -1,5 +1,5 @@
 import Joi from "joi";
-import PROGRAMS from "../config/programs";
+import PROGRAMS from "../config/programs.js";
 
 const uploadSchema = Joi.object({
     title: Joi.string().trim().max(100).required().messages({
