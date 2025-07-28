@@ -23,6 +23,8 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
     const [errors, setErrors] = useState({});
     const [openDropdown, setOpenDropdown] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
+
     const [showPassword, setShowPassword] = useState(false);
 
     const branches = programs.find(p => p.name === formData.program)?.branches || [];
@@ -118,14 +120,15 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
 
 
     const handleGoogleAuth = async () => {
-        setLoading(true);
+        setGoogleLoading(true);
         try {
             window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
         } catch (err) {
             console.error('Google Auth failed:', err);
-            setLoading(false);
+            setGoogleLoading(false);
         }
     };
+
 
     const CustomDropdown = ({ label, field, options, disabled }) => {
         const localDropdownRef = useRef(null);
@@ -254,10 +257,10 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                                 type="button"
                                 onClick={() => setShowPassword(prev => !prev)}
                                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300 focus:outline-none"
-                                tabIndex={-1} // prevent it from being in tab order
+                                tabIndex={-1}
                             >
                                 {showPassword ? (
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
@@ -295,10 +298,10 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">or</p>
                     <button
                         onClick={handleGoogleAuth}
-                        disabled={loading}
+                        disabled={googleLoading}
                         className="w-full flex items-center justify-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 dark:bg-red-900 dark:hover:bg-red-800 dark:text-red-300 font-medium py-2 rounded transition transform hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {loading ? (
+                        {googleLoading ? (
                             <svg className="animate-spin h-5 w-5 mr-2 text-red-700 dark:text-red-300" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
