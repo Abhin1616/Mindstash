@@ -61,7 +61,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
 
     const onDelete = async (id) => {
         try {
-            setDeletingId(id); // 👈 lock that card
+            setDeletingId(id);
             const res = await api.delete(`/materials/${id}`, {
                 withCredentials: true,
             });
@@ -73,7 +73,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
         } catch (error) {
             console.error("Delete error:", error.response?.data || error);
         } finally {
-            setDeletingId(null); // 👈 unlock once done
+            setDeletingId(null);
         }
     };
 

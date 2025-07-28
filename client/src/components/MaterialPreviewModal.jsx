@@ -93,7 +93,7 @@ const MaterialPreviewModal = ({ isOpen, onClose, material, onReport, currentUser
                                         <Download size={16} /> Download
                                     </button>
                                     {uploadedBy._id != currentUserId && <button
-                                        onClick={onReport}
+                                        onClick={() => onReport(_id)}
                                         disabled={currentUserId == null}
                                         className={`flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm transition
   ${currentUserId == null ? 'opacity-50 cursor-not-allowed' : ''}`}
