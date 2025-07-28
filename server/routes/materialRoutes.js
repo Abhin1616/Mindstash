@@ -18,8 +18,10 @@ import requireCompletedProfile from "../utils/requireCompletedProfile.js";
 const router = express.Router();
 const upload = multer({
     storage,
-    limits: {
-        fileSize: 10 * 1024 * 1024 // 10MB
+    limits: { fileSize: 10 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        console.log("[DEBUG] File received:", file.originalname);
+        cb(null, true);
     }
 });
 
