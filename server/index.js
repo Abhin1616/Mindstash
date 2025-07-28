@@ -48,7 +48,10 @@ app.use((req, res, next) => {
     req.upload = upload;
     next();
 });
-
+app.use((req, res, next) => {
+    console.log("[DEBUG] Incoming content-type:", req.headers["content-type"]);
+    next();
+});
 // Routes
 app.get("/rules", (req, res) => {
     res.status(200).json(RULES);
