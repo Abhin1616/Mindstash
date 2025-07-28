@@ -123,7 +123,7 @@ const App = () => {
           <Route path="/community-guidelines" element={<Rules />} />
           <Route path="/reports" element={<MyReports />} />
           <Route path="/profile" element={<Profile programs={programs} />} />
-          <Route path="/upload-material" element={<UploadMaterial />} />
+          <Route path="/upload-material" element={<UploadMaterial currentUserId={currentUserId} programs={programs} />} />
           <Route path="/chat" element={<Chat />} />
           {notifications && <Route path="/notifications" element={<MyNotifications notifications={notifications} setNotifications={setNotifications} />} />}
           <Route path="/auth" element={<AuthPage programs={programs} setLoggedIn={setLoggedIn} setCurrentUserId={setCurrentUserId} />} />
