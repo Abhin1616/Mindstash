@@ -175,7 +175,7 @@ const UploadMaterial = ({ currentUserId, programs }) => {
                                         initial={{ opacity: 0, y: 5 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: 5 }}
-                                        className="absolute z-50 mt-1 w-full max-h-40 overflow-y-auto bg-white dark:bg-zinc-900 shadow-lg rounded border dark:border-white/10 text-sm"
+                                        className="absolute z-50 mt-1 w-20 max-h-30 overflow-y-auto bg-white dark:bg-zinc-900 shadow-lg rounded border dark:border-white/10 text-sm"
                                     >
                                         {semesterOptions.map((sem, i) => (
                                             <li
