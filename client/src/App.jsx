@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useNavigate, replace } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard.jsx';
 import AuthPage from './pages/AuthPage.jsx';
@@ -15,9 +15,9 @@ import ModerationReports from './pages/ModerationReports.jsx';
 import Chat from './pages/Chat.jsx';
 import api from './config/api.js';
 
-
 const App = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
   const [programs, setPrograms] = useState([]);
   const [sortByRecent, setSortByRecent] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -30,35 +30,30 @@ const App = () => {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [role, setRole] = useState([]);
-  const toggleSort = () => {
-    setSortByRecent(prev => !prev);
-  };
+
+  const toggleSort = () => setSortByRecent(prev => !prev);
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        // Fetch programs
         const progRes = await api.get('/programs');
         setPrograms(progRes.data);
 
-        // Verify token and get user
-        const authRes = await api.get('/verify-token', {
-          withCredentials: true,
-        });
+        const authRes = await api.get('/verify-token', { withCredentials: true });
 
         if (authRes.status === 200 && authRes.data?.user) {
           setCurrentUserId(authRes.data.user.id);
-          setRole(authRes.data.user.role)
+          setRole(authRes.data.user.role);
           setLoggedIn(true);
         } else {
           setCurrentUserId(null);
+          setRole(null);
           setLoggedIn(false);
-          setRole(null)
         }
-      } catch (err) {
+      } catch {
         setCurrentUserId(null);
+        setRole(null);
         setLoggedIn(false);
-        setRole(null)
       }
     };
 
@@ -68,40 +63,43 @@ const App = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await api.get('/notifications', {
-          withCredentials: true,
-        });
+        const res = await api.get('/notifications', { withCredentials: true });
         setNotifications(res.data.notifications);
       } catch (err) {
         console.error('Failed to fetch notifications', err);
       }
     };
 
-    if (currentUserId) {
-      fetchNotifications();
-    }
+    if (currentUserId) fetchNotifications();
   }, [currentUserId]);
-
 
   const handleLogout = async () => {
     try {
-      await api.get("/logout", {
-        withCredentials: true
-      });
-      setRole(null)
+      await api.get('/logout', { withCredentials: true });
+      setRole(null);
       setLoggedIn(false);
       setCurrentUserId(null);
-      navigate('/', { replace: true })
+      navigate('/', { replace: true });
     } catch (err) {
-      console.error("Logout failed:", err);
+      console.error('Logout failed:', err);
     }
   };
 
-
   return (
-    <>
-      <Navbar key={role} handleLogout={handleLogout} setLoggedIn={setLoggedIn} loggedIn={loggedIn} notifications={notifications} filters={filters} setFilters={setFilters} role={role} setRole={setRole} />
-      <main className="bg-gray-50 min-h-screen pt-16">
+    <div className="bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
+      <Navbar
+        key={role}
+        handleLogout={handleLogout}
+        setLoggedIn={setLoggedIn}
+        loggedIn={loggedIn}
+        notifications={notifications}
+        filters={filters}
+        setFilters={setFilters}
+        role={role}
+        setRole={setRole}
+      />
+
+      <main className="pt-16 px-2 sm:px-4 md:px-6 lg:px-8 pb-12">
         <Routes>
           <Route
             path="/"
@@ -125,15 +123,37 @@ const App = () => {
           <Route path="/profile" element={<Profile programs={programs} />} />
           <Route path="/upload-material" element={<UploadMaterial currentUserId={currentUserId} programs={programs} />} />
           <Route path="/chat" element={<Chat />} />
-          {notifications && <Route path="/notifications" element={<MyNotifications notifications={notifications} setNotifications={setNotifications} />} />}
-          <Route path="/auth" element={<AuthPage programs={programs} setLoggedIn={setLoggedIn} setCurrentUserId={setCurrentUserId} />} />
-          <Route path="/complete-profile" element={<CompleteProfile programs={programs} setLoggedIn={setLoggedIn} setCurrentUserId={setCurrentUserId} />} />
+          {notifications && (
+            <Route
+              path="/notifications"
+              element={<MyNotifications notifications={notifications} setNotifications={setNotifications} />}
+            />
+          )}
+          <Route
+            path="/auth"
+            element={
+              <AuthPage
+                programs={programs}
+                setLoggedIn={setLoggedIn}
+                setCurrentUserId={setCurrentUserId}
+              />
+            }
+          />
+          <Route
+            path="/complete-profile"
+            element={
+              <CompleteProfile
+                programs={programs}
+                setLoggedIn={setLoggedIn}
+                setCurrentUserId={setCurrentUserId}
+              />
+            }
+          />
           <Route path="/report-moderation" element={<ModerationReports />} />
           <Route path="/ask-ai" element={<Chat />} />
-
         </Routes>
       </main>
-    </>
+    </div>
   );
 };
 

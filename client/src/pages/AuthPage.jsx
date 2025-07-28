@@ -224,9 +224,12 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                         <div className="relative">
                             <input
                                 type={showPassword ? "text" : "password"}
-                                className="w-full p-2 pr-10 border rounded"
+                                value={formData.password}
+                                onChange={(e) => handleChange('password', e.target.value)}
+                                className="w-full p-2 pr-10 border rounded bg-white dark:bg-zinc-700 dark:text-white dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Enter password"
                             />
+
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
