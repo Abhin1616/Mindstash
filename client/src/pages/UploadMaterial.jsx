@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
+import { BsChevronDown } from 'react-icons/bs';
 
 const UploadMaterial = ({ currentUserId, programs }) => {
     const navigate = useNavigate();
@@ -14,6 +15,8 @@ const UploadMaterial = ({ currentUserId, programs }) => {
     const [errors, setErrors] = useState({});
     const [uploading, setUploading] = useState(false);
     const [editableSemester, setEditableSemester] = useState('');
+    const [openDropdown, setOpenDropdown] = useState(false);
+    const dropdownRef = useRef(null);
 
     useEffect(() => {
         api.get('/profile', { withCredentials: true })
@@ -27,6 +30,16 @@ const UploadMaterial = ({ currentUserId, programs }) => {
     const branches = programs.find(p => p.name === currentUser.program)?.branches || [];
     const semestersCount = branches.find(b => b.name === currentUser.branch)?.semesters || 0;
     const semesterOptions = Array.from({ length: semestersCount }, (_, i) => (i + 1).toString());
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setOpenDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const validate = () => {
         const errs = {};
@@ -146,17 +159,39 @@ const UploadMaterial = ({ currentUserId, programs }) => {
                             </div>
                             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 italic">Branch is auto-filled and cannot be changed here</p>
                         </div>
-                        <div>
+                        <div ref={dropdownRef}>
                             <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Semester</label>
-                            <select
-                                value={editableSemester}
-                                onChange={(e) => setEditableSemester(e.target.value)}
-                                className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                            <button
+                                type="button"
+                                onClick={() => setOpenDropdown(!openDropdown)}
+                                className="mt-1 w-full px-3 py-2 flex justify-between items-center rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-white text-sm"
                             >
-                                {semesterOptions.map((sem) => (
-                                    <option key={sem} value={sem}>{sem}</option>
-                                ))}
-                            </select>
+                                <span>{editableSemester || 'Select semester'}</span>
+                                <BsChevronDown className="ml-2 text-xs" />
+                            </button>
+                            <AnimatePresence>
+                                {openDropdown && (
+                                    <motion.ul
+                                        initial={{ opacity: 0, y: 5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 5 }}
+                                        className="absolute z-50 mt-1 w-full max-h-40 overflow-y-auto bg-white dark:bg-zinc-900 shadow-lg rounded border dark:border-white/10 text-sm"
+                                    >
+                                        {semesterOptions.map((sem, i) => (
+                                            <li
+                                                key={i}
+                                                onClick={() => {
+                                                    setEditableSemester(sem);
+                                                    setOpenDropdown(false);
+                                                }}
+                                                className="px-3 py-2 hover:bg-blue-100 dark:hover:bg-zinc-700 cursor-pointer"
+                                            >
+                                                {sem}
+                                            </li>
+                                        ))}
+                                    </motion.ul>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
 
