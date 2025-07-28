@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, Loader } from 'lucide-react';
+import { Upload, Loader, ChevronDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
-import { BsChevronDown } from 'react-icons/bs';
 
 const UploadMaterial = ({ currentUserId, programs }) => {
     const navigate = useNavigate();
@@ -15,7 +14,8 @@ const UploadMaterial = ({ currentUserId, programs }) => {
     const [errors, setErrors] = useState({});
     const [uploading, setUploading] = useState(false);
     const [editableSemester, setEditableSemester] = useState('');
-    const [openDropdown, setOpenDropdown] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState(null);
+
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -27,19 +27,19 @@ const UploadMaterial = ({ currentUserId, programs }) => {
             .catch((err) => console.error(err));
     }, [currentUserId]);
 
+    useEffect(() => {
+        const closeOnOutsideClick = (e) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setOpenDropdown(null);
+            }
+        };
+        document.addEventListener('mousedown', closeOnOutsideClick);
+        return () => document.removeEventListener('mousedown', closeOnOutsideClick);
+    }, []);
+
     const branches = programs.find(p => p.name === currentUser.program)?.branches || [];
     const semestersCount = branches.find(b => b.name === currentUser.branch)?.semesters || 0;
     const semesterOptions = Array.from({ length: semestersCount }, (_, i) => (i + 1).toString());
-
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-                setOpenDropdown(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
 
     const validate = () => {
         const errs = {};
@@ -54,6 +54,8 @@ const UploadMaterial = ({ currentUserId, programs }) => {
             const allowed = ['application/pdf', 'image/png', 'image/jpg', 'image/jpeg'];
             if (!allowed.includes(file.type)) errs.file = 'Only PDF, PNG, JPG, JPEG allowed';
         }
+
+        if (!editableSemester) errs.semester = 'Semester is required';
 
         setErrors(errs);
         return Object.keys(errs).length === 0;
@@ -87,6 +89,46 @@ const UploadMaterial = ({ currentUserId, programs }) => {
             setUploading(false);
         }
     };
+
+    const renderDropdown = () => (
+        <div className="relative" ref={dropdownRef}>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Semester</label>
+            <button
+                type="button"
+                onClick={() => setOpenDropdown(openDropdown === 'semester' ? null : 'semester')}
+                className="w-full flex justify-between items-center px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+            >
+                <span>{editableSemester || 'Select Semester'}</span>
+                <ChevronDown className="w-4 h-4 ml-2" />
+            </button>
+
+            <AnimatePresence>
+                {openDropdown === 'semester' && (
+                    <motion.ul
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 4 }}
+                        className="absolute z-50 mt-1 w-full max-h-32 overflow-y-auto bg-white dark:bg-zinc-700 shadow-lg rounded border border-zinc-300 dark:border-zinc-600 text-sm"
+                    >
+                        {semesterOptions.map((sem, index) => (
+                            <li
+                                key={index}
+                                onClick={() => {
+                                    setEditableSemester(sem);
+                                    setOpenDropdown(null);
+                                }}
+                                className="px-3 py-2 hover:bg-blue-100 dark:hover:bg-zinc-600 cursor-pointer"
+                            >
+                                {sem}
+                            </li>
+                        ))}
+                    </motion.ul>
+                )}
+            </AnimatePresence>
+
+            {errors.semester && <p className="text-red-500 text-sm mt-1">{errors.semester}</p>}
+        </div>
+    );
 
     return (
         <motion.div
@@ -138,83 +180,39 @@ const UploadMaterial = ({ currentUserId, programs }) => {
                             type="file"
                             accept=".pdf, .jpg, .jpeg, .png"
                             onChange={(e) => setFile(e.target.files[0])}
-                            className="block w-full text-sm file:px-4 file:py-2 file:rounded-md file:border-0 file:bg-blue-100 dark:file:bg-blue-800 file:text-blue-800 dark:file:text-blue-200 hover:file:bg-blue-200 dark:hover:file:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                            className="block w-full text-sm file:px-4 file:py-2 file:rounded-md file:border-0 file:bg-blue-100 dark:file:bg-blue-800 file:text-blue-800 dark:file:text-blue-200 hover:file:bg-blue-200 dark:hover:file:bg-blue-700 focus:outline-none"
                         />
                         {errors.file && <p className="text-red-500 text-sm mt-1">{errors.file}</p>}
                     </div>
 
-                    {/* Info Tags + Editable Semester */}
+                    {/* Info Tags + Custom Semester Dropdown */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                             <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Program</label>
-                            <div className="mt-1 px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 italic border border-transparent select-none">
-                                {currentUser?.program || '—'}
+                            <div className="mt-1 px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-800 dark:text-white">
+                                {currentUser.program || '—'}
                             </div>
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 italic">Program is auto-filled and cannot be changed here</p>
                         </div>
+
                         <div>
                             <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Branch</label>
-                            <div className="mt-1 px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 italic border border-transparent select-none">
-                                {currentUser?.branch || '—'}
+                            <div className="mt-1 px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-800 dark:text-white">
+                                {currentUser.branch || '—'}
                             </div>
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 italic">Branch is auto-filled and cannot be changed here</p>
                         </div>
-                        <div ref={dropdownRef}>
-                            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Semester</label>
-                            <button
-                                type="button"
-                                onClick={() => setOpenDropdown(!openDropdown)}
-                                className="mt-1 w-full px-3 py-2 flex justify-between items-center rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-white text-sm"
-                            >
-                                <span>{editableSemester || 'Select semester'}</span>
-                                <BsChevronDown className="ml-2 text-xs" />
-                            </button>
-                            <AnimatePresence>
-                                {openDropdown && (
-                                    <motion.ul
-                                        initial={{ opacity: 0, y: 5 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: 5 }}
-                                        className="absolute z-50 mt-1 w-20 max-h-30 overflow-y-auto bg-white dark:bg-zinc-900 shadow-lg rounded border dark:border-white/10 text-sm"
-                                    >
-                                        {semesterOptions.map((sem, i) => (
-                                            <li
-                                                key={i}
-                                                onClick={() => {
-                                                    setEditableSemester(sem);
-                                                    setOpenDropdown(false);
-                                                }}
-                                                className="px-3 py-2 hover:bg-blue-100 dark:hover:bg-zinc-700 cursor-pointer"
-                                            >
-                                                {sem}
-                                            </li>
-                                        ))}
-                                    </motion.ul>
-                                )}
-                            </AnimatePresence>
-                        </div>
+
+                        <div>{renderDropdown()}</div>
                     </div>
 
-                    {/* Submit Button */}
-                    <div className="flex justify-end">
-                        <button
-                            type="submit"
-                            disabled={uploading}
-                            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-60 shadow-md transition-colors w-full md:w-auto"
-                        >
-                            {uploading ? (
-                                <>
-                                    <Loader className="animate-spin w-4 h-4" />
-                                    Uploading...
-                                </>
-                            ) : (
-                                <>
-                                    <Upload className="w-4 h-4" />
-                                    Upload
-                                </>
-                            )}
-                        </button>
-                    </div>
+                    <button
+                        type="submit"
+                        disabled={uploading}
+                        className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-medium transition-colors ${uploading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                            }`}
+                    >
+                        {uploading ? <Loader className="animate-spin w-5 h-5" /> : <Upload className="w-5 h-5" />}
+                        {uploading ? 'Uploading...' : 'Upload Material'}
+                    </button>
                 </form>
             </div>
         </motion.div>

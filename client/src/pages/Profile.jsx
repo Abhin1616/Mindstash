@@ -95,7 +95,7 @@ const Profile = ({ programs }) => {
                     type="button"
                     disabled={disabled}
                     onClick={() => setOpenDropdown(openDropdown === field ? null : field)}
-                    className={`w-full flex justify-between items-center px-3 py-2 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-zinc-600 transition'}`}
+                    className={`w-full flex justify-between items-center px-3 py-2 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white ${disabled && 'opacity-50 cursor-not-allowed'}`}
                 >
                     <span>{formData[field] || `Select ${label}`}</span>
                     <BsChevronDown className="ml-2 text-xs" />
