@@ -140,7 +140,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 programs={programs}
             />
             <MaterialPreviewModal
-                onReport={() => setReportingMaterialId(material._id)}
+                onReport={() => setReportingMaterialId(previewMaterial?._id)}
                 isOpen={!!previewMaterial}
                 onClose={() => setPreviewMaterial(null)}
                 material={previewMaterial}
