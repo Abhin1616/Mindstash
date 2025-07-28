@@ -11,12 +11,15 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_KEY,
     api_secret: process.env.CLOUDINARY_SECRET
 });
-
+console.log("Cloudinary env:", process.env.CLOUDINARY_CLOUD_NAME);
+console.log("Cloudinary env:", process.env.CLOUDINARY_KEY);
+console.log("Cloudinary env:", process.env.CLOUDINARY_SECRET);
 const allowedFormats = ['pdf', 'jpg', 'jpeg', 'png'];
 
 const storage = new CloudinaryStorage({
     cloudinary,
     params: async (req, file) => {
+        console.log("[DEBUG] CloudinaryStorage params called");
         const ext = file.originalname.split('.').pop().toLowerCase();
         const originalNameWithoutExt = file.originalname.split('.').slice(0, -1).join('.');
         const sanitizedFilename = originalNameWithoutExt.replace(/[^a-zA-Z0-9-_]/g, '');
@@ -32,7 +35,7 @@ const storage = new CloudinaryStorage({
         return {
             folder: 'mindstash-DB',
             public_id: `${Date.now()}-${sanitizedFilename}`,
-            resource_type: 'auto', // ✅ Cloudinary chooses 'image' or 'raw'
+            resource_type: 'auto',
             allowed_formats: allowedFormats
         };
     }
