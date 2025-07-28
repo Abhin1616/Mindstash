@@ -27,7 +27,7 @@ export const uploadMaterial = async (req, res) => {
         return res.status(400).json({ error: "File upload missing or failed" });
     }
     console.log(valid);
-    console.log(req.file)
+    console.log(req.file);
     try {
         const fileType = req.file.mimetype === 'application/pdf' ? 'pdf' : 'image';
 
@@ -119,6 +119,7 @@ export const deleteMaterialAsModerator = async (req, res) => {
 };
 
 export const getMaterials = async (req, res) => {
+    console.log("Check");
     const { program, branch, semester, search, sort = 'recent', page = 1, limit = 10 } = req.query;
     const normalizedProgram = normalize(program);
     const normalizedBranch = normalize(branch);
