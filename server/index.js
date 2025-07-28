@@ -48,14 +48,6 @@ app.use((req, res, next) => {
     req.upload = upload;
     next();
 });
-app.use((req, res, next) => {
-    console.log("[DEBUG] Raw headers:", req.headers);
-    next();
-});
-app.use((req, res, next) => {
-    console.log("[DEBUG] Incoming content-type:", req.headers["content-type"]);
-    next();
-});
 // Routes
 app.get("/rules", (req, res) => {
     res.status(200).json(RULES);
@@ -63,23 +55,6 @@ app.get("/rules", (req, res) => {
 app.get("/programs", (req, res) => {
     res.status(200).json(PROGRAMS);
 })
-
-// ✅ Debug Upload Route — bypasses auth for testing uploads
-app.post("/materials", (req, res, next) => {
-    req.upload.single("file")(req, res, (err) => {
-        if (err) return next(err);
-
-        console.log("[DEBUG] Upload route hitTTTTT");
-        console.log("File info:", req.file);
-        console.log("Body fields:", req.body);
-
-        if (!req.file) {
-            return res.status(400).json({ error: "No file uploaded" });
-        }
-
-        res.status(200).json({ message: "Upload successful", file: req.file });
-    });
-});
 
 app.use(completeProfileRoutes);
 app.use(routes);

@@ -13,9 +13,6 @@ import modDeleteSchema from "../joiSchemas/modDeleteSchema.js";
 const normalize = val => val && val.toLowerCase() !== 'all' ? val : undefined;
 
 export const uploadMaterial = async (req, res) => {
-    console.log("[DEBUG] Upload route hit");
-    console.log("File info:", req.file);
-    console.log("Body fields:", req.body);
 
     if (!req.body || Object.keys(req.body).length === 0) {
         return res.status(400).json({ error: "Request body cannot be empty" });
@@ -30,8 +27,6 @@ export const uploadMaterial = async (req, res) => {
     if (!req.file?.path || !req.file?.mimetype) {
         return res.status(400).json({ error: "File upload missing or failed" });
     }
-    console.log(valid);
-    console.log(req.file);
     try {
         const fileType = req.file.mimetype === 'application/pdf' ? 'pdf' : 'image';
 

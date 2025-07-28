@@ -19,10 +19,6 @@ const router = express.Router();
 const upload = multer({
     storage,
     limits: { fileSize: 10 * 1024 * 1024 },
-    fileFilter: (req, file, cb) => {
-        console.log("[DEBUG] File received:", file.originalname);
-        cb(null, true);
-    }
 });
 
 router.post("/materials", verifyToken, requireCompletedProfile, upload.single("file"), asyncHandler(uploadMaterial));
