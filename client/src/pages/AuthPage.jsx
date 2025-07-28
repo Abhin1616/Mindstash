@@ -6,6 +6,7 @@ import { BsChevronDown } from 'react-icons/bs';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
+import { Eye, EyeOff } from "lucide-react";
 
 const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
     const navigate = useNavigate();
@@ -222,18 +223,16 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                         <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Password</label>
                         <div className="relative">
                             <input
-                                type={showPassword ? 'text' : 'password'}
-                                value={formData.password}
-                                onChange={(e) => handleChange('password', e.target.value)}
-                                className="w-full p-2 pr-10 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                type={showPassword ? "text" : "password"}
+                                className="w-full p-2 pr-10 border rounded"
+                                placeholder="Enter password"
                             />
                             <button
                                 type="button"
-                                onClick={() => setShowPassword((prev) => !prev)}
-                                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300"
-                                tabIndex={-1}
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                             >
-                                {showPassword ? '🙈' : '👁️'}
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
                         </div>
                         {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
