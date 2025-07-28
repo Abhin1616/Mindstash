@@ -7,8 +7,6 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 
-
-
 const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
@@ -24,13 +22,11 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
     const [openDropdown, setOpenDropdown] = useState(null);
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
-
     const [showPassword, setShowPassword] = useState(false);
 
     const branches = programs.find(p => p.name === formData.program)?.branches || [];
     const semesters = branches.find(b => b.name === formData.branch)?.semesters || 0;
     const semesterOptions = Array.from({ length: semesters }, (_, i) => (i + 1).toString());
-
 
     const handleChange = (name, value) => {
         setFormData(prev => ({
@@ -44,38 +40,30 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
 
     const validate = () => {
         const errs = {};
-
         if (!isLogin) {
             if (!formData.name.trim()) {
                 errs.name = 'Name is required';
             } else if (formData.name.trim().length < 2 || formData.name.trim().length > 40) {
                 errs.name = 'Name must be between 2 and 40 characters';
             } else if (/\s{2,}/.test(formData.name)) {
-                errs.name = 'Multiple spaces are not allowed between words';
+                errs.name = 'Multiple spaces are not allowed';
             } else if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(formData.name.trim())) {
-                errs.name = 'Name must contain only alphabetic characters and single spaces';
+                errs.name = 'Only alphabetic characters and single spaces allowed';
             }
-
-
         }
 
-        // Email validation (apply for both)
         if (!formData.email.trim()) {
             errs.email = 'Email is required';
         } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,8}$/.test(formData.email)) {
             errs.email = 'Invalid email format';
         }
 
-        // Password validation
         if (!formData.password) {
             errs.password = 'Password is required';
         } else if (!isLogin) {
-            // Additional checks only for registration
             if (formData.password.length < 8 || formData.password.length > 30) {
-                errs.password = 'Password must be between 8 and 30 characters';
-            } else if (
-                !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(formData.password)
-            ) {
+                errs.password = 'Password must be 8-30 characters';
+            } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(formData.password)) {
                 errs.password = 'Must include uppercase, lowercase, number, and special character';
             }
         }
@@ -86,7 +74,7 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
             if (!formData.semester) {
                 errs.semester = 'Semester is required';
             } else if (Number(formData.semester) < 1 || Number(formData.semester) > semesters) {
-                errs.semester = `Semester must be between 1 and ${semesters}`;
+                errs.semester = `Must be between 1 and ${semesters}`;
             }
         }
 
@@ -95,29 +83,25 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
     };
 
     const handleSubmit = async (e) => {
-        const endpoint = isLogin ? '/login' : '/register';
-        const payload = { ...formData };
-
         e.preventDefault();
         if (!validate()) return;
+
         setLoading(true);
+        const endpoint = isLogin ? '/login' : '/register';
+
         try {
-            const { data } = await api.post(`${endpoint}`, payload, {
-                withCredentials: true,
-            });
+            const { data } = await api.post(endpoint, formData, { withCredentials: true });
             setLoggedIn(true);
             setCurrentUserId(data.userId);
             toast.success(data.message);
-            navigate("/", { replace: true });
+            navigate('/', { replace: true });
         } catch (err) {
             const error = err.response?.data?.error || err.response?.data?.message || 'Something went wrong';
             toast.error(error);
-            console.error("Auth error:", error);
         } finally {
             setLoading(false);
         }
     };
-
 
     const handleGoogleAuth = async () => {
         setGoogleLoading(true);
@@ -129,41 +113,39 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
         }
     };
 
-
     const CustomDropdown = ({ label, field, options, disabled }) => {
-        const localDropdownRef = useRef(null);
+        const localRef = useRef();
 
         useEffect(() => {
-            const handleClickOutside = (e) => {
-                if (localDropdownRef.current && !localDropdownRef.current.contains(e.target) && openDropdown === field) {
+            const handleOutside = (e) => {
+                if (localRef.current && !localRef.current.contains(e.target)) {
                     setOpenDropdown(null);
                 }
             };
-            document.addEventListener('mousedown', handleClickOutside);
-            return () => document.removeEventListener('mousedown', handleClickOutside);
-        }, [openDropdown, field]);
+            document.addEventListener('mousedown', handleOutside);
+            return () => document.removeEventListener('mousedown', handleOutside);
+        }, []);
 
         return (
-            <div className="relative" ref={localDropdownRef}>
+            <div className="relative" ref={localRef}>
                 <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">{label}</label>
                 <button
                     type="button"
                     disabled={disabled}
                     onClick={() => setOpenDropdown(openDropdown === field ? null : field)}
-                    className={`w-full p-2 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white bg-white text-left focus:outline-none flex justify-between items-center ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`w-full p-2 rounded border bg-white dark:bg-zinc-700 dark:border-white/10 dark:text-white text-left focus:outline-none flex justify-between items-center ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                    <span className="truncate">{formData[field] || `Select ${label}`}</span>
-                    <BsChevronDown className={`transform transition-transform duration-200 ${openDropdown === field ? 'rotate-180' : 'rotate-0'}`} />
+                    <span>{formData[field] || `Select ${label}`}</span>
+                    <BsChevronDown className={`transition-transform ${openDropdown === field ? 'rotate-180' : ''}`} />
                 </button>
                 {openDropdown === field && (
-                    <div className="absolute z-40 mt-1 w-full overflow-y-auto bg-white dark:bg-zinc-700 border border-gray-300 dark:border-white/10 rounded shadow"
-                        style={{ maxHeight: 'calc(4 * 2.5rem)' }}> {/* 4 items * (p-2 + text-sm height which is roughly 2.5rem for each item) */}
+                    <div className="absolute z-50 w-full mt-1 max-h-40 overflow-y-auto bg-white dark:bg-zinc-800 border dark:border-white/10 rounded shadow-lg">
                         {options.length > 0 ? (
                             options.map((val, i) => (
                                 <div
                                     key={i}
                                     onClick={() => handleChange(field, val)}
-                                    className={`px-3 py-2 cursor-pointer text-sm hover:bg-blue-100 dark:hover:bg-zinc-600 ${formData[field] === val ? 'bg-blue-100 dark:bg-zinc-600 font-semibold' : ''}`}
+                                    className={`px-3 py-2 text-sm cursor-pointer hover:bg-blue-100 dark:hover:bg-zinc-700 ${formData[field] === val ? 'bg-blue-100 dark:bg-zinc-700 font-semibold' : ''}`}
                                 >
                                     {val}
                                 </div>
@@ -180,18 +162,16 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
 
     return (
         <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
-            {/* Background glow */}
-            <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-                <div className="w-[600px] h-[600px] bg-gradient-to-br from-blue-500 to-purple-500 opacity-20 dark:from-blue-700 dark:to-purple-700 rounded-full blur-3xl" />
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-[600px] h-[600px] bg-gradient-to-br from-blue-400 to-purple-500 dark:from-indigo-800 dark:to-purple-900 opacity-25 rounded-full blur-3xl" />
             </div>
 
             <motion.div
                 initial={{ opacity: 0, y: 40, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="relative w-full max-w-md bg-white dark:bg-zinc-800 border dark:border-white/10 shadow-xl rounded-2xl p-6 space-y-6 z-10 backdrop-blur-md"
+                className="relative w-full max-w-md bg-white/80 dark:bg-white/[0.05] backdrop-blur-md border border-gray-200 dark:border-white/10 shadow-2xl rounded-2xl p-6 space-y-6 z-10"
             >
-                {/* Toggle */}
                 <div className="flex justify-center mb-2">
                     {['Login', 'Register'].map((type, idx) => {
                         const active = (idx === 0) === isLogin;
@@ -204,7 +184,7 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                                     idx === 0 ? 'rounded-l-lg' : 'rounded-r-lg',
                                     active
                                         ? 'bg-blue-600 text-white border-blue-600'
-                                        : 'bg-white text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-zinc-700'
+                                        : 'bg-white dark:bg-transparent text-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-zinc-700'
                                 )}
                             >
                                 {type}
@@ -213,32 +193,27 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                     })}
                 </div>
 
-                {/* Form */}
                 <form onSubmit={handleSubmit} noValidate className="space-y-4">
                     {!isLogin && (
-                        <>
-                            <div>
-                                <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Name</label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={(e) => handleChange('name', e.target.value)}
-                                    className="w-full p-2 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                                />
-                                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-                            </div>
-                        </>
+                        <div>
+                            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Name</label>
+                            <input
+                                type="text"
+                                value={formData.name}
+                                onChange={(e) => handleChange('name', e.target.value)}
+                                className="w-full p-2 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                        </div>
                     )}
 
                     <div>
                         <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Email</label>
                         <input
                             type="email"
-                            name="email"
                             value={formData.email}
                             onChange={(e) => handleChange('email', e.target.value)}
-                            className="w-full p-2 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                            className="w-full p-2 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                     </div>
@@ -248,30 +223,19 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                         <div className="relative">
                             <input
                                 type={showPassword ? 'text' : 'password'}
-                                name="password"
                                 value={formData.password}
                                 onChange={(e) => handleChange('password', e.target.value)}
-                                className="w-full p-2 pr-10 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                                className="w-full p-2 pr-10 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             <button
                                 type="button"
-                                onClick={() => setShowPassword(prev => !prev)}
-                                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300 focus:outline-none"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300"
                                 tabIndex={-1}
                             >
-                                {showPassword ? (
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.977 9.977 0 012.021-3.262M15 12a3 3 0 00-3-3m0 0a3 3 0 00-3 3m6 0a3 3 0 01-3 3m0 0a3 3 0 01-3-3m0 0L3 3m18 18l-3.5-3.5" />
-                                    </svg>
-                                )}
+                                {showPassword ? '🙈' : '👁️'}
                             </button>
                         </div>
-
                         {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                     </div>
 
@@ -290,28 +254,22 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                     >
                         {isLogin ? 'Login' : 'Register'}
                     </button>
-
                 </form>
 
-                {/* Google */}
                 <div className="text-center">
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">or</p>
                     <button
                         onClick={handleGoogleAuth}
                         disabled={googleLoading}
-                        className="w-full flex items-center justify-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 dark:bg-red-900 dark:hover:bg-red-800 dark:text-red-300 font-medium py-2 rounded transition transform hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-gray-800 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:text-gray-200 font-medium py-2 rounded transition transform hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {googleLoading ? (
-                            <svg className="animate-spin h-5 w-5 mr-2 text-red-700 dark:text-red-300" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                            </svg>
+                            <span className="animate-spin">⏳</span>
                         ) : (
                             <FcGoogle size={18} />
                         )}
                         Continue with Google
                     </button>
-
                 </div>
             </motion.div>
         </div>

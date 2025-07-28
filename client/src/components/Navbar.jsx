@@ -171,7 +171,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
 
             {/* Mobile Dropdown */}
             {isOpen && (
-                <div className="mdnav:hidden bg-white dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-700 shadow space-y-2">
+                <div className="mdnav:hidden bg-white dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-700 shadow space-y-2 pb-3">
                     <div className="relative">
                         <input
                             type="text"
