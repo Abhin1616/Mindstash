@@ -232,7 +232,7 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                                 onClick={() => setShowPassword(!showPassword)}
                                 className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                             >
-                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                             </button>
                         </div>
                         {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
