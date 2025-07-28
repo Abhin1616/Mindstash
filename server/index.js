@@ -62,7 +62,7 @@ app.post("/materials", (req, res, next) => {
     req.upload.single("file")(req, res, (err) => {
         if (err) return next(err);
 
-        console.log("[DEBUG] Upload route hit");
+        console.log("[DEBUG] Upload route hitTTTTT");
         console.log("File info:", req.file);
         console.log("Body fields:", req.body);
 
@@ -74,8 +74,6 @@ app.post("/materials", (req, res, next) => {
     });
 });
 
-app.use(completeProfileRoutes);
-app.use(routes);
 app.use(completeProfileRoutes);
 app.use(routes);
 
