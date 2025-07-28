@@ -51,13 +51,8 @@ const UploadMaterial = ({ currentUserId }) => {
         formData.append('title', title.trim());
         formData.append('description', description.trim());
         formData.append('file', file);
-        for (let pair of formData.entries()) {
-            console.log(`${pair[0]}:`, pair[1]);
-        }
         try {
             const res = await api.post('/materials', formData, { withCredentials: true });
-            console.log(formData)
-            console.log(res)
             setTitle('');
             setDescription('');
             setFile(null);
