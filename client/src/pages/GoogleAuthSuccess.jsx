@@ -8,7 +8,6 @@ const GoogleAuthSuccess = () => {
         const params = new URLSearchParams(window.location.search);
         const profileCompleted = params.get('profileCompleted');
         const userId = params.get('userId');
-        console.log(userId);
         if (profileCompleted === 'true') {
             navigate('/', { replace: true });
         } else {
