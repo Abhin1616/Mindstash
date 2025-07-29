@@ -32,8 +32,6 @@ const MaterialCard = ({
         upvotes = [],
         _id,
     } = material;
-    console.log(uploadedBy)
-    console.log(uploadedBy.email)
     const isConfirming = confirmingDeleteId === _id;
     const isUploader = currentUserId === uploadedBy._id;
     const hasUpvoted = upvotes.includes(currentUserId);
