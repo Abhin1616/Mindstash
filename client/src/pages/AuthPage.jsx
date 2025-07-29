@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 import { Eye, EyeOff } from "lucide-react";
+import { supportEmail } from '../constants';
 
 const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
     const navigate = useNavigate();
@@ -94,11 +95,13 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
             const { data } = await api.post(endpoint, formData, { withCredentials: true });
 
             if (data.banned) {
-                toast.error("This account has been suspended for violating our community guidelines.", { duration: 3000 });
-                toast("Contact mindsta to appeal.", {
-                    duration: 5000,
-                    icon: "📩",
-                });
+                toast.error("This account has been suspended for violating our community guidelines.", { duration: 4000 });
+                setTimeout(() => {
+                    toast(`Contact ${supportEmail} to appeal.`, {
+                        duration: 7000,
+                        icon: "📩",
+                    });
+                }, 1000);
                 return;
             }
 

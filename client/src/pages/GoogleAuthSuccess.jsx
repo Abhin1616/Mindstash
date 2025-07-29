@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-
+import { supportEmail } from '../constants';
 const GoogleAuthSuccess = () => {
     const navigate = useNavigate();
 
@@ -11,11 +11,13 @@ const GoogleAuthSuccess = () => {
         const userId = params.get('userId');
 
         if (params.get("banned") === "true") {
-            toast.error("This account has been suspended for violating our community guidelines.", { duration: 3000 });
-            toast("Contact support@example.com to appeal.", {
-                duration: 5000,
-                icon: "📩",
-            });
+            toast.error("This account has been suspended for violating our community guidelines.", { duration: 4000 });
+            setTimeout(() => {
+                toast(`Contact ${supportEmail} to appeal.`, {
+                    duration: 7000,
+                    icon: "📩",
+                });
+            }, 1000);
             navigate('/auth', { replace: true });
             return;
         }

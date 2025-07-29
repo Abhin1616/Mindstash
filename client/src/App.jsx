@@ -14,6 +14,7 @@ import Rules from './pages/Rules.jsx';
 import ModerationReports from './pages/ModerationReports.jsx';
 import Chat from './pages/Chat.jsx';
 import api from './config/api.js';
+import { toast } from 'react-hot-toast';
 
 const App = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const App = () => {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [role, setRole] = useState([]);
+  const [isBanned, setIsBanned] = useState(false);
 
   const toggleSort = () => setSortByRecent(prev => !prev);
 
@@ -44,15 +46,18 @@ const App = () => {
         if (authRes.status === 200 && authRes.data?.user) {
           setCurrentUserId(authRes.data.user.id);
           setRole(authRes.data.user.role);
+          setIsBanned(authRes.data.user.isBanned)
           setLoggedIn(true);
         } else {
           setCurrentUserId(null);
           setRole(null);
+          setIsBanned(false);
           setLoggedIn(false);
         }
       } catch {
         setCurrentUserId(null);
         setRole(null);
+        setIsBanned(false);
         setLoggedIn(false);
       }
     };
@@ -72,6 +77,31 @@ const App = () => {
 
     if (currentUserId) fetchNotifications();
   }, [currentUserId]);
+
+  useEffect(() => {
+    if (isBanned) {
+      toast.error("You’ve been banned and logged out");
+      setLoggedIn(false);
+      setCurrentUserId(null);
+      setRole(null);
+      navigate('/auth');
+    }
+  }, [isBanned, navigate]);
+
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await api.get("/verify-token", { withCredentials: true });
+        if (res.data?.user?.isBanned) {
+          setIsBanned(true);
+        }
+      } catch (err) {
+      }
+    }, 60000)
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = async () => {
     try {
