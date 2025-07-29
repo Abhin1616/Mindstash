@@ -14,7 +14,6 @@ const userSchema = new mongoose.Schema({
         maxlength: 40,
         set: cleanName,
         match: /^[A-Za-z]+(?: [A-Za-z]+)*$/
-
     },
     email: {
         type: String,
@@ -69,8 +68,16 @@ const userSchema = new mongoose.Schema({
     profileCompleted: {
         type: Boolean,
         default: false
+    },
+    isBanned: {
+        type: Boolean,
+        default: false
+    },
+    banReason: {
+        type: String,
+        trim: true,
+        maxlength: 300
     }
-
 }, { timestamps: true });
 
 userSchema.plugin(passportLocalMongoose, {

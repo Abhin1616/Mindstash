@@ -123,6 +123,7 @@ export const getMaterials = async (req, res) => {
     const normalizedBranch = normalize(branch);
     const semesterNum = Number(semester);
 
+    // Validation checks
     if (!normalizedProgram && (normalizedBranch || !isNaN(semesterNum)))
         return res.status(400).json({ error: "Program must be specified to filter by branch or semester" });
 
@@ -132,36 +133,33 @@ export const getMaterials = async (req, res) => {
     if (normalizedBranch && !isValidBranch(normalizedProgram, normalizedBranch))
         return res.status(400).json({ error: "Invalid branch for selected program" });
 
-    if (!isNaN(semesterNum) && (!normalizedProgram || !normalizedBranch || !isValidSemester(normalizedProgram, normalizedBranch, semesterNum)))
+    if (!isNaN(semesterNum) &&
+        (!normalizedProgram || !normalizedBranch || !isValidSemester(normalizedProgram, normalizedBranch, semesterNum)))
         return res.status(400).json({ error: "Invalid semester for selected program and branch" });
 
+    // Filter construction
     const filter = {};
     if (normalizedProgram) filter.program = normalizedProgram;
     if (normalizedBranch) filter.branch = normalizedBranch;
     if (!isNaN(semesterNum)) filter.semester = semesterNum;
 
+    // Search logic
     if (search) {
-        const searchWords = search.trim().split(/\s+/); // Split on spaces
-        const searchRegexes = searchWords.map(word => ({
-            $or: [
-                { title: { $regex: word, $options: 'i' } },
-                { description: { $regex: word, $options: 'i' } }
-            ]
-        }));
-        filter.$and = searchRegexes;
+        const searchWords = search.trim().split(/\s+/);
+        filter.$or = searchWords.flatMap(word => ([
+            { title: { $regex: word, $options: 'i' } },
+            { description: { $regex: word, $options: 'i' } }
+        ]));
     }
 
     const pageNum = Number(page);
     const limitNum = Number(limit);
     const skip = (pageNum - 1) * limitNum;
 
+    // Sort: "top"
     if (sort === "top") {
         const pipeline = [
             { $match: filter },
-            { $addFields: { upvoteCount: { $size: "$upvotes" } } },
-            { $sort: { upvoteCount: -1, createdAt: -1 } },
-            { $skip: skip },
-            { $limit: limitNum },
             {
                 $lookup: {
                     from: "users",
@@ -171,6 +169,11 @@ export const getMaterials = async (req, res) => {
                 }
             },
             { $unwind: "$uploadedBy" },
+            { $match: { "uploadedBy.isBanned": false } },
+            { $addFields: { upvoteCount: { $size: "$upvotes" } } },
+            { $sort: { upvoteCount: -1, createdAt: -1 } },
+            { $skip: skip },
+            { $limit: limitNum },
             {
                 $project: {
                     title: 1, description: 1, fileUrl: 1, fileType: 1,
@@ -185,7 +188,20 @@ export const getMaterials = async (req, res) => {
 
         const [materials, totalCount] = await Promise.all([
             Material.aggregate(pipeline),
-            Material.countDocuments(filter)
+            Material.aggregate([
+                { $match: filter },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "uploadedBy",
+                        foreignField: "_id",
+                        as: "uploadedBy"
+                    }
+                },
+                { $unwind: "$uploadedBy" },
+                { $match: { "uploadedBy.isBanned": false } },
+                { $count: "total" }
+            ]).then(r => r[0]?.total || 0)
         ]);
 
         return res.status(200).json({
@@ -196,17 +212,37 @@ export const getMaterials = async (req, res) => {
         });
     }
 
-    const [materials, totalCount] = await Promise.all([
+    // Sort: "recent" (with aggregation for accurate count)
+    const [materialsRaw, totalCount] = await Promise.all([
         Material.find(filter)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limitNum)
-            .populate('uploadedBy', 'name')
+            .populate({
+                path: 'uploadedBy',
+                select: 'name isBanned',
+                match: { isBanned: false }
+            })
             .lean(),
-        Material.countDocuments(filter)
+        Material.aggregate([
+            { $match: filter },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "uploadedBy",
+                    foreignField: "_id",
+                    as: "uploadedBy"
+                }
+            },
+            { $unwind: "$uploadedBy" },
+            { $match: { "uploadedBy.isBanned": false } },
+            { $count: "total" }
+        ]).then(r => r[0]?.total || 0)
     ]);
 
-    res.status(200).json({
+    const materials = materialsRaw.filter(m => m.uploadedBy);
+
+    return res.status(200).json({
         materials,
         totalCount,
         page: pageNum,

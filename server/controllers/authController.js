@@ -44,11 +44,19 @@ export const login = async (req, res) => {
 
     const user = await UserModel.findOne({ email: req.body.email }).select('+hash +salt');
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
+
     if (!user.hash || !user.salt) {
         return res.status(400).json({
             message: "This account was registered with Google. Please use 'Login with Google'.",
         });
     }
+
+    if (user.isBanned) {
+        return res.status(403).json({
+            message: "This account has been suspended for violating our community guidelines.",
+        });
+    }
+
     user.authenticate(req.body.password, (err, authenticatedUser) => {
         if (err || !authenticatedUser) {
             return res.status(401).json({ message: "Invalid credentials" });
@@ -59,6 +67,7 @@ export const login = async (req, res) => {
         res.status(200).json({ message: "Login successful" });
     });
 };
+
 
 export const verifyTokenSuccess = async (req, res) => {
     const curUser = await UserModel.findById(req.user.id);
