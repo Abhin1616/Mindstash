@@ -18,7 +18,7 @@ const ModDashboard = () => {
             title: "Bans",
             description: "Ban or unban users who violate guidelines.",
             icon: <Ban className="w-8 h-8 text-red-600 group-hover:drop-shadow-glow" />,
-            path: "/ban-users",
+            path: "/ban-moderation",
             bg: "from-red-100 to-red-200 dark:from-red-950 dark:to-red-900"
         }
     ];

@@ -3,15 +3,17 @@ import { X } from "lucide-react";
 import { motion } from "framer-motion";
 import api from "../config/api";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const BanUserModal = ({ user, onClose }) => {
     const [reason, setReason] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-
+    const navigate = useNavigate();
     const handleBan = async (e) => {
         e.preventDefault();
         if (!reason.trim()) return setError("Reason is required");
+        if (reason.trim().length() < 10) return setError("The reason must be atleast 10 characters");
 
         setLoading(true);
         try {
@@ -23,6 +25,7 @@ const BanUserModal = ({ user, onClose }) => {
 
             toast.success("User banned successfully");
             onClose();
+            navigate('/ban-moderation')
         } catch (err) {
             console.error(err);
             toast.error(err.response?.data?.error || "Failed to ban user");
