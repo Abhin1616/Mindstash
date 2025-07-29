@@ -17,7 +17,8 @@ const MaterialCard = ({
     isDeleting,
     onReport,
     role,
-    setModRemoveMaterialId
+    setModRemoveMaterialId,
+    setBanUser
 }) => {
     const {
         title,
@@ -95,11 +96,18 @@ const MaterialCard = ({
                     )}{" "}
                     • {dayjs(createdAt).fromNow()}
                     {role === "moderator" && showEmail && uploadedBy?.email && (
-                        <div className="text-xs mt-1 text-indigo-700 dark:text-indigo-300 ml-1">
-                            {uploadedBy.email}
+                        <div className="text-xs mt-1 ml-1 flex flex-col sm:flex-row sm:items-center gap-1">
+                            <span className="text-indigo-700 dark:text-indigo-300">{uploadedBy.email}</span>
+                            <button
+                                onClick={() => setBanUser({ id: uploadedBy?._id, name: uploadedBy?.name, email: uploadedBy?.email })}
+                                className="text-red-600 dark:text-red-400 border border-red-500 dark:border-red-400 hover:bg-red-100 dark:hover:bg-red-800 px-2 py-0.5 rounded-md text-xs transition-all"
+                            >
+                                Ban User
+                            </button>
                         </div>
                     )}
                 </div>
+
 
 
                 {/* Program Info */}

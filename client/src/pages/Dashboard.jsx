@@ -5,6 +5,7 @@ import MaterialPreviewModal from '../components/MaterialPreviewModal.jsx';
 import ReportMaterial from './ReportMaterial.jsx';
 import ModeratorRemoveModal from '../components/ModeratorRemoveModal.jsx';
 import api from '../config/api.js';
+import BanUserModal from './BanUserModal.jsx';
 
 const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, currentUserId, role }) => {
     const [page, setPage] = useState(1);
@@ -20,6 +21,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     const activeQueryRef = useRef('');
     const [confirmingDeleteId, setConfirmingDeleteId] = useState(null);
     const [deletingId, setDeletingId] = useState(null);
+    const [banUser, setBanUser] = useState(null);
 
     const handleUpvote = async (materialId) => {
         try {
@@ -173,6 +175,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                                 confirmingDeleteId={confirmingDeleteId}
                                 setConfirmingDeleteId={setConfirmingDeleteId}
                                 onDelete={onDelete}
+                                setBanUser={() => setBanUser}
                             />
                         </div>
                     ))
@@ -200,6 +203,9 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                         onDelete(id);
                     }}
                 />
+            )}
+            {banUser && (
+                <BanUserModal user={banUser} onClose={() => setBanUser(null)} />
             )}
         </div>
     );
