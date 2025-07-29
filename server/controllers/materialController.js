@@ -220,7 +220,7 @@ export const getMaterials = async (req, res) => {
             .limit(limitNum)
             .populate({
                 path: 'uploadedBy',
-                select: 'name isBanned email',
+                select: 'name isBanned email _id',
                 match: { isBanned: false }
             })
             .lean(),
