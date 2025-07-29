@@ -175,7 +175,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                                 confirmingDeleteId={confirmingDeleteId}
                                 setConfirmingDeleteId={setConfirmingDeleteId}
                                 onDelete={onDelete}
-                                setBanUser={() => setBanUser}
+                                setBanUser={setBanUser}
                             />
                         </div>
                     ))
