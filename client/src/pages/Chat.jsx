@@ -64,7 +64,7 @@ const Chat = () => {
     };
 
     return (
-        <div className="flex flex-col items-center min-h-[calc(100vh-64px)] max-h-[calc(100vh-64px)] bg-gradient-to-b from-indigo-100 via-white to-zinc-100 dark:from-black dark:via-zinc-950 dark:to-zinc-900 px-4 py-4 text-zinc-900 dark:text-zinc-100">
+        <div className="flex flex-col items-center h-[calc(100vh-64px)] bg-gradient-to-b from-indigo-100 via-white to-zinc-100 dark:from-black dark:via-zinc-950 dark:to-zinc-900 px-4 py-4 text-zinc-900 dark:text-zinc-100">
             {/* Header */}
             <div className="w-full max-w-3xl flex items-center gap-2 px-6 py-4 text-2xl font-semibold bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm shadow-md rounded-2xl border border-zinc-200 dark:border-zinc-800">
                 <Bot className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
@@ -73,7 +73,8 @@ const Chat = () => {
             </div>
 
             {/* Chat Window */}
-            <div className="w-full max-w-3xl flex-grow overflow-y-auto bg-white/70 dark:bg-zinc-900/60 backdrop-blur-md mt-4 mb-3 rounded-2xl px-6 py-6 space-y-4 shadow-inner border border-zinc-200 dark:border-zinc-800">
+            {/* Chat Window */}
+            <div className="w-full max-w-3xl flex-1 overflow-y-auto bg-white/70 dark:bg-zinc-900/60 backdrop-blur-md mt-4 mb-3 rounded-2xl px-6 py-6 space-y-4 shadow-inner border border-zinc-200 dark:border-zinc-800">
                 {messages.map((msg, idx) => (
                     <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                         <div className={`max-w-[80%] px-5 py-3 rounded-2xl text-sm shadow-sm break-words
