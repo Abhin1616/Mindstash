@@ -71,10 +71,21 @@ export const login = async (req, res) => {
 
 
 export const verifyTokenSuccess = async (req, res) => {
-    const curUser = await UserModel.findById(req.user.id);
-    const user = req.user;
-    user.role = curUser.role;
-    res.status(200).json({ message: "Token valid", user: user });
+    try {
+        const curUser = await UserModel.findById(req.user.id).select("role isBanned");
+        if (!curUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const user = {
+            userId: req.user.id,
+            role: curUser.role,
+            isBanned: curUser.isBanned,
+        };
+        res.status(200).json({ message: "Token valid", user });
+    } catch (err) {
+        console.error("Error verifying token:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
 };
 
 export const logout = (req, res) => {

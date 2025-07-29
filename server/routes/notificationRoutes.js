@@ -6,10 +6,11 @@ import {
     markAllSeen
 } from "../controllers/notificationController.js";
 import requireCompletedProfile from "../utils/requireCompletedProfile.js";
+import { checkBannedUser } from "../utils/checkBannedUser.js";
 
 const router = express.Router();
 
-router.get("/notifications", verifyToken, requireCompletedProfile, asyncHandler(getNotifications));
-router.patch("/notifications/mark-all-seen", verifyToken, requireCompletedProfile, asyncHandler(markAllSeen));
+router.get("/notifications", verifyToken, requireCompletedProfile, checkBannedUser, asyncHandler(getNotifications));
+router.patch("/notifications/mark-all-seen", verifyToken, requireCompletedProfile, checkBannedUser, asyncHandler(markAllSeen));
 
 export default router;

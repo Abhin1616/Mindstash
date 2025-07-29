@@ -14,6 +14,7 @@ import {
     getMaterialById
 } from "../controllers/materialController.js";
 import requireCompletedProfile from "../utils/requireCompletedProfile.js";
+import { checkBannedUser } from "../utils/checkBannedUser.js";
 
 const router = express.Router();
 const upload = multer({
@@ -21,12 +22,12 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-router.post("/materials", verifyToken, requireCompletedProfile, upload.single("file"), asyncHandler(uploadMaterial));
-router.delete("/materials/:id", verifyToken, requireCompletedProfile, asyncHandler(deleteMaterial));
+router.post("/materials", verifyToken, requireCompletedProfile, checkBannedUser, upload.single("file"), asyncHandler(uploadMaterial));
+router.delete("/materials/:id", verifyToken, requireCompletedProfile, checkBannedUser, asyncHandler(deleteMaterial));
 router.get("/materials", asyncHandler(getMaterials));
-router.get("/materials/myuploads", verifyToken, requireCompletedProfile, asyncHandler(getMyUploads));
+router.get("/materials/myuploads", verifyToken, requireCompletedProfile, checkBannedUser, asyncHandler(getMyUploads));
 router.get("/materials/:id", verifyToken, requireCompletedProfile, requireRole("moderator"), asyncHandler(getMaterialById));
-router.post("/materials/:id/upvote", verifyToken, requireCompletedProfile, asyncHandler(toggleUpvote));
+router.post("/materials/:id/upvote", verifyToken, requireCompletedProfile, checkBannedUser, asyncHandler(toggleUpvote));
 router.delete("/materials/:id/mod", verifyToken, requireCompletedProfile, requireRole("moderator"), asyncHandler(deleteMaterialAsModerator));
 
 export default router;

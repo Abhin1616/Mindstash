@@ -1,6 +1,6 @@
-import { banSchema } from "../joiSchemas/banSchema";
-import User from "../models/User";
-import validate from "../utils/validate";
+import { banSchema } from "../joiSchemas/banSchema.js";
+import User from "../models/User.js";
+import validate from "../utils/validate.js";
 
 export const banUser = async (req, res) => {
     const { userId } = req.params;

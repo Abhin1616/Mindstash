@@ -7,7 +7,7 @@ import notificationRoutes from "./notificationRoutes.js";
 import aiChatRoutes from "./aiChatRoutes.js";
 import googleAuthRoutes from "./googleAuthRoutes.js";
 import completeProfileRoutes from "./completeProfileRoutes.js"
-
+import banRoutes from "./banRoutes.js"
 const router = express.Router();
 
 router.use(authRoutes);
@@ -18,5 +18,5 @@ router.use(notificationRoutes);
 router.use(aiChatRoutes);
 router.use(googleAuthRoutes);
 router.use(completeProfileRoutes);
-
+router.use(banRoutes);
 export default router;
