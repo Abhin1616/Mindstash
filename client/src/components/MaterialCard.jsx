@@ -32,7 +32,8 @@ const MaterialCard = ({
         upvotes = [],
         _id,
     } = material;
-
+    console.log(uploadedBy)
+    console.log(uploadedBy.email)
     const isConfirming = confirmingDeleteId === _id;
     const isUploader = currentUserId === uploadedBy._id;
     const hasUpvoted = upvotes.includes(currentUserId);
@@ -82,7 +83,7 @@ const MaterialCard = ({
                             className="inline-flex items-center font-medium text-indigo-600 dark:text-indigo-400 hover:underline focus:outline-none"
                             title="Click to show/hide email"
                         >
-                            {material.uploadedBy?.name || "Anonymous"}
+                            {uploadedBy?.name || "Anonymous"}
                             {showEmail ? (
                                 <ChevronUp className="w-4 h-4 ml-1" />
                             ) : (
@@ -91,13 +92,13 @@ const MaterialCard = ({
                         </button>
                     ) : (
                         <span className="font-medium text-gray-800 dark:text-white">
-                            {material.uploadedBy?.name || "Anonymous"}
+                            {uploadedBy?.name || "Anonymous"}
                         </span>
                     )}{" "}
-                    • {dayjs(material.createdAt).fromNow()}
-                    {role === "moderator" && showEmail && material.uploadedBy?.email && (
+                    • {dayjs(createdAt).fromNow()}
+                    {role === "moderator" && showEmail && uploadedBy?.email && (
                         <div className="text-xs mt-1 text-indigo-700 dark:text-indigo-300 ml-1">
-                            {material.uploadedBy.email}
+                            {uploadedBy.email}
                         </div>
                     )}
                 </div>
