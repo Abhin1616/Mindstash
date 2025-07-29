@@ -80,7 +80,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                         { to: "/profile", label: "Profile", auth: true },
                         { to: "/uploads", label: "My Uploads", auth: true },
                         {
-                            to: role === "moderator" ? "/report-moderation" : "/reports",
+                            to: role === "moderator" ? "/moderation" : "/reports",
                             label: role === "moderator" ? "Moderation" : "My Reports",
                             auth: true
                         },
@@ -195,7 +195,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                         { to: "/profile", label: "Profile", auth: true },
                         { to: "/uploads", label: "My Uploads", auth: true },
                         {
-                            to: role === "moderator" ? "/report-moderation" : "/reports",
+                            to: role === "moderator" ? "/moderation" : "/reports",
                             label: role === "moderator" ? "Moderation" : "My Reports",
                             auth: true
                         },

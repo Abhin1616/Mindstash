@@ -15,6 +15,7 @@ import ModerationReports from './pages/ModerationReports.jsx';
 import Chat from './pages/Chat.jsx';
 import api from './config/api.js';
 import { toast } from 'react-hot-toast';
+import ModDashboard from './pages/ModDashboard.jsx';
 
 const App = () => {
   const navigate = useNavigate();
@@ -179,6 +180,7 @@ const App = () => {
               />
             }
           />
+          <Route path="/moderation" element={<ModDashboard />} />
           <Route path="/report-moderation" element={<ModerationReports />} />
           <Route path="/ask-ai" element={<Chat />} />
         </Routes>
