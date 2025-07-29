@@ -10,39 +10,45 @@ const ModDashboard = () => {
         {
             title: "Reports",
             description: "Review and moderate reported materials.",
-            icon: <ShieldAlert className="w-8 h-8 text-blue-500" />,
+            icon: <ShieldAlert className="w-8 h-8 text-blue-600 group-hover:drop-shadow-glow" />,
             path: "/report-moderation",
-            bg: "bg-blue-100 dark:bg-blue-950"
+            bg: "from-blue-100 to-blue-200 dark:from-blue-950 dark:to-blue-900"
         },
         {
             title: "Bans",
             description: "Ban or unban users who violate guidelines.",
-            icon: <Ban className="w-8 h-8 text-red-500" />,
+            icon: <Ban className="w-8 h-8 text-red-600 group-hover:drop-shadow-glow" />,
             path: "/ban-users",
-            bg: "bg-red-100 dark:bg-red-950"
+            bg: "from-red-100 to-red-200 dark:from-red-950 dark:to-red-900"
         }
     ];
 
     return (
-        <div className="min-h-screen px-4 py-8 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="min-h-screen px-4 py-10 bg-white dark:bg-gray-900 transition-colors duration-300">
             <div className="max-w-5xl mx-auto">
-                <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Moderator Dashboard</h1>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 dark:text-white mb-8">
+                    Moderator Dashboard
+                </h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {cards.map((card, idx) => (
                         <motion.div
                             key={idx}
-                            whileHover={{ scale: 1.03 }}
-                            whileTap={{ scale: 0.98 }}
-                            className={`rounded-2xl shadow-md p-6 cursor-pointer transition-colors ${card.bg}`}
+                            whileHover={{ scale: 1.04 }}
+                            whileTap={{ scale: 0.97 }}
                             onClick={() => navigate(card.path)}
+                            className={`group cursor-pointer rounded-2xl p-6 bg-gradient-to-br ${card.bg} shadow hover:shadow-lg transition-all duration-300`}
                         >
                             <div className="flex items-center gap-4 mb-4">
-                                <div className="p-2 bg-white dark:bg-gray-800 rounded-full shadow">
+                                <div className="p-3 bg-white dark:bg-gray-800 rounded-full shadow-inner">
                                     {card.icon}
                                 </div>
-                                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">{card.title}</h2>
+                                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+                                    {card.title}
+                                </h2>
                             </div>
-                            <p className="text-gray-600 dark:text-gray-300">{card.description}</p>
+                            <p className="text-gray-700 dark:text-gray-300">
+                                {card.description}
+                            </p>
                         </motion.div>
                     ))}
                 </div>
