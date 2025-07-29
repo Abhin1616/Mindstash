@@ -76,7 +76,7 @@ const MaterialCard = ({
                 {/* Uploader & Time */}
                 <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Uploaded by{" "}
-                    {role === "moderator" ? (
+                    {role === "moderator" && !isUploader ? (
                         <button
                             onClick={toggleEmail}
                             className="inline-flex items-center font-medium text-indigo-600 dark:text-indigo-400 hover:underline focus:outline-none"

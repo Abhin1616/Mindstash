@@ -16,8 +16,8 @@ const BanUserModal = ({ user, onClose }) => {
         setLoading(true);
         try {
             const res = await api.post(
-                "/admin/ban-user",
-                { userId: user.id, reason: reason.trim() },
+                `/ban-user/${user.id}`,
+                { reason: reason.trim() },
                 { withCredentials: true }
             );
 
