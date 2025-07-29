@@ -53,6 +53,7 @@ export const login = async (req, res) => {
 
     if (user.isBanned) {
         return res.status(403).json({
+            banned: true,
             message: "This account has been suspended for violating our community guidelines.",
         });
     }
