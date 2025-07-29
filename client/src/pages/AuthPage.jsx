@@ -96,13 +96,12 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
 
             if (data.banned) {
                 toast.error("This account has been suspended for violating our community guidelines.", { duration: 4000 });
-                setTimeout(() => {
-                    toast(`Contact ${supportEmail} to appeal.`, {
-                        duration: 7000,
-                        icon: "📩",
-                    });
-                }, 1000);
+                toast(`Contact ${supportEmail} to appeal.`, {
+                    duration: 7000,
+                    icon: "📩",
+                });
                 return;
+
             }
 
             setLoggedIn(true);
