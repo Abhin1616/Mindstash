@@ -117,7 +117,7 @@ const App = () => {
   };
 
   return (
-    <div className="bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
+    <div className="bg-zinc-50 dark:bg-zinc-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
       <Navbar
         key={role}
         handleLogout={handleLogout}
