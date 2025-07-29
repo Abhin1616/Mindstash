@@ -8,7 +8,6 @@ import api from '../config/api.js';
 import BanUserModal from './BanUserModal.jsx';
 
 const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, currentUserId, role }) => {
-    console.log(currentUserId + " inside dashboard")
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);

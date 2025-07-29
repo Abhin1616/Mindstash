@@ -45,7 +45,7 @@ const App = () => {
         const authRes = await api.get('/verify-token', { withCredentials: true });
 
         if (authRes.status === 200 && authRes.data?.user) {
-          setCurrentUserId(authRes.data.user.id);
+          setCurrentUserId(authRes.data.user.userId);
           setRole(authRes.data.user.role);
           setIsBanned(authRes.data.user.isBanned)
           setLoggedIn(true);
@@ -115,7 +115,6 @@ const App = () => {
       console.error('Logout failed:', err);
     }
   };
-  console.log(currentUserId + " inside dashboard")
   return (
     <div className="bg-zinc-50 dark:bg-zinc-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
       <Navbar
