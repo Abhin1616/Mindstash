@@ -11,13 +11,11 @@ const GoogleAuthSuccess = () => {
         const userId = params.get('userId');
 
         if (params.get("banned") === "true") {
+            toast(`Contact ${supportEmail} to appeal.`, {
+                duration: 7000,
+                icon: "📩",
+            });
             toast.error("This account has been suspended for violating our community guidelines.", { duration: 4000 });
-            setTimeout(() => {
-                toast(`Contact ${supportEmail} to appeal.`, {
-                    duration: 7000,
-                    icon: "📩",
-                });
-            }, 1000);
             navigate('/auth', { replace: true });
             return;
         }
