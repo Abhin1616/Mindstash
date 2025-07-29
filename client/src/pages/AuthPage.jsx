@@ -101,11 +101,11 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
             const data = err.response?.data;
             const error = data?.error || data?.message || 'Something went wrong';
             if (data?.banned) {
-                toast.error(error, { duration: 4000 });
                 toast(`Contact ${supportEmail} to appeal.`, {
                     duration: 7000,
                     icon: "📩",
                 });
+                toast.error(error, { duration: 4000 });
                 return;
             }
 
