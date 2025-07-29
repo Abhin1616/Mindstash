@@ -13,7 +13,9 @@ const BanUserModal = ({ user, onClose }) => {
     const handleBan = async (e) => {
         e.preventDefault();
         if (!reason.trim()) return setError("Reason is required");
-        if (reason.trim().length() < 10) return setError("The reason must be atleast 10 characters");
+        if (reason.trim().length < 10) {
+            return setError("The reason must be at least 10 characters");
+        }
 
         setLoading(true);
         try {
