@@ -93,27 +93,27 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
 
         try {
             const { data } = await api.post(endpoint, formData, { withCredentials: true });
-
-            if (data.banned) {
-                toast.error("This account has been suspended for violating our community guidelines.", { duration: 4000 });
-                toast(`Contact ${supportEmail} to appeal.`, {
-                    duration: 7000,
-                    icon: "📩",
-                });
-                return;
-
-            }
-
             setLoggedIn(true);
             setCurrentUserId(data.userId);
             toast.success(data.message);
             navigate('/', { replace: true });
         } catch (err) {
-            const error = err.response?.data?.error || err.response?.data?.message || 'Something went wrong';
+            const data = err.response?.data;
+            const error = data?.error || data?.message || 'Something went wrong';
+            if (data?.banned) {
+                toast.error(error, { duration: 4000 });
+                toast(`Contact ${supportEmail} to appeal.`, {
+                    duration: 7000,
+                    icon: "📩",
+                });
+                return;
+            }
+
             toast.error(error);
         } finally {
             setLoading(false);
         }
+
     };
 
     const handleGoogleAuth = async () => {
