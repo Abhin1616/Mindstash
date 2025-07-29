@@ -92,6 +92,16 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
 
         try {
             const { data } = await api.post(endpoint, formData, { withCredentials: true });
+
+            if (data.banned) {
+                toast.error("This account has been suspended for violating our community guidelines.", { duration: 3000 });
+                toast("Contact mindsta to appeal.", {
+                    duration: 5000,
+                    icon: "📩",
+                });
+                return;
+            }
+
             setLoggedIn(true);
             setCurrentUserId(data.userId);
             toast.success(data.message);
