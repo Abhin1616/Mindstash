@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Download, Flag, ThumbsUp, Trash2 } from 'lucide-react';
+import { ArrowUpRight, Download, Flag, ThumbsUp, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import getDownloadUrl from '../utils/getDownloadUrl';
@@ -37,6 +37,10 @@ const MaterialCard = ({
     const isUploader = currentUserId === uploadedBy._id;
     const hasUpvoted = upvotes.includes(currentUserId);
     const [isLocked, setIsLocked] = useState(false);
+    const [showEmail, setShowEmail] = useState(false);
+    const toggleEmail = () => {
+        setShowEmail((prev) => !prev);
+    };
 
     const formatNumber = (num) => {
         if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
@@ -71,8 +75,33 @@ const MaterialCard = ({
 
                 {/* Uploader & Time */}
                 <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    Uploaded by <span className="font-medium text-gray-800 dark:text-white">{uploadedBy?.name || 'Anonymous'}</span> • {dayjs(createdAt).fromNow()}
+                    Uploaded by{" "}
+                    {role === "moderator" ? (
+                        <button
+                            onClick={toggleEmail}
+                            className="inline-flex items-center font-medium text-indigo-600 dark:text-indigo-400 hover:underline focus:outline-none"
+                            title="Click to show/hide email"
+                        >
+                            {material.uploadedBy?.name || "Anonymous"}
+                            {showEmail ? (
+                                <ChevronUp className="w-4 h-4 ml-1" />
+                            ) : (
+                                <ChevronDown className="w-4 h-4 ml-1" />
+                            )}
+                        </button>
+                    ) : (
+                        <span className="font-medium text-gray-800 dark:text-white">
+                            {material.uploadedBy?.name || "Anonymous"}
+                        </span>
+                    )}{" "}
+                    • {dayjs(material.createdAt).fromNow()}
+                    {role === "moderator" && showEmail && material.uploadedBy?.email && (
+                        <div className="text-xs mt-1 text-indigo-700 dark:text-indigo-300 ml-1">
+                            {material.uploadedBy.email}
+                        </div>
+                    )}
                 </div>
+
 
                 {/* Program Info */}
                 <div className="text-xs italic text-gray-400 dark:text-gray-500 mb-3">

@@ -26,7 +26,7 @@ const ModDashboard = () => {
     return (
         <div className="min-h-screen px-4 py-10 bg-white dark:bg-gray-900 transition-colors duration-300">
             <div className="max-w-5xl mx-auto">
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 dark:text-white mb-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mb-8">
                     Moderator Dashboard
                 </h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
