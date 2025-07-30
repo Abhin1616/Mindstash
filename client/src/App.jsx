@@ -184,7 +184,6 @@ const App = () => {
           <Route path="/moderation" element={<ModDashboard />} />
           <Route path="/user-moderation" element={<ModerationUsers />} />
           <Route path="/report-moderation" element={<ModerationReports />} />
-          <Route path="/ban-moderation" element={<BanUsers />} />
           <Route path="/ask-ai" element={<Chat />} />
         </Routes>
       </main>
