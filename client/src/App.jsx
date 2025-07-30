@@ -17,6 +17,7 @@ import api from './config/api.js';
 import { toast } from 'react-hot-toast';
 import ModDashboard from './pages/ModDashboard.jsx';
 import BanUsers from './pages/BanUsers.jsx';
+import ModerationUsers from './pages/ModerationUsers.jsx';
 
 const App = () => {
   const navigate = useNavigate();
@@ -181,6 +182,7 @@ const App = () => {
             }
           />
           <Route path="/moderation" element={<ModDashboard />} />
+          <Route path="/user-moderation" element={<ModerationUsers />} />
           <Route path="/report-moderation" element={<ModerationReports />} />
           <Route path="/ban-moderation" element={<BanUsers />} />
           <Route path="/ask-ai" element={<Chat />} />
