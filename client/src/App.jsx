@@ -16,7 +16,6 @@ import Chat from './pages/Chat.jsx';
 import api from './config/api.js';
 import { toast } from 'react-hot-toast';
 import ModDashboard from './pages/ModDashboard.jsx';
-import BanUsers from './pages/BanUsers.jsx';
 import ModerationUsers from './pages/ModerationUsers.jsx';
 
 const App = () => {
