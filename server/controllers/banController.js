@@ -60,7 +60,9 @@ export const getUsersForModeration = async (req, res) => {
     const limit = 10;
 
 
-    const query = {};
+    const query = {
+        role: { $ne: "moderator" }
+    };
 
     if (banned === "true") {
         query.isBanned = true;
