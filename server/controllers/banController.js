@@ -74,17 +74,36 @@ export const getUsersForModeration = async (req, res) => {
 
     try {
         const skip = (parseInt(page) - 1) * parseInt(limit);
-        const users = await User.find(query)
+
+        // Base query to exclude moderators
+        const baseQuery = { role: { $ne: "moderator" } };
+
+        // Count all users excluding moderators
+        const userCount = await User.countDocuments(baseQuery);
+
+        // Apply filters on top of base query
+        const filteredQuery = { ...baseQuery };
+
+        if (banned === "true") {
+            filteredQuery.isBanned = true;
+        }
+
+        if (search) {
+            filteredQuery.email = { $regex: new RegExp(search, "i") };
+        }
+
+        const users = await User.find(filteredQuery)
             .sort({ email: 1 })
             .skip(skip)
             .limit(limit)
             .select("name email isBanned banReason");
 
-        const total = await User.countDocuments(query);
+        const total = await User.countDocuments(filteredQuery);
 
         res.json({
             users,
             total,
+            userCount,
             page: parseInt(page),
             totalPages: Math.ceil(total / limit),
         });

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, Users } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../config/api.js";
 
 const ModerationUsers = () => {
     const [users, setUsers] = useState([]);
+    const [userCount, setUserCount] = useState(0);
     const [bannedOnly, setBannedOnly] = useState(false);
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
@@ -32,6 +33,7 @@ const ModerationUsers = () => {
                 setUsers((prev) => [...prev, ...res.data.users]);
             }
 
+            setUserCount(res.data.userCount || 0);
             setPage(pageToFetch);
             setTotalPages(res.data.totalPages);
             setHasMore(pageToFetch < res.data.totalPages);
@@ -46,7 +48,6 @@ const ModerationUsers = () => {
         const handleScroll = () => {
             const bottomReached =
                 window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
-
             if (bottomReached && hasMore && !loading) {
                 fetchUsers(page + 1);
             }
@@ -74,17 +75,18 @@ const ModerationUsers = () => {
     const handleBanToggle = async (userId, isBanned) => {
         try {
             setActioningId(userId);
-            const url = `/api/moderation/users/${userId}/ban`;
+            const banUrl = `/ban-user/${userId}`;
+            const unBanUrl = `/unban-user/${userId}`;
 
             if (isBanned) {
-                await api.patch(url, { unban: true });
+                await api.patch(unBanUrl, { unban: true });
                 toast.success("User unbanned");
             } else {
                 const reason = prompt("Enter ban reason (min 10 characters):")?.trim();
                 if (!reason || reason.length < 10) {
                     return toast.error("Ban reason must be at least 10 characters.");
                 }
-                await api.patch(url, { reason });
+                await api.post(banUrl, { reason });
                 toast.success("User banned");
             }
 
@@ -102,12 +104,12 @@ const ModerationUsers = () => {
 
     return (
         <div className="max-w-5xl mx-auto p-6 text-gray-800 dark:text-gray-100">
-            <h1 className="text-3xl font-bold mb-8 text-center">👮‍♀️ User Moderation</h1>
+            <h1 className="text-3xl font-bold mb-8">User Moderation</h1>
 
             {/* Search and Filter */}
             <form
                 onSubmit={handleSearch}
-                className="flex flex-col md:flex-row gap-4 items-center mb-8"
+                className="flex flex-col md:flex-row gap-4 items-center mb-4"
             >
                 <div className="flex w-full md:w-auto flex-1">
                     <input
@@ -136,6 +138,19 @@ const ModerationUsers = () => {
                 </label>
             </form>
 
+            {/* User Count */}
+            {!loading && (
+                <div className="w-full text-center mb-8">
+                    <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 flex items-center justify-center gap-2">
+                        <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        Total users (excluding moderators):{" "}
+                        <span className="font-semibold text-blue-600 dark:text-blue-400">
+                            {userCount}
+                        </span>
+                    </p>
+                </div>
+            )}
+
             {/* User List */}
             {users.length === 0 && !loading ? (
                 <p className="text-center text-gray-500 dark:text-gray-400">No users found.</p>
@@ -163,8 +178,7 @@ const ModerationUsers = () => {
                                 className={`px-4 py-2 rounded-md text-sm font-medium transition ${user.isBanned
                                     ? "bg-gray-500 hover:bg-gray-600 text-white"
                                     : "bg-red-600 hover:bg-red-700 text-white"
-                                    } ${actioningId === user._id ? "opacity-70 cursor-not-allowed" : ""
-                                    }`}
+                                    } ${actioningId === user._id ? "opacity-70 cursor-not-allowed" : ""}`}
                             >
                                 {actioningId === user._id ? (
                                     <Loader2 className="w-4 h-4 animate-spin" />
