@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Search } from "lucide-react";
+import { CustomButton } from "../components/CustomButton";
+import { CustomCheckbox } from "../components/CustomCheckBox";
+import { CustomInput } from "../components/CustomInput";
 
 const ModerationUsers = () => {
     const [users, setUsers] = useState([]);
@@ -74,18 +74,18 @@ const ModerationUsers = () => {
                 onSubmit={handleSearchSubmit}
                 className="flex flex-col sm:flex-row gap-2 mb-4 items-center"
             >
-                <Input
+                <CustomInput
                     placeholder="Search by email..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="w-full sm:w-auto flex-1"
                 />
-                <Button type="submit" variant="outline" className="flex items-center gap-2">
+                <CustomButton type="submit" variant="outline" className="flex items-center gap-2">
                     <Search className="w-4 h-4" />
                     Search
-                </Button>
+                </CustomButton>
                 <label className="flex items-center gap-2">
-                    <Checkbox checked={bannedOnly} onCheckedChange={() => setBannedOnly((v) => !v)} />
+                    <CustomCheckbox checked={bannedOnly} onCheckedChange={() => setBannedOnly((v) => !v)} />
                     Show only banned
                 </label>
             </form>
@@ -113,7 +113,7 @@ const ModerationUsers = () => {
                                         </p>
                                     )}
                                 </div>
-                                <Button
+                                <CustomButton
                                     variant={user.isBanned ? "secondary" : "destructive"}
                                     className="mt-3 sm:mt-0"
                                     onClick={() => handleBanToggle(user._id, user.isBanned)}
@@ -126,7 +126,7 @@ const ModerationUsers = () => {
                                     ) : (
                                         "Ban"
                                     )}
-                                </Button>
+                                </CustomButton>
                             </div>
                         ))
                     )}
@@ -136,14 +136,14 @@ const ModerationUsers = () => {
             {totalPages > 1 && (
                 <div className="flex justify-center mt-6 gap-2">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                        <Button
+                        <CustomButton
                             key={p}
                             onClick={() => setPage(p)}
                             variant={p === page ? "default" : "outline"}
                             className="px-3"
                         >
                             {p}
-                        </Button>
+                        </CustomButton>
                     ))}
                 </div>
             )}
