@@ -3,7 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { Loader2, Search } from "lucide-react";
 import { CustomButton } from "../components/CustomButton.jsx";
-import { CustomCheckbox } from "../components/CustomCheckBox.jsx";
+import { CustomCheckbox } from "../components/CustomCheckbox.jsx";
 import { CustomInput } from "../components/CustomInput.jsx";
 
 const ModerationUsers = () => {
