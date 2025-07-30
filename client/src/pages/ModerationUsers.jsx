@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Loader2, Search, Users } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../config/api.js";
+import BanUserModal from "./BanUserModal.jsx";
 
 const ModerationUsers = () => {
     const [users, setUsers] = useState([]);
@@ -206,21 +207,23 @@ const ModerationUsers = () => {
             {!loading && !hasMore && users.length > 0 && (
                 <p className="text-center text-gray-500 mt-6">No more users to load.</p>
             )}
-            <BanUserModal
-                user={banModalUser}
-                onClose={(banInfo) => {
-                    handleModalClose();
-                    if (banInfo?.success) {
-                        setUsers((prev) =>
-                            prev.map((u) =>
-                                u._id === banModalUser._id
-                                    ? { ...u, isBanned: true, banReason: banInfo.reason }
-                                    : u
-                            )
-                        );
-                    }
-                }}
-            />
+            {banModalUser && (
+                <BanUserModal
+                    user={banModalUser}
+                    onClose={(banInfo) => {
+                        handleModalClose();
+                        if (banInfo?.success) {
+                            setUsers((prev) =>
+                                prev.map((u) =>
+                                    u._id === banModalUser._id
+                                        ? { ...u, isBanned: true, banReason: banInfo.reason }
+                                        : u
+                                )
+                            );
+                        }
+                    }}
+                />
+            )}
         </div>
     );
 };
