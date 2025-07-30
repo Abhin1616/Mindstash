@@ -11,18 +11,30 @@ const ModerationUsers = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
     const [actioningId, setActioningId] = useState(null);
+    const [hasMore, setHasMore] = useState(true);
 
-    const fetchUsers = async () => {
+    const fetchUsers = async (pageToFetch = 1, reset = false) => {
+        if (loading || (!hasMore && !reset)) return;
+
         try {
             setLoading(true);
             const params = {
-                page,
+                page: pageToFetch,
                 banned: bannedOnly ? "true" : undefined,
                 search: search.trim() || undefined,
             };
+
             const res = await api.get("/users", { params });
-            setUsers(res.data.users);
+
+            if (reset) {
+                setUsers(res.data.users);
+            } else {
+                setUsers((prev) => [...prev, ...res.data.users]);
+            }
+
+            setPage(pageToFetch);
             setTotalPages(res.data.totalPages);
+            setHasMore(pageToFetch < res.data.totalPages);
         } catch (err) {
             toast.error("Failed to fetch users");
         } finally {
@@ -31,8 +43,33 @@ const ModerationUsers = () => {
     };
 
     useEffect(() => {
-        fetchUsers();
-    }, [page, bannedOnly]);
+        const handleScroll = () => {
+            const bottomReached =
+                window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
+
+            if (bottomReached && hasMore && !loading) {
+                fetchUsers(page + 1);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [page, hasMore, loading]);
+
+    useEffect(() => {
+        setUsers([]);
+        setPage(1);
+        setHasMore(true);
+        fetchUsers(1, true);
+    }, [bannedOnly]);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        setUsers([]);
+        setPage(1);
+        setHasMore(true);
+        fetchUsers(1, true);
+    };
 
     const handleBanToggle = async (userId, isBanned) => {
         try {
@@ -51,18 +88,16 @@ const ModerationUsers = () => {
                 toast.success("User banned");
             }
 
-            fetchUsers();
+            setUsers((prev) =>
+                prev.map((user) =>
+                    user._id === userId ? { ...user, isBanned: !isBanned } : user
+                )
+            );
         } catch (err) {
             toast.error("Ban/unban failed");
         } finally {
             setActioningId(null);
         }
-    };
-
-    const handleSearch = (e) => {
-        e.preventDefault();
-        setPage(1);
-        fetchUsers();
     };
 
     return (
@@ -102,11 +137,7 @@ const ModerationUsers = () => {
             </form>
 
             {/* User List */}
-            {loading ? (
-                <div className="text-center py-10">
-                    <Loader2 className="w-6 h-6 animate-spin text-blue-500 mx-auto" />
-                </div>
-            ) : users.length === 0 ? (
+            {users.length === 0 && !loading ? (
                 <p className="text-center text-gray-500 dark:text-gray-400">No users found.</p>
             ) : (
                 <div className="space-y-4">
@@ -117,7 +148,9 @@ const ModerationUsers = () => {
                         >
                             <div>
                                 <p className="font-semibold text-lg">{user.name}</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    {user.email}
+                                </p>
                                 {user.isBanned && (
                                     <p className="text-sm text-red-600 mt-1">
                                         🚫 <span className="italic">Banned:</span> {user.banReason}
@@ -130,7 +163,8 @@ const ModerationUsers = () => {
                                 className={`px-4 py-2 rounded-md text-sm font-medium transition ${user.isBanned
                                     ? "bg-gray-500 hover:bg-gray-600 text-white"
                                     : "bg-red-600 hover:bg-red-700 text-white"
-                                    } ${actioningId === user._id ? "opacity-70 cursor-not-allowed" : ""}`}
+                                    } ${actioningId === user._id ? "opacity-70 cursor-not-allowed" : ""
+                                    }`}
                             >
                                 {actioningId === user._id ? (
                                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -145,22 +179,13 @@ const ModerationUsers = () => {
                 </div>
             )}
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="flex justify-center mt-8 gap-2 flex-wrap">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                        <button
-                            key={p}
-                            onClick={() => setPage(p)}
-                            className={`px-3 py-1 rounded-md border ${p === page
-                                ? "bg-blue-600 text-white border-blue-600"
-                                : "bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                                }`}
-                        >
-                            {p}
-                        </button>
-                    ))}
+            {loading && (
+                <div className="text-center py-10">
+                    <Loader2 className="w-6 h-6 animate-spin text-blue-500 mx-auto" />
                 </div>
+            )}
+            {!loading && !hasMore && users.length > 0 && (
+                <p className="text-center text-gray-500 mt-6">No more users to load.</p>
             )}
         </div>
     );
