@@ -132,15 +132,14 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
         useEffect(() => {
             const handleOutside = (e) => {
                 if (localRef.current && !localRef.current.contains(e.target)) {
-                    console.log('Clicked outside before setOpenDropdown:', e.target);
-                    setOpenDropdown(null);
-                    console.log('Clicked outside before setOpenDropdown:', e.target);
+                    setTimeout(() => {
+                        setOpenDropdown(null);
+                    }, 50);
                 }
             };
             document.addEventListener('mousedown', handleOutside);
             return () => document.removeEventListener('mousedown', handleOutside);
         }, []);
-        console.log('Dropdown field:', field, 'Open state:', openDropdown, 'Selected:', formData[field]);
         return (
             <div className="relative" ref={localRef}>
                 <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">{label}</label>
