@@ -37,7 +37,7 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
             ...(name === 'program' ? { branch: '', semester: '' } : {}),
             ...(name === 'branch' ? { semester: '' } : {}),
         }));
-        setOpenDropdown(null);
+        setOpenDropdown(null); // Close dropdown after selection
     };
 
     const validate = () => {
@@ -131,15 +131,20 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
 
         useEffect(() => {
             const handleOutside = (e) => {
-                if (localRef.current && !localRef.current.contains(e.target)) {
-                    setTimeout(() => {
-                        setOpenDropdown(null);
-                    }, 50);
+                // Check if the click is outside the dropdown and not on the dropdown button itself
+                if (localRef.current && !localRef.current.contains(e.target) && openDropdown === field) {
+                    setOpenDropdown(null);
                 }
             };
             document.addEventListener('mousedown', handleOutside);
             return () => document.removeEventListener('mousedown', handleOutside);
-        }, []);
+        }, [openDropdown, field]); // Dependency array: Re-run if openDropdown or field changes
+
+        const handleOptionClick = (val, e) => {
+            e.stopPropagation(); // Prevent the click from bubbling up to the document
+            handleChange(field, val);
+        };
+
         return (
             <div className="relative" ref={localRef}>
                 <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">{label}</label>
@@ -158,7 +163,7 @@ const AuthPage = ({ programs, setLoggedIn, setCurrentUserId }) => {
                             options.map((val, i) => (
                                 <div
                                     key={i}
-                                    onClick={() => handleChange(field, val)}
+                                    onClick={(e) => handleOptionClick(val, e)} // Use the new handler
                                     className={`px-3 py-2 text-sm cursor-pointer hover:bg-blue-100 dark:hover:bg-zinc-700 ${formData[field] === val ? 'bg-blue-100 dark:bg-zinc-700 font-semibold' : ''}`}
                                 >
                                     {val}
