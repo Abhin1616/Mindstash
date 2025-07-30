@@ -15,7 +15,6 @@ const ModerationUsers = () => {
     const [actioningId, setActioningId] = useState(null);
     const [hasMore, setHasMore] = useState(true);
     const [banModalUser, setBanModalUser] = useState(null);
-    console.log(banModalUser)
     const handleModalClose = () => setBanModalUser(null);
     const fetchUsers = async (pageToFetch = 1, reset = false) => {
         if (loading || (!hasMore && !reset)) return;
@@ -179,7 +178,7 @@ const ModerationUsers = () => {
                                 onClick={() =>
                                     user.isBanned
                                         ? handleBanToggle(user._id, true)
-                                        : setBanModalUser(user)
+                                        : setBanModalUser({ ...user, id: user._id })
                                 }
                                 disabled={actioningId === user._id}
                                 className={`px-4 py-2 rounded-md text-sm font-medium transition ${user.isBanned
