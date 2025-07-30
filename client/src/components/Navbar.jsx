@@ -82,10 +82,16 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                         {
                             to: role === "moderator" ? "/moderation" : "/reports",
                             label: role === "moderator" ? "Moderation" : "My Reports",
-                            auth: true
+                            auth: true,
+                            activeMatch: role === "moderator"
+                                ? (pathname) =>
+                                    ["/moderation", "/user-moderation", "/report-moderation"].some((path) =>
+                                        pathname.startsWith(path)
+                                    )
+                                : (pathname) => pathname === "/reports"
                         },
-                        { to: "/chat", label: "AI Chat", auth: true },
-                    ].map(({ to, label, auth }) => (
+                        { to: "/chat", label: "AI Chat", auth: true }
+                    ].map(({ to, label, auth, activeMatch }) => (
                         <Link
                             key={to}
                             to={loggedIn || !auth ? to : "#"}
@@ -96,7 +102,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                                     navigate("/auth", { replace: true });
                                 }
                             }}
-                            className={`text-sm font-medium ${isActive(to)
+                            className={`text-sm font-medium ${activeMatch && activeMatch(location.pathname)
                                 ? "text-blue-600 dark:text-blue-400 font-semibold"
                                 : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                                 }`}
@@ -197,14 +203,20 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                         {
                             to: role === "moderator" ? "/moderation" : "/reports",
                             label: role === "moderator" ? "Moderation" : "My Reports",
-                            auth: true
+                            auth: true,
+                            activeMatch: role === "moderator"
+                                ? (pathname) =>
+                                    ["/moderation", "/user-moderation", "/report-moderation"].some((path) =>
+                                        pathname.startsWith(path)
+                                    )
+                                : (pathname) => pathname === "/reports"
                         },
                         { to: "/chat", label: "AI Chat", auth: true }
-                    ].map(({ to, label, auth }) => (
+                    ].map(({ to, label, auth, activeMatch }) => (
                         <button
                             key={to}
                             onClick={(e) => handleMobileNav(e, to, auth)}
-                            className={`block w-full text-left px-3 py-2 rounded-md transition active:scale-95 ${isActive(to)
+                            className={`block w-full text-left px-3 py-2 rounded-md transition active:scale-95 ${activeMatch && activeMatch(location.pathname)
                                 ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 font-semibold"
                                 : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                                 }`}
