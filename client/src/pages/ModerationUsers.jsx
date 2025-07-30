@@ -212,10 +212,10 @@ const ModerationUsers = () => {
                     user={banModalUser}
                     onClose={(banInfo) => {
                         handleModalClose();
-                        if (banInfo?.success) {
+                        if (banInfo?.success && banInfo.id) {
                             setUsers((prev) =>
                                 prev.map((u) =>
-                                    u._id === banModalUser._id
+                                    u._id === banInfo.id
                                         ? { ...u, isBanned: true, banReason: banInfo.reason }
                                         : u
                                 )

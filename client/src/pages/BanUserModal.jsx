@@ -26,7 +26,7 @@ const BanUserModal = ({ user, onClose }) => {
             );
 
             toast.success("User banned successfully");
-            onClose();
+            onClose({ success: true, reason: reason.trim(), id: user._id });
             navigate('/user-moderation', { replace: true })
         } catch (err) {
             console.error(err);
