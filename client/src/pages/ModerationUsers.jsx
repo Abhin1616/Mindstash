@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { Loader2, Search } from "lucide-react";
 import { CustomButton } from "../components/CustomButton.jsx";
 import { CustomCheckbox } from "../components/CustomCheckbox.jsx";
 import { CustomInput } from "../components/CustomInput.jsx";
+import api from "../config/api.js";
 
 const ModerationUsers = () => {
     const [users, setUsers] = useState([]);
@@ -23,7 +23,7 @@ const ModerationUsers = () => {
                 banned: bannedOnly ? "true" : undefined,
                 search: search.trim() ? search.trim() : undefined,
             };
-            const res = await axios.get("/users", { params });
+            const res = await api.get("/users", { params });
             setUsers(res.data.users);
             setTotalPages(res.data.totalPages);
         } catch (err) {
