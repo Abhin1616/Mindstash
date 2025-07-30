@@ -178,7 +178,7 @@ const ModerationUsers = () => {
                                 onClick={() =>
                                     user.isBanned
                                         ? handleBanToggle(user._id, true)
-                                        : setBanModalUser({ ...user, id: user._id })
+                                        : setBanModalUser({ ...user, id: user._id, _id: user._id })
                                 }
                                 disabled={actioningId === user._id}
                                 className={`px-4 py-2 rounded-md text-sm font-medium transition ${user.isBanned
