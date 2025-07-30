@@ -23,7 +23,7 @@ const ModerationUsers = () => {
                 banned: bannedOnly ? "true" : undefined,
                 search: search.trim() ? search.trim() : undefined,
             };
-            const res = await axios.get("/api/moderation/users", { params });
+            const res = await axios.get("/users", { params });
             setUsers(res.data.users);
             setTotalPages(res.data.totalPages);
         } catch (err) {
