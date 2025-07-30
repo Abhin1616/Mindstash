@@ -15,6 +15,7 @@ const ModerationUsers = () => {
     const [actioningId, setActioningId] = useState(null);
     const [hasMore, setHasMore] = useState(true);
     const [banModalUser, setBanModalUser] = useState(null);
+    console.log(banModalUser)
     const handleModalClose = () => setBanModalUser(null);
     const fetchUsers = async (pageToFetch = 1, reset = false) => {
         if (loading || (!hasMore && !reset)) return;
