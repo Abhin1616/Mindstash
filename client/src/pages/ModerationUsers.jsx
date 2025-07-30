@@ -13,7 +13,8 @@ const ModerationUsers = () => {
     const [loading, setLoading] = useState(false);
     const [actioningId, setActioningId] = useState(null);
     const [hasMore, setHasMore] = useState(true);
-
+    const [banModalUser, setBanModalUser] = useState(null);
+    const handleModalClose = () => setBanModalUser(null);
     const fetchUsers = async (pageToFetch = 1, reset = false) => {
         if (loading || (!hasMore && !reset)) return;
 
@@ -143,7 +144,7 @@ const ModerationUsers = () => {
                 <div className="w-full text-center mb-8">
                     <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 flex items-center justify-center gap-2">
                         <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                        Total users (excluding moderators):{" "}
+                        Total users: {" "}
                         <span className="font-semibold text-blue-600 dark:text-blue-400">
                             {userCount}
                         </span>
@@ -173,7 +174,11 @@ const ModerationUsers = () => {
                                 )}
                             </div>
                             <button
-                                onClick={() => handleBanToggle(user._id, user.isBanned)}
+                                onClick={() =>
+                                    user.isBanned
+                                        ? handleBanToggle(user._id, true)
+                                        : setBanModalUser(user)
+                                }
                                 disabled={actioningId === user._id}
                                 className={`px-4 py-2 rounded-md text-sm font-medium transition ${user.isBanned
                                     ? "bg-gray-500 hover:bg-gray-600 text-white"
@@ -201,6 +206,21 @@ const ModerationUsers = () => {
             {!loading && !hasMore && users.length > 0 && (
                 <p className="text-center text-gray-500 mt-6">No more users to load.</p>
             )}
+            <BanUserModal
+                user={banModalUser}
+                onClose={(banInfo) => {
+                    handleModalClose();
+                    if (banInfo?.success) {
+                        setUsers((prev) =>
+                            prev.map((u) =>
+                                u._id === banModalUser._id
+                                    ? { ...u, isBanned: true, banReason: banInfo.reason }
+                                    : u
+                            )
+                        );
+                    }
+                }}
+            />
         </div>
     );
 };
