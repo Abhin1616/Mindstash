@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import { Loader2, Search } from "lucide-react";
-import { CustomButton } from "../components/CustomButton.jsx";
-import { CustomCheckbox } from "../components/CustomCheckbox.jsx";
-import { CustomInput } from "../components/CustomInput.jsx";
+import toast from "react-hot-toast";
 import api from "../config/api.js";
 
 const ModerationUsers = () => {
@@ -21,7 +18,7 @@ const ModerationUsers = () => {
             const params = {
                 page,
                 banned: bannedOnly ? "true" : undefined,
-                search: search.trim() ? search.trim() : undefined,
+                search: search.trim() || undefined,
             };
             const res = await api.get("/users", { params });
             setUsers(res.data.users);
@@ -41,6 +38,7 @@ const ModerationUsers = () => {
         try {
             setActioningId(userId);
             const url = `/api/moderation/users/${userId}/ban`;
+
             if (isBanned) {
                 await api.patch(url, { unban: true });
                 toast.success("User unbanned");
@@ -52,6 +50,7 @@ const ModerationUsers = () => {
                 await api.patch(url, { reason });
                 toast.success("User banned");
             }
+
             fetchUsers();
         } catch (err) {
             toast.error("Ban/unban failed");
@@ -60,90 +59,89 @@ const ModerationUsers = () => {
         }
     };
 
-    const handleSearchSubmit = (e) => {
+    const handleSearch = (e) => {
         e.preventDefault();
         setPage(1);
         fetchUsers();
     };
 
     return (
-        <div className="p-6 max-w-5xl mx-auto">
-            <h1 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">
-                User Moderation
-            </h1>
+        <div className="max-w-5xl mx-auto p-6 text-gray-800 dark:text-gray-100">
+            <h1 className="text-3xl font-bold mb-8 text-center">👮‍♀️ User Moderation</h1>
 
-            {/* Search & Filters */}
+            {/* Search and Filter */}
             <form
-                onSubmit={handleSearchSubmit}
-                className="flex flex-col md:flex-row items-center gap-4 mb-6"
+                onSubmit={handleSearch}
+                className="flex flex-col md:flex-row gap-4 items-center mb-8"
             >
-                <CustomInput
-                    placeholder="Search by email..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1"
-                />
-                <CustomButton type="submit" variant="outline" className="flex items-center gap-2">
-                    <Search className="w-4 h-4" />
-                    Search
-                </CustomButton>
-                <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                    <CustomCheckbox
+                <div className="flex w-full md:w-auto flex-1">
+                    <input
+                        type="text"
+                        placeholder="Search by email..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="w-full px-4 py-2 border rounded-l-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                        type="submit"
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-r-md flex items-center gap-2"
+                    >
+                        <Search className="w-4 h-4" />
+                        Search
+                    </button>
+                </div>
+                <label className="flex items-center gap-2 text-sm">
+                    <input
+                        type="checkbox"
                         checked={bannedOnly}
-                        onChange={() => setBannedOnly((v) => !v)}
+                        onChange={() => setBannedOnly((prev) => !prev)}
+                        className="w-4 h-4 accent-blue-600"
                     />
                     Show only banned
                 </label>
             </form>
 
-            {/* Loading */}
+            {/* User List */}
             {loading ? (
                 <div className="text-center py-10">
-                    <Loader2 className="animate-spin w-6 h-6 mx-auto text-blue-500" />
+                    <Loader2 className="w-6 h-6 animate-spin text-blue-500 mx-auto" />
                 </div>
+            ) : users.length === 0 ? (
+                <p className="text-center text-gray-500 dark:text-gray-400">No users found.</p>
             ) : (
                 <div className="space-y-4">
-                    {/* No Users */}
-                    {users.length === 0 ? (
-                        <p className="text-center text-gray-500 dark:text-gray-400">
-                            No users found.
-                        </p>
-                    ) : (
-                        users.map((user) => (
-                            <div
-                                key={user._id}
-                                className="border dark:border-gray-700 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-                            >
-                                <div>
-                                    <p className="font-semibold text-lg text-gray-800 dark:text-white">
-                                        {user.name}
+                    {users.map((user) => (
+                        <div
+                            key={user._id}
+                            className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow transition hover:shadow-md"
+                        >
+                            <div>
+                                <p className="font-semibold text-lg">{user.name}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+                                {user.isBanned && (
+                                    <p className="text-sm text-red-600 mt-1">
+                                        🚫 <span className="italic">Banned:</span> {user.banReason}
                                     </p>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                                        {user.email}
-                                    </p>
-                                    {user.isBanned && (
-                                        <p className="text-sm text-red-600 mt-1">
-                                            🚫 <span className="italic">Banned:</span> {user.banReason}
-                                        </p>
-                                    )}
-                                </div>
-                                <CustomButton
-                                    variant={user.isBanned ? "secondary" : "destructive"}
-                                    onClick={() => handleBanToggle(user._id, user.isBanned)}
-                                    className="w-full sm:w-auto"
-                                    disabled={actioningId === user._id}
-                                >
-                                    {actioningId === user._id ? (
-                                        <Loader2 className="animate-spin w-4 h-4" />
-                                    ) : user.isBanned ? (
-                                        "Unban"
-                                    ) : (
-                                        "Ban"
-                                    )}
-                                </CustomButton>
+                                )}
                             </div>
-                        ))
-                    )}
+                            <button
+                                onClick={() => handleBanToggle(user._id, user.isBanned)}
+                                disabled={actioningId === user._id}
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition ${user.isBanned
+                                    ? "bg-gray-500 hover:bg-gray-600 text-white"
+                                    : "bg-red-600 hover:bg-red-700 text-white"
+                                    } ${actioningId === user._id ? "opacity-70 cursor-not-allowed" : ""}`}
+                            >
+                                {actioningId === user._id ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : user.isBanned ? (
+                                    "Unban"
+                                ) : (
+                                    "Ban"
+                                )}
+                            </button>
+                        </div>
+                    ))}
                 </div>
             )}
 
@@ -151,14 +149,16 @@ const ModerationUsers = () => {
             {totalPages > 1 && (
                 <div className="flex justify-center mt-8 gap-2 flex-wrap">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                        <CustomButton
+                        <button
                             key={p}
                             onClick={() => setPage(p)}
-                            variant={p === page ? "default" : "outline"}
-                            className="px-3 py-1 text-sm"
+                            className={`px-3 py-1 rounded-md border ${p === page
+                                ? "bg-blue-600 text-white border-blue-600"
+                                : "bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                }`}
                         >
                             {p}
-                        </CustomButton>
+                        </button>
                     ))}
                 </div>
             )}
