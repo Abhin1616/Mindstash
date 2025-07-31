@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
+// src/pages/Dashboard.jsx
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import MaterialCard from '../components/MaterialCard.jsx';
 import MaterialFilters from '../components/MaterialFilters.jsx';
 import MaterialPreviewModal from '../components/MaterialPreviewModal.jsx';
@@ -8,7 +9,25 @@ import api from '../config/api.js';
 import BanUserModal from './BanUserModal.jsx';
 import { IoCloseCircleOutline } from 'react-icons/io5';
 
+// You can create a simple debounce hook or function
+const useDebounce = (value, delay) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+};
+
 const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, currentUserId, role }) => {
+    // ... all other state variables
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
@@ -24,7 +43,20 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     const [deletingId, setDeletingId] = useState(null);
     const [banUser, setBanUser] = useState(null);
 
+    // Create a local state for the search input value
+    const [searchInputValue, setSearchInputValue] = useState(filters.search);
+    // Debounce the search input value
+    const debouncedSearchTerm = useDebounce(searchInputValue, 500); // 500ms debounce
+
+    // Sync the debounced search term with the global filters state
+    useEffect(() => {
+        if (debouncedSearchTerm !== filters.search) {
+            setFilters(prev => ({ ...prev, search: debouncedSearchTerm }));
+        }
+    }, [debouncedSearchTerm, setFilters, filters.search]);
+
     const handleUpvote = async (materialId) => {
+        // ... (upvote logic remains the same)
         try {
             const res = await api.post(
                 `/materials/${materialId}/upvote`,
@@ -51,12 +83,12 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
 
     // Handler for the new search input
     const handleSearchChange = (e) => {
-        setFilters(prev => ({ ...prev, search: e.target.value }));
+        setSearchInputValue(e.target.value);
     };
 
     // Handler for the clear search button
     const handleClearSearch = () => {
-        setFilters(prev => ({ ...prev, search: "" }));
+        setSearchInputValue("");
     };
 
     useEffect(() => {
@@ -68,6 +100,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     }, [filters, sortByRecent]);
 
     const onDelete = async (id) => {
+        // ... (delete logic remains the same)
         try {
             setDeletingId(id);
             const res = await api.delete(`/materials/${id}`, {
@@ -141,11 +174,11 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 <input
                     type="text"
                     placeholder="Search materials by title or tags..."
-                    value={filters.search}
+                    value={searchInputValue} // Use the local state here
                     onChange={handleSearchChange}
                     className="w-full p-2 pl-4 pr-10 rounded-lg border dark:border-white/10 dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                {filters.search && (
+                {searchInputValue && (
                     <button
                         onClick={handleClearSearch}
                         className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -179,9 +212,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                         </p>
                         {filters.search && (
                             <button
-                                onClick={() => {
-                                    setFilters(prev => ({ ...prev, search: "" }));
-                                }}
+                                onClick={handleClearSearch}
                                 className="mt-3 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-gray-700 dark:text-gray-100 rounded-lg"
                             >
                                 Clear Search
