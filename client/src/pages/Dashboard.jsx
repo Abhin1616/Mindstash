@@ -49,12 +49,10 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
         }
     };
 
-    // Handler for the new search input
     const handleSearchChange = (e) => {
         setFilters(prev => ({ ...prev, search: e.target.value }));
     };
 
-    // Handler for the clear search button
     const handleClearSearch = () => {
         setFilters(prev => ({ ...prev, search: "" }));
     };
@@ -136,7 +134,6 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
 
     return (
         <div className="p-4 space-y-6 bg-zinc-50 dark:bg-zinc-900 min-h-screen transition-colors duration-300">
-            {/* The search bar is added back here */}
             <div className="relative mb-4">
                 <input
                     type="text"
@@ -154,6 +151,20 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                     </button>
                 )}
             </div>
+
+            {filters.search && (
+                <div className="mb-4 flex justify-between items-center px-4 md:px-6">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                        Showing results for: <span className="font-medium">{filters.search}</span>
+                    </p>
+                    <button
+                        onClick={handleClearSearch}
+                        className="text-xs font-medium px-3 py-1 border rounded bg-white dark:bg-zinc-800 text-red-600 border-red-300 hover:bg-red-50 dark:hover:bg-red-900 transition"
+                    >
+                        Clear Search
+                    </button>
+                </div>
+            )}
 
             <MaterialFilters
                 filters={filters}
