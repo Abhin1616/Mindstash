@@ -95,7 +95,14 @@ const Profile = ({ programs }) => {
                     type="button"
                     disabled={disabled}
                     onClick={() => setOpenDropdown(openDropdown === field ? null : field)}
-                    className={`w-full flex justify-between items-center px-3 py-2 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white ${disabled && 'opacity-50 cursor-not-allowed'}`}
+                    className={`
+                        w-full flex justify-between items-center px-3 py-2 rounded border
+                        transition-colors duration-200 ease-in-out
+                        ${disabled
+                            ? 'bg-gray-200 dark:bg-zinc-700 text-gray-500 dark:text-gray-400 cursor-not-allowed border-gray-300 dark:border-zinc-600'
+                            : 'bg-white dark:bg-zinc-900 text-gray-800 dark:text-white border-gray-300 dark:border-white/10 hover:border-blue-500 dark:hover:border-blue-500'
+                        }
+                    `}
                 >
                     <span>{formData[field] || `Select ${label}`}</span>
                     <BsChevronDown className="ml-2 text-xs" />
@@ -105,13 +112,13 @@ const Profile = ({ programs }) => {
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 5 }}
-                        className="absolute z-20 mt-1 w-full max-h-32 overflow-y-auto bg-white dark:bg-zinc-700 shadow rounded border dark:border-white/10 text-sm"
+                        className="absolute z-20 mt-1 w-full max-h-32 overflow-y-auto bg-white dark:bg-zinc-800 shadow-lg rounded border dark:border-white/10 text-sm"
                     >
                         {options.map((opt, i) => (
                             <li
                                 key={i}
                                 onClick={() => handleChange(field, opt)}
-                                className="px-3 py-2 hover:bg-blue-100 dark:hover:bg-zinc-600 cursor-pointer"
+                                className="px-3 py-2 hover:bg-blue-100 dark:hover:bg-zinc-700 cursor-pointer text-gray-800 dark:text-white"
                             >
                                 {opt}
                             </li>
@@ -123,7 +130,7 @@ const Profile = ({ programs }) => {
         );
     };
 
-    if (!userData) return <div className="text-center p-10">Loading...</div>;
+    if (!userData) return <div className="text-center p-10 text-gray-800 dark:text-gray-300">Loading...</div>;
 
     return (
         <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
@@ -136,7 +143,7 @@ const Profile = ({ programs }) => {
                 initial={{ opacity: 0, y: 40, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="relative w-full max-w-md bg-white dark:bg-zinc-800 border dark:border-white/10 shadow-xl rounded-2xl p-6 space-y-6 z-10 backdrop-blur-md"
+                className="relative w-full max-w-md bg-white dark:bg-zinc-800 border dark:border-white/10 shadow-xl rounded-2xl p-6 space-y-6 z-10"
             >
                 <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-white">Profile</h2>
 
@@ -149,10 +156,10 @@ const Profile = ({ programs }) => {
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => handleChange('name', e.target.value)}
-                                className="w-full p-2 rounded border dark:border-white/10 dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                                className="w-full p-2 rounded border dark:border-white/10 dark:bg-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                             />
                         ) : (
-                            <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-700 text-sm text-gray-800 dark:text-white">
+                            <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-900 text-sm text-gray-800 dark:text-white">
                                 {userData.name}
                             </div>
                         )}
@@ -162,7 +169,7 @@ const Profile = ({ programs }) => {
                     {/* Email */}
                     <div>
                         <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Email</label>
-                        <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-700 text-sm text-gray-800 dark:text-white">
+                        <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-900 text-sm text-gray-800 dark:text-white">
                             {userData.email}
                         </div>
                     </div>
@@ -178,21 +185,21 @@ const Profile = ({ programs }) => {
                         <>
                             <div>
                                 <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Program</label>
-                                <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-700 text-sm text-gray-800 dark:text-white">
+                                <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-900 text-sm text-gray-800 dark:text-white">
                                     {userData.program}
                                 </div>
                             </div>
 
                             <div>
                                 <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Branch</label>
-                                <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-700 text-sm text-gray-800 dark:text-white">
+                                <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-900 text-sm text-gray-800 dark:text-white">
                                     {userData.branch}
                                 </div>
                             </div>
 
                             <div>
                                 <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Semester</label>
-                                <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-700 text-sm text-gray-800 dark:text-white">
+                                <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-900 text-sm text-gray-800 dark:text-white">
                                     {userData.semester}
                                 </div>
                             </div>
