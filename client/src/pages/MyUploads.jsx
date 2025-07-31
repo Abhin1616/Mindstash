@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import MaterialCard from '../components/MaterialCard.jsx';
 import MaterialPreviewModal from '../components/MaterialPreviewModal.jsx';
 import { Plus } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const MyUploads = ({ currentUserId }) => {
     const [page, setPage] = useState(1);
@@ -104,7 +105,7 @@ const MyUploads = ({ currentUserId }) => {
             if (res.status === 200) {
                 setMaterialList((prev) => prev.filter((m) => m._id !== id));
                 seenIdsRef.current.delete(id);
-                console.log('Deleted:', id);
+                toast.success("Material deleted successfully")
                 setMaterialCount(materialCount - 1)
             }
         } catch (error) {
