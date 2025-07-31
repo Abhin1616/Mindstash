@@ -16,7 +16,7 @@ export default {
         'slide-down': 'slide-down 0.2s ease-out',
       },
       screens: {
-        mdnav: '1050px',
+        mdnav: '850px',
         mdmat: '850px',
       },
     },
