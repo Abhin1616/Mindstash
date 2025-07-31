@@ -155,7 +155,7 @@ const MaterialCard = ({
                             </button>
                         )}
 
-                        {role === 'moderator' && (
+                        {role === 'moderator' && !isUploader && (
                             <button
                                 onClick={() => setModRemoveMaterialId(_id)}
                                 disabled={isDeleting}
