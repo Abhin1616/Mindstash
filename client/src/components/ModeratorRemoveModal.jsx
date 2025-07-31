@@ -44,6 +44,7 @@ const ModeratorRemoveModal = ({ materialId, onClose, onRemoved }) => {
             });
             toast.success('Material removed successfully');
             onRemoved(materialId);
+            onClose();
         } catch (err) {
             toast.error(err.response?.data?.error || 'Failed to delete');
         } finally {
