@@ -228,11 +228,8 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                     materialId={modRemoveMaterialId}
                     onClose={() => setModRemoveMaterialId(null)}
                     onRemoved={(id) => {
-                        setModRemoveMaterialId(null);
-                        onDelete(id);
+                        setMaterialList(prev => prev.filter(m => m._id.toString() !== id.toString()));
                     }}
-                    setMaterialList={setMaterialList}
-                    seenIdsRef={seenIdsRef}
                 />
             )}
             {banUser && (
