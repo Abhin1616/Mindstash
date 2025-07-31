@@ -4,7 +4,7 @@ import { FiBell } from "react-icons/fi";
 import toast from "react-hot-toast";
 import api from "../config/api";
 
-export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notifications, filters, setFilters, role, setRole }) {
+export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notifications, role, setRole }) {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
