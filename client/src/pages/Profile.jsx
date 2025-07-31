@@ -169,9 +169,25 @@ const Profile = ({ programs }) => {
                     {/* Email */}
                     <div>
                         <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Email</label>
-                        <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-900 text-sm text-gray-800 dark:text-white">
-                            {userData.email}
-                        </div>
+                        {isEditing ? (
+                            <>
+                                <input
+                                    type="email"
+                                    value={userData.email}
+                                    disabled
+                                    className="w-full p-2 rounded border cursor-not-allowed
+                                    bg-gray-200 dark:bg-zinc-700 text-gray-500 dark:text-gray-400
+                                    border-gray-300 dark:border-zinc-600 focus:outline-none"
+                                />
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                    Email cannot be changed.
+                                </p>
+                            </>
+                        ) : (
+                            <div className="px-3 py-2 rounded bg-gray-100 dark:bg-zinc-900 text-sm text-gray-800 dark:text-white">
+                                {userData.email}
+                            </div>
+                        )}
                     </div>
 
                     {/* Dropdowns */}
