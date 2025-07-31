@@ -226,7 +226,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
             </div>
 
             {loading && <p className="text-center text-gray-500 dark:text-gray-400">Loading...</p>}
-            {!hasMore && !loading && (
+            {!loading && !hasMore && !filters.search && materialList.length > 0 && (
                 <p className="text-center text-gray-400 dark:text-gray-500">No more materials.</p>
             )}
 
