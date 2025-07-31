@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '../config/api';
 
-const ModeratorRemoveModal = ({ materialId, onClose, onRemoved }) => {
+const ModeratorRemoveModal = ({ materialId, onClose, onRemoved, setMaterialList, seenIdsRef }) => {
     const [availableRules, setAvailableRules] = useState([]);
     const [brokenRules, setBrokenRules] = useState([]);
     const [fieldError, setFieldError] = useState('');
@@ -42,6 +42,10 @@ const ModeratorRemoveModal = ({ materialId, onClose, onRemoved }) => {
                 data: { brokenRules },
                 withCredentials: true,
             });
+            if (res.status === 200) {
+                setMaterialList(prev => prev.filter(material => material._id !== id));
+                seenIdsRef.current.delete(id);
+            }
             toast.success('Material removed successfully');
             onRemoved(materialId);
         } catch (err) {
