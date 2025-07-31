@@ -7,6 +7,7 @@ import ModeratorRemoveModal from '../components/ModeratorRemoveModal.jsx';
 import api from '../config/api.js';
 import BanUserModal from './BanUserModal.jsx';
 import { IoCloseCircleOutline } from 'react-icons/io5';
+import toast from 'react-hot-toast';
 
 const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, currentUserId, role }) => {
     const [page, setPage] = useState(1);
@@ -76,6 +77,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 setMaterialList(prev => prev.filter(material => material._id !== id));
                 seenIdsRef.current.delete(id);
             }
+            toast.success("Material deleted sucessfully")
         } catch (error) {
             console.error("Delete error:", error.response?.data || error);
         } finally {
