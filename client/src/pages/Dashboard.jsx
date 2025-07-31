@@ -168,6 +168,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 onClose={() => setPreviewMaterial(null)}
                 material={previewMaterial}
                 currentUserId={currentUserId}
+                role={role}
             />
 
             <div className="grid grid-cols-1 gap-6">

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Download, Flag } from 'lucide-react';
+import { X, Download, Flag, Trash2 } from 'lucide-react';
 import getDownloadUrl from '../utils/getDownloadUrl';
 
-const MaterialPreviewModal = ({ isOpen, onClose, material, onReport, currentUserId }) => {
+const MaterialPreviewModal = ({ isOpen, onClose, material, onReport, currentUserId, role, setModRemoveMaterialId }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [previewKey, setPreviewKey] = useState(0);
 
@@ -16,7 +16,7 @@ const MaterialPreviewModal = ({ isOpen, onClose, material, onReport, currentUser
 
     if (!material) return null;
 
-    const { title, description, fileUrl, fileType, program, uploadedBy, branch, semester } = material;
+    const { _id, title, description, fileUrl, fileType, program, uploadedBy, branch, semester } = material;
     const isPDF = fileType === 'pdf';
 
     return (
@@ -94,7 +94,7 @@ const MaterialPreviewModal = ({ isOpen, onClose, material, onReport, currentUser
                                         <Download size={16} /> Download
                                     </button>
 
-                                    {uploadedBy?._id !== currentUserId && (
+                                    {uploadedBy?._id !== currentUserId && role !== "moderator" && (
                                         <button
                                             onClick={onReport}
                                             disabled={currentUserId == null}
@@ -104,6 +104,16 @@ const MaterialPreviewModal = ({ isOpen, onClose, material, onReport, currentUser
                                             <Flag size={16} /> Report
                                         </button>
                                     )}
+                                    {uploadedBy?._id !== currentUserId && role === "moderator" && (
+                                        <button
+                                            onClick={setModRemoveMaterialId(_id)}
+                                            className={`flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm transition
+                                                }`}
+                                        >
+                                            <Trash2 size={16} /> Remove
+                                        </button>
+                                    )}
+
                                 </div>
                             </div>
                         </div>
