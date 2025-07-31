@@ -15,7 +15,7 @@ const MaterialPreviewModal = ({ isOpen, onClose, material, onReport, currentUser
     }, [material]);
 
     if (!material) return null;
-
+    console.log(material)
     const { _id, title, description, fileUrl, fileType, program, uploadedBy, branch, semester } = material;
     const isPDF = fileType === 'pdf';
 
