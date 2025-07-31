@@ -203,7 +203,11 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 <p className="text-center text-gray-400 dark:text-gray-500">No more materials.</p>
             )}
 
-            {/* ... Your modals */}
+            {/* The missing MaterialPreviewModal is added back here */}
+            {previewMaterial && (
+                <MaterialPreviewModal material={previewMaterial} onClose={() => setPreviewMaterial(null)} />
+            )}
+
             {reportingMaterialId && (
                 <ReportMaterial
                     materialId={reportingMaterialId}
