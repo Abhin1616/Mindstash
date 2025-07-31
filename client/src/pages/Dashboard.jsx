@@ -1,4 +1,3 @@
-// Dashboard.jsx
 import React, { useEffect, useState, useRef } from 'react';
 import MaterialCard from '../components/MaterialCard.jsx';
 import MaterialFilters from '../components/MaterialFilters.jsx';
@@ -7,7 +6,7 @@ import ReportMaterial from './ReportMaterial.jsx';
 import ModeratorRemoveModal from '../components/ModeratorRemoveModal.jsx';
 import api from '../config/api.js';
 import BanUserModal from './BanUserModal.jsx';
-import { IoCloseCircleOutline } from 'react-icons/io5'; // Using a clean icon for the button
+import { IoCloseCircleOutline } from 'react-icons/io5';
 
 const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, currentUserId, role }) => {
     const [page, setPage] = useState(1);
@@ -26,7 +25,6 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     const [banUser, setBanUser] = useState(null);
 
     const handleUpvote = async (materialId) => {
-        // ... (your existing handleUpvote logic) ...
         try {
             const res = await api.post(
                 `/materials/${materialId}/upvote`,
@@ -138,7 +136,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
 
     return (
         <div className="p-4 space-y-6 bg-zinc-50 dark:bg-zinc-900 min-h-screen transition-colors duration-300">
-            {/* The new, permanent search bar at the top */}
+            {/* The search bar is added back here */}
             <div className="relative mb-4">
                 <input
                     type="text"
@@ -165,16 +163,32 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 programs={programs}
             />
 
+            <MaterialPreviewModal
+                onReport={() => setReportingMaterialId(previewMaterial?._id)}
+                isOpen={!!previewMaterial}
+                onClose={() => setPreviewMaterial(null)}
+                material={previewMaterial}
+                currentUserId={currentUserId}
+            />
+
             <div className="grid grid-cols-1 gap-6">
-                {/* Conditional rendering for "no materials found" */}
-                {!loading && materialList.length === 0 && filters.search.trim() ? (
+                {!loading && materialList.length === 0 ? (
                     <div className="text-center py-10 col-span-full bg-white dark:bg-zinc-800 rounded-xl shadow-md">
                         <p className="text-gray-600 dark:text-gray-300">
-                            No materials found for "{filters.search}".
+                            No materials found{filters.search ? ` for "${filters.search}"` : ""}.
                         </p>
+                        {filters.search && (
+                            <button
+                                onClick={() => {
+                                    setFilters(prev => ({ ...prev, search: "" }));
+                                }}
+                                className="mt-3 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-gray-700 dark:text-gray-100 rounded-lg"
+                            >
+                                Clear Search
+                            </button>
+                        )}
                     </div>
                 ) : (
-                    // The rest of your material list rendering
                     materialList.map((material, index) => (
                         <div
                             key={material._id}
@@ -203,17 +217,13 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 <p className="text-center text-gray-400 dark:text-gray-500">No more materials.</p>
             )}
 
-            {/* The missing MaterialPreviewModal is added back here */}
-            {previewMaterial && (
-                <MaterialPreviewModal material={previewMaterial} onClose={() => setPreviewMaterial(null)} />
-            )}
-
             {reportingMaterialId && (
                 <ReportMaterial
                     materialId={reportingMaterialId}
                     onClose={() => setReportingMaterialId(null)}
                 />
             )}
+
             {modRemoveMaterialId && (
                 <ModeratorRemoveModal
                     materialId={modRemoveMaterialId}
