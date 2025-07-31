@@ -172,7 +172,7 @@ const MaterialCard = ({
                                 disabled={isDeleting}
                                 className="p-2 rounded-xl bg-red-500 hover:bg-red-700 text-white transition disabled:opacity-50"
                             >
-                                <Trash2 size={18} />Delete
+                                <Trash2 size={18} className="inline mr-1" />Delete
                             </button>
                         )}
                     </div>

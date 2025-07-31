@@ -15,7 +15,6 @@ const MaterialPreviewModal = ({ isOpen, onClose, material, onReport, currentUser
     }, [material]);
 
     if (!material) return null;
-    console.log(material)
     const { _id, title, description, fileUrl, fileType, program, uploadedBy, branch, semester } = material;
     const isPDF = fileType === 'pdf';
 
@@ -106,7 +105,7 @@ const MaterialPreviewModal = ({ isOpen, onClose, material, onReport, currentUser
                                     )}
                                     {uploadedBy?._id !== currentUserId && role === "moderator" && (
                                         <button
-                                            onClick={setModRemoveMaterialId(_id)}
+                                            onClick={() => setModRemoveMaterialId(_id)}
                                             className={`flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm transition
                                                 }`}
                                         >
