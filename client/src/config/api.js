@@ -16,10 +16,7 @@ api.interceptors.response.use(
         const message = error?.response?.data?.error;
 
         if (message === "Access denied. Your account has been banned.") {
-            toast.error(message, { duration: 2000 });
-
             deleteCookie("acc_token");
-
             if (window.location.pathname !== "/auth") {
                 setTimeout(() => {
                     window.location.href = "/auth";

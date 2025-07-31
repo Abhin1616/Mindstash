@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard.jsx';
@@ -34,6 +34,7 @@ const App = () => {
   const [notifications, setNotifications] = useState([]);
   const [role, setRole] = useState([]);
   const [isBanned, setIsBanned] = useState(false);
+  const banHandledRef = useRef(false);
 
   const toggleSort = () => setSortByRecent(prev => !prev);
 
@@ -81,7 +82,8 @@ const App = () => {
   }, [currentUserId]);
 
   useEffect(() => {
-    if (isBanned) {
+    if (isBanned && !banHandledRef.current) {
+      banHandledRef.current = true;
       toast.error("You’ve been banned and logged out");
       setLoggedIn(false);
       setCurrentUserId(null);
@@ -89,6 +91,7 @@ const App = () => {
       navigate('/auth');
     }
   }, [isBanned, navigate]);
+
 
 
   useEffect(() => {
@@ -99,11 +102,13 @@ const App = () => {
           setIsBanned(true);
         }
       } catch (err) {
+        console.error("Verify-token polling failed", err);
       }
-    }, 60000)
+    }, 60000);
 
     return () => clearInterval(interval);
   }, []);
+
 
   const handleLogout = async () => {
     try {
