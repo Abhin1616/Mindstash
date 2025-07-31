@@ -17,7 +17,6 @@ const ModerationReports = () => {
                 const res = await api.get("/auth/verify", {
                     withCredentials: true,
                 });
-                // setCurrentUserId(res.data.user.id); // remove if unused
             } catch (err) {
                 console.error("Failed to get user:", err);
             }

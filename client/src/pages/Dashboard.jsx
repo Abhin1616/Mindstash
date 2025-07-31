@@ -1,3 +1,4 @@
+// Dashboard.jsx
 import React, { useEffect, useState, useRef } from 'react';
 import MaterialCard from '../components/MaterialCard.jsx';
 import MaterialFilters from '../components/MaterialFilters.jsx';
@@ -6,6 +7,7 @@ import ReportMaterial from './ReportMaterial.jsx';
 import ModeratorRemoveModal from '../components/ModeratorRemoveModal.jsx';
 import api from '../config/api.js';
 import BanUserModal from './BanUserModal.jsx';
+import { IoCloseCircleOutline } from 'react-icons/io5'; // Using a clean icon for the button
 
 const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, currentUserId, role }) => {
     const [page, setPage] = useState(1);
@@ -24,6 +26,7 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
     const [banUser, setBanUser] = useState(null);
 
     const handleUpvote = async (materialId) => {
+        // ... (your existing handleUpvote logic) ...
         try {
             const res = await api.post(
                 `/materials/${materialId}/upvote`,
@@ -46,6 +49,16 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
         } catch (err) {
             console.error('Upvote error:', err);
         }
+    };
+
+    // Handler for the new search input
+    const handleSearchChange = (e) => {
+        setFilters(prev => ({ ...prev, search: e.target.value }));
+    };
+
+    // Handler for the clear search button
+    const handleClearSearch = () => {
+        setFilters(prev => ({ ...prev, search: "" }));
     };
 
     useEffect(() => {
@@ -125,6 +138,25 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
 
     return (
         <div className="p-4 space-y-6 bg-zinc-50 dark:bg-zinc-900 min-h-screen transition-colors duration-300">
+            {/* The new, permanent search bar at the top */}
+            <div className="relative mb-4">
+                <input
+                    type="text"
+                    placeholder="Search materials by title or tags..."
+                    value={filters.search}
+                    onChange={handleSearchChange}
+                    className="w-full p-2 pl-4 pr-10 rounded-lg border dark:border-white/10 dark:bg-zinc-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {filters.search && (
+                    <button
+                        onClick={handleClearSearch}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    >
+                        <IoCloseCircleOutline size={24} />
+                    </button>
+                )}
+            </div>
+
             <MaterialFilters
                 filters={filters}
                 setFilters={setFilters}
@@ -133,32 +165,16 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 programs={programs}
             />
 
-            <MaterialPreviewModal
-                onReport={() => setReportingMaterialId(previewMaterial?._id)}
-                isOpen={!!previewMaterial}
-                onClose={() => setPreviewMaterial(null)}
-                material={previewMaterial}
-                currentUserId={currentUserId}
-            />
-
             <div className="grid grid-cols-1 gap-6">
-                {!loading && materialList.length === 0 ? (
+                {/* Conditional rendering for "no materials found" */}
+                {!loading && materialList.length === 0 && filters.search.trim() ? (
                     <div className="text-center py-10 col-span-full bg-white dark:bg-zinc-800 rounded-xl shadow-md">
                         <p className="text-gray-600 dark:text-gray-300">
-                            No materials found{filters.search ? ` for "${filters.search}"` : ""}.
+                            No materials found for "{filters.search}".
                         </p>
-                        {filters.search && (
-                            <button
-                                onClick={() => {
-                                    setFilters(prev => ({ ...prev, search: "" }));
-                                }}
-                                className="mt-3 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-gray-700 dark:text-gray-100 rounded-lg"
-                            >
-                                Clear Search
-                            </button>
-                        )}
                     </div>
                 ) : (
+                    // The rest of your material list rendering
                     materialList.map((material, index) => (
                         <div
                             key={material._id}
@@ -187,13 +203,13 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 <p className="text-center text-gray-400 dark:text-gray-500">No more materials.</p>
             )}
 
+            {/* ... Your modals */}
             {reportingMaterialId && (
                 <ReportMaterial
                     materialId={reportingMaterialId}
                     onClose={() => setReportingMaterialId(null)}
                 />
             )}
-
             {modRemoveMaterialId && (
                 <ModeratorRemoveModal
                     materialId={modRemoveMaterialId}
