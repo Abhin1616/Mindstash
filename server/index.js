@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import multer from "multer";
-import passport from "passport"; // ✅ NEW
+import passport from "passport";
 import RULES from "./config/rules.js";
 import routes from "./routes/index.js";
 import { storage } from "./cloudinary/index.js";

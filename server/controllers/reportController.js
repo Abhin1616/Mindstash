@@ -93,7 +93,12 @@ export const getModerationReports = async (req, res) => {
 
     const reports = await Report.find(filter)
         .sort({ createdAt: -1 })
-        .populate("material reportedBy reviewedBy");
+        .populate([
+            { path: "material", populate: { path: "uploadedBy", select: "name email" } },
+            { path: "reportedBy", select: "name email" },
+            { path: "reviewedBy", select: "name" }
+        ]);
+
 
     const filteredReports = reports.filter(report => {
         // Always exclude reports with deleted materials if their status is "pending"
@@ -106,22 +111,31 @@ export const getModerationReports = async (req, res) => {
     const result = filteredReports.map(report => ({
         _id: report._id,
         status: report.status,
-        reportedBy: {
-            _id: report.reportedBy?._id,
-            name: report.reportedBy?.name,
-        },
-        reviewedBy: report.reviewedBy ? {
-            _id: report.reviewedBy._id,
-            name: report.reviewedBy.name,
-        } : null,
+        reason: report.reason,
+        brokenRules: report.brokenRules,
         moderatorComment: report.moderatorComment,
+        createdAt: report.createdAt,
+        updatedAt: report.updatedAt,
+        reportedBy: report.reportedBy && {
+            _id: report.reportedBy._id,
+            name: report.reportedBy.name,
+            email: report.reportedBy.email
+        },
+        reviewedBy: report.reviewedBy && {
+            _id: report.reviewedBy._id,
+            name: report.reviewedBy.name
+        },
         materialId: report.material?._id || null,
         isMaterialDeleted: !report.material,
         materialTitle: report.material?.title || report.materialSnapshot?.title || "Unknown",
         snapshot: report.materialSnapshot,
-        createdAt: report.createdAt,
-        updatedAt: report.updatedAt
+        uploadedBy: report.material?.uploadedBy && {
+            _id: report.material.uploadedBy._id,
+            name: report.material.uploadedBy.name,
+            email: report.material.uploadedBy.email
+        }
     }));
+
 
     res.status(200).json(result);
 };
