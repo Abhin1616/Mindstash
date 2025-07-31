@@ -2,14 +2,21 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FiBell } from "react-icons/fi";
 import toast from "react-hot-toast";
-import { Search } from 'lucide-react';
+// No longer need Search icon here: import { Search } from 'lucide-react';
 import api from "../config/api";
 
 export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notifications, filters, setFilters, role, setRole }) {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
-    const [localSearch, setLocalSearch] = useState(filters.search || '');
+    // localSearch and handleSearchClick are no longer needed here
+    // const [localSearch, setLocalSearch] = useState(filters.search || '');
+    // const handleSearchClick = () => {
+    //     setFilters(prev => ({ ...prev, search: localSearch.trim() }));
+    //     setLocalSearch('');
+    //     setIsOpen(false);
+    // };
+
     const isActive = (path) => location.pathname === path;
     const hasUnseen = notifications?.some(n => !n.seen);
 
@@ -29,12 +36,6 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
         };
         checkAuth();
     }, []);
-
-    const handleSearchClick = () => {
-        setFilters(prev => ({ ...prev, search: localSearch.trim() }));
-        setLocalSearch('');
-        setIsOpen(false);
-    };
 
     const handleMobileNav = (e, path, requiresAuth = false) => {
         if (requiresAuth && !loggedIn) {
@@ -57,6 +58,8 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
 
                 {/* Desktop Menu */}
                 <nav className="hidden mdnav:flex space-x-6 items-center text-sm font-medium">
+                    {/* Search bar removed from here */}
+                    {/*
                     <div className="relative w-64">
                         <input
                             type="text"
@@ -73,6 +76,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                             <Search className="w-5 h-5" />
                         </button>
                     </div>
+                    */}
 
                     {[
                         { to: "/community-guidelines", label: "Rules" },
@@ -178,6 +182,8 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
             {/* Mobile Dropdown */}
             {isOpen && (
                 <div className="mdnav:hidden bg-white dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-700 shadow space-y-2 pb-3">
+                    {/* Search bar removed from here */}
+                    {/*
                     <div className="relative">
                         <input
                             type="text"
@@ -194,6 +200,7 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                             <Search className="w-5 h-5" />
                         </button>
                     </div>
+                    */}
 
                     {[
                         { to: "/community-guidelines", label: "Rules" },
