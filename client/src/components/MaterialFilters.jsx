@@ -188,35 +188,17 @@ const MaterialFilters = ({ filters, setFilters, sortByRecent, toggleSort, progra
 export default MaterialFilters;
 
 {
-    searchQuery && (
-
+    filters.search && (
         <div className="mb-4 flex justify-between items-center px-4 md:px-6">
-
             <p className="text-sm text-gray-600 dark:text-gray-300">
-
-                Showing results for: <span className="font-medium">{searchQuery}</span>
-
+                Showing results for: <span className="font-medium">{filters.search}</span>
             </p>
-
             <button
-
-                onClick={() => {
-
-                    setSearchQuery('');
-
-                    refetchDashboard(); // or your fetch logic
-
-                }}
-
+                onClick={handleClearSearch}
                 className="text-xs font-medium px-3 py-1 border rounded bg-white dark:bg-zinc-800 text-red-600 border-red-300 hover:bg-red-50 dark:hover:bg-red-900 transition"
-
             >
-
                 Clear Search
-
             </button>
-
         </div>
-
     )
 }
