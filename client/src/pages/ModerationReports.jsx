@@ -11,18 +11,6 @@ const ModerationReports = () => {
     const [previewMaterial, setPreviewMaterial] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
 
-    useEffect(() => {
-        const getUser = async () => {
-            try {
-                const res = await api.get("/auth/verify", {
-                    withCredentials: true,
-                });
-            } catch (err) {
-                console.error("Failed to get user:", err);
-            }
-        };
-        getUser();
-    }, []);
 
     const fetchReports = async () => {
         setLoading(true);
