@@ -84,13 +84,28 @@ const App = () => {
   useEffect(() => {
     if (isBanned && !banHandledRef.current) {
       banHandledRef.current = true;
-      toast.error("You’ve been banned and logged out");
-      setLoggedIn(false);
-      setCurrentUserId(null);
-      setRole(null);
-      navigate('/auth');
+
+      const handleBan = async () => {
+        toast.error("You’ve been banned and logged out");
+
+        try {
+          await api.get("/logout", { withCredentials: true });
+          document.cookie = "acc_token=; Max-Age=0; path=/;";
+
+        } catch (err) {
+          console.error("Logout during ban failed:", err);
+        }
+
+        setLoggedIn(false);
+        setCurrentUserId(null);
+        setRole(null);
+        navigate("/auth");
+      };
+
+      handleBan();
     }
   }, [isBanned, navigate]);
+
 
 
 
