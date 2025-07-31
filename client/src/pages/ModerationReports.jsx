@@ -111,9 +111,19 @@ const ModerationReports = () => {
 
                             <div className="text-sm text-gray-700 mb-2">
                                 <p><strong>Material:</strong> {report.materialTitle}</p>
-                                <p><strong>Reported By:</strong> {report.reportedBy.name}</p>
-                                <p><strong>Uploaded By:</strong> {report.snapshot.uploadedBy.name}</p>
+                                <p>
+                                    <strong>Reported By:</strong> {report.reportedBy?.name}
+                                    <span className="text-gray-500 text-xs"> ({report.reportedBy?.email})</span>
+                                </p>
+                                <p>
+                                    <strong>Uploaded By:</strong> {report.uploadedBy?.name || report.snapshot.uploadedBy?.name}
+                                    <span className="text-gray-500 text-xs"> ({report.uploadedBy?.email || "email unavailable"})</span>
+                                </p>
                                 <p><strong>Program:</strong> {report.snapshot.program}, <strong>Branch:</strong> {report.snapshot.branch}, <strong>Semester:</strong> {report.snapshot.semester}</p>
+                                <p><strong>Reason:</strong> {report.reason}</p>
+                                {report.brokenRules?.length > 0 && (
+                                    <p><strong>Broken Rules:</strong> {report.brokenRules.join(', ')}</p>
+                                )}
                                 {report.reviewedBy && (
                                     <p><strong>Reviewed By:</strong> {report.reviewedBy.name}</p>
                                 )}
@@ -203,7 +213,6 @@ const ModerationReports = () => {
                     </div>
                 </div>
             )}
-
         </div>
     );
 };
