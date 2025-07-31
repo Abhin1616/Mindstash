@@ -227,10 +227,11 @@ const Dashboard = ({ programs, filters, setFilters, toggleSort, sortByRecent, cu
                 <ModeratorRemoveModal
                     materialId={modRemoveMaterialId}
                     onClose={() => setModRemoveMaterialId(null)}
-                    onRemoved={(id) => {
+                    onRemoved={async (id) => {
+                        await onDelete(id);
                         setModRemoveMaterialId(null);
-                        onDelete(id);
                     }}
+
                 />
             )}
             {banUser && (

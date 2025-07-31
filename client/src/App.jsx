@@ -132,6 +132,7 @@ const App = () => {
       setLoggedIn(false);
       setCurrentUserId(null);
       navigate('/', { replace: true });
+      toast.success("Logged out sucessfully")
     } catch (err) {
       console.error('Logout failed:', err);
     }
