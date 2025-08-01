@@ -101,10 +101,14 @@ export const getModerationReports = async (req, res) => {
 
 
     const filteredReports = reports.filter(report => {
-        // Always exclude reports with deleted materials if their status is "pending"
-        if (report.status === "pending" && !report.material) {
+        // Exclude if material is deleted and status is pending
+        if (report.status === "pending" && !report.material) return false;
+
+        // Exclude if current user is the uploader of the material
+        if (report.material && report.material.uploadedBy?._id?.toString() === req.user.id) {
             return false;
         }
+
         return true;
     });
 
