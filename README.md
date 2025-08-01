@@ -6,18 +6,19 @@ Originally built for **Kerala Technological University (KTU)**, it can be adapte
 
 Students can upload and discover academic resources like **PDFs and images**, categorized by **Program → Branch → Semester**, and filtered or searched via intelligent keyword matching.
 
+Live at: [https://mindstash-app.vercel.app](https://mindstash-app.vercel.app)
+
 ---
 
-## 🧰 Tech Stack
+## 🛠️ Tech Stack
 
-- ⚙️ **Backend**: Node.js + Express + MongoDB + Mongoose  
-- 🎨 **Frontend**: React + Tailwind CSS (Vite) *(coming soon)*  
-- 🔐 **Auth**: JWT + Passport.js  
-- ☁️ **Media**: Cloudinary  
-- 🧮 **Validation**: Joi  
-- 🧠 **AI Integration**: Gemini Pro (Google Generative AI API)  
-- 🔎 **Search**: Regex + fuzzy title/description search  
-- 🔄 **Filter**: Dynamic dropdown logic (Program → Branch → Semester)
+- **Frontend**: React, Tailwind CSS, Vite
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB + Mongoose
+- **Authentication**: JWT, Passport.js, Google OAuth
+- **File Storage**: Cloudinary
+- **Validation**: Joi
+- **AI Integration**: Gemini Pro (Google Generative AI API)
 
 ---
 
@@ -25,31 +26,25 @@ Students can upload and discover academic resources like **PDFs and images**, ca
 
 | Feature                                      | Status |
 |---------------------------------------------|--------|
-| 🔑 Email-based Registration & Login         | ✔️     |
-| 🔐 JWT-based Auth with Role Support          | ✔️     |
-| 📁 Upload PDFs and Image Notes               | ✔️     |
-| 🔄 Program → Branch → Semester Filtering     | ✔️     |
-| 🔍 Smart Search (Title & Description)        | ✔️     |
-| ⬆️ Upvote System                             | ✔️     |
-| 🚨 Report Materials with Cooldown            | ✔️     |
-| 👨‍⚖️ Moderator Handling + Notification        | ✔️     |
-| 🧠 AI Chatbot (Gemini via Google API)        | ✔️     |
-| 🔔 Notification Center for User Feedback     | ✔️     |
-| 📄 PDF Preview & File Download Support       | ✔️     |
-| ✨ Easily Forkable for Any University         | ✔️     |
+| 🔑 Email-based Registration & Login         | ✅     |
+| 🔐 JWT-based Auth with Role Support          | ✅     |
+| 📁 Upload PDFs and Image Notes               | ✅     |
+| 🔄 Program → Branch → Semester Filtering     | ✅     |
+| 🔍 Smart Search (Title & Description)        | ✅     |
+| ⬆️ Upvote System                             | ✅     |
+| 🚨 Report Materials with Cooldown            | ✅     |
+| 👨‍⚖️ Moderator Handling + Notification        | ✅     |
+| 🧠 AI Chatbot (Gemini via Google API)        | ✅     |
+| 🔔 Notification Center for User Feedback     | ✅     |
+| 📄 PDF Preview & File Download Support       | ✅     |
+| ✨ Easily Forkable for Any University         | ✅     |
+| ❌ Ban/Unban Users via Moderator Panel         | ✅     |
 
 ---
 
-## 🌐 Live Demo
+## 📆 Configurable Architecture
 
-> ⚠️ *Frontend under development.* Demo link will be added after deployment.
-
----
-
-## 🧱 Configurable Architecture
-
-MindStash is powered by a central academic structure array inside `config/programs.js`.  
-To support your own university, just edit the `PROGRAMS` array:
+Academic hierarchy is configured in `config/programs.js` like this:
 
 ```js
 const PROGRAMS = [
@@ -82,17 +77,15 @@ const PROGRAMS = [
 ];
 ```
 
-This controls both frontend dropdowns and backend validation.
-
 ---
 
 ## 🤖 AI Chat Integration
 
-MindStash comes with a built-in AI Assistant powered by **Gemini Pro**.
+The chatbot is powered by **Gemini Pro**:
 
-- Users can ask academic questions to the chatbot.
-- Secured via JWT — only logged-in users can access AI.
-- Powered by `@google/generative-ai` and `gemini-2.0-flash`.
+- Users can ask academic questions.
+- Secured via JWT authentication.
+- Integrated using `@google/generative-ai` with model `gemini-2.0-pro`.
 
 ---
 
@@ -122,26 +115,38 @@ JWT_EXPIRES_IN=7d
 GEMINI_API_KEY=your_gemini_api_key
 ```
 
-Start the server:
+Start the backend:
 
 ```bash
 npm run dev
 ```
 
-### 3. Frontend Setup *(Coming Soon)*
+### 3. Frontend Setup
 
-> Frontend is being developed with React + Tailwind (Vite).  
-> Setup and instructions will be added here once available.
-
----
-
-## 🛡️ License
-
-This project is open-source and MIT-licensed.  
-Feel free to fork and modify for your university or organization!
+```bash
+cd client
+npm install
+npm run dev
+```
 
 ---
 
-## 🙌 Credits
+## 🌐 Live Demo
 
-Made with 💻 by Abhin Raj R
+You can try it at: [https://mindstash-app.vercel.app](https://mindstash-app.vercel.app)
+
+Login/Register required. Google OAuth supported.
+
+---
+
+## 📅 License
+
+MIT License. Feel free to fork and adapt for your university!
+
+---
+
+## 👋 Author
+
+Made with ❤️ by **Abhin Raj R**
+
+GitHub: [@Abhin1616](https://github.com/Abhin1616)
