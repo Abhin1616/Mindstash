@@ -18,7 +18,7 @@ const ModerationUsers = () => {
     const handleModalClose = () => setBanModalUser(null);
     const [isSearching, setIsSearching] = useState(false);
 
-    const fetchUsers = async (pageToFetch = 1, reset = false) => {
+    const fetchUsers = async (pageToFetch = 1, reset = false, searchOverride = null) => {
         if (loading || (!hasMore && !reset)) return;
 
         try {
@@ -26,7 +26,7 @@ const ModerationUsers = () => {
             const params = {
                 page: pageToFetch,
                 banned: bannedOnly ? "true" : undefined,
-                search: search.trim() || undefined,
+                search: searchOverride !== null ? searchOverride.trim() : search.trim() || undefined,
             };
 
             const res = await api.get("/users", { params });
@@ -85,8 +85,9 @@ const ModerationUsers = () => {
         setUsers([]);
         setPage(1);
         setHasMore(true);
-        fetchUsers(1, true);
+        fetchUsers(1, true, "");
     };
+
 
     const handleBanToggle = async (userId, isBanned) => {
         try {
