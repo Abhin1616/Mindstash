@@ -126,6 +126,8 @@ const App = () => {
   };
 
   useEffect(() => {
+    if (!loggedIn) return;
+
     const fetchNotifications = async () => {
       try {
         const res = await api.get("/notifications", { withCredentials: true });
@@ -138,10 +140,10 @@ const App = () => {
     };
 
     fetchNotifications(); // Initial fetch
-    const interval = setInterval(fetchNotifications, 10000); // Fetch every 10s
 
+    const interval = setInterval(fetchNotifications, 10000); // Poll every 10s
     return () => clearInterval(interval);
-  }, []);
+  }, [loggedIn]);
 
 
   return (
