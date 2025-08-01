@@ -6,7 +6,7 @@ Originally built for **Kerala Technological University (KTU)**, it can be adapte
 
 Students can upload and discover academic resources like **PDFs and images**, categorized by **Program → Branch → Semester**, and filtered or searched via intelligent keyword matching.
 
-Live at: [https://mindstash-app.vercel.app](https://mindstash-app.vercel.app)
+Live at: [https://mindstash.vercel.app](https://mindstash.vercel.app)
 
 ---
 
@@ -133,7 +133,7 @@ npm run dev
 
 ## 🌐 Live Demo
 
-You can try it at: [https://mindstash-app.vercel.app](https://mindstash-app.vercel.app)
+You can try it at: [https://mindstash.vercel.app](https://mindstash.vercel.app)
 
 Login/Register required. Google OAuth supported.
 
