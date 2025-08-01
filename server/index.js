@@ -64,6 +64,13 @@ app.use((err, req, res, next) => {
     if (err.message?.includes("Unexpected field")) {
         return res.status(400).json({ error: "File upload failed", message: "Multiple files not allowed." });
     }
+    if (err?.code === 'LIMIT_FILE_SIZE') {
+        return res.status(413).json({
+            error: 'File too large',
+            message: `Max allowed size: ${MAX_MATERIAL_FILE_SIZE / (1024 * 1024)}MB`
+        });
+    }
+
     if (err.name === "MulterError") {
         return res.status(400).json({ error: "File upload failed", message: err.message });
     }

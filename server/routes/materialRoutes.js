@@ -15,11 +15,12 @@ import {
 } from "../controllers/materialController.js";
 import requireCompletedProfile from "../utils/requireCompletedProfile.js";
 import { checkBannedUser } from "../utils/checkBannedUser.js";
+import MAX_MATERIAL_FILE_SIZE from "../config/materialFileSize.js";
 
 const router = express.Router();
 const upload = multer({
     storage,
-    limits: { fileSize: 10 * 1024 * 1024 },
+    limits: { fileSize: MAX_MATERIAL_FILE_SIZE },
 });
 
 router.post("/materials", verifyToken, requireCompletedProfile, checkBannedUser, upload.single("file"), asyncHandler(uploadMaterial));

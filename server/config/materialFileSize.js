@@ -1,0 +1,3 @@
+const MAX_MATERIAL_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+export default MAX_MATERIAL_FILE_SIZE;
