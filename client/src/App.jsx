@@ -69,19 +69,6 @@ const App = () => {
   }, [role, loggedIn]);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await api.get('/notifications', { withCredentials: true });
-        setNotifications(res.data.notifications);
-      } catch (err) {
-        console.error('Failed to fetch notifications', err);
-      }
-    };
-
-    if (currentUserId) fetchNotifications();
-  }, [currentUserId]);
-
-  useEffect(() => {
     if (isBanned && !banHandledRef.current) {
       banHandledRef.current = true;
 
@@ -137,6 +124,26 @@ const App = () => {
       console.error('Logout failed:', err);
     }
   };
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await api.get("/notifications", { withCredentials: true });
+        if (res.data?.notifications) {
+          setNotifications(res.data.notifications);
+        }
+      } catch (err) {
+        console.error("Error fetching notifications", err);
+      }
+    };
+
+    fetchNotifications(); // Initial fetch
+    const interval = setInterval(fetchNotifications, 10000); // Fetch every 10s
+
+    return () => clearInterval(interval);
+  }, []);
+
+
   return (
     <div className="bg-zinc-50 dark:bg-zinc-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
       <Navbar

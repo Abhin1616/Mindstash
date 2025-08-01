@@ -114,8 +114,10 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                             }`}
                         title="Notifications"
                     >
-                        <FiBell size={20} />
-                        {hasUnseen && <span className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-red-500 rounded-full" />}
+                        <div className="relative">
+                            <FiBell size={20} />
+                            {hasUnseen && <span className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-red-500 rounded-full" />}
+                        </div>
                     </Link>
 
                     {loggedIn ? (
@@ -152,8 +154,10 @@ export default function Navbar({ handleLogout, setLoggedIn, loggedIn, notificati
                         }}
                         className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
                     >
-                        <FiBell size={22} />
-                        {hasUnseen && <span className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-red-500 rounded-full" />}
+                        <div className="relative">
+                            <FiBell size={22} />
+                            {hasUnseen && <span className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-red-500 rounded-full" />}
+                        </div>
                     </Link>
 
                     <button
