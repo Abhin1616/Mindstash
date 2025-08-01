@@ -16,6 +16,8 @@ const ModerationUsers = () => {
     const [hasMore, setHasMore] = useState(true);
     const [banModalUser, setBanModalUser] = useState(null);
     const handleModalClose = () => setBanModalUser(null);
+    const [isSearching, setIsSearching] = useState(false);
+
     const fetchUsers = async (pageToFetch = 1, reset = false) => {
         if (loading || (!hasMore && !reset)) return;
 
@@ -68,6 +70,18 @@ const ModerationUsers = () => {
 
     const handleSearch = (e) => {
         e.preventDefault();
+        if (!search.trim()) return;
+
+        setIsSearching(true);
+        setUsers([]);
+        setPage(1);
+        setHasMore(false);
+        fetchUsers(1, true);
+    };
+
+    const handleClearSearch = () => {
+        setSearch("");
+        setIsSearching(false);
         setUsers([]);
         setPage(1);
         setHasMore(true);
@@ -152,6 +166,16 @@ const ModerationUsers = () => {
                     </p>
                 </div>
             )}
+            {isSearching && (
+                <div className="text-center mb-6">
+                    <button
+                        onClick={handleClearSearch}
+                        className="text-sm text-blue-600 hover:underline"
+                    >
+                        Clear search
+                    </button>
+                </div>
+            )}
 
             {/* User List */}
             {users.length === 0 && !loading ? (
@@ -204,9 +228,10 @@ const ModerationUsers = () => {
                     <Loader2 className="w-6 h-6 animate-spin text-blue-500 mx-auto" />
                 </div>
             )}
-            {!loading && !hasMore && users.length > 0 && (
+            {!loading && !hasMore && users.length > 0 && search.trim() === "" && (
                 <p className="text-center text-gray-500 mt-6">No more users to load.</p>
             )}
+
             {banModalUser && (
                 <BanUserModal
                     user={banModalUser}
