@@ -167,7 +167,7 @@ const ModerationUsers = () => {
                     </p>
                 </div>
             )}
-            {isSearching && (
+            {isSearching && !loading && (
                 <div className="text-center mb-6">
                     <button
                         onClick={handleClearSearch}
