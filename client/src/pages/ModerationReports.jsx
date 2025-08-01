@@ -64,11 +64,11 @@ const ModerationReports = () => {
     return (
         <div className="p-4 max-w-5xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                <h1 className="text-xl font-semibold text-gray-800">Moderation Reports</h1>
+                <h1 className="text-xl font-semibold text-gray-800 dark:text-white">Moderation Reports</h1>
                 <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="border border-gray-300 rounded px-3 py-2 text-sm"
+                    className="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm bg-white dark:bg-zinc-700 dark:text-white"
                 >
                     <option value="all">All</option>
                     <option value="pending">Pending</option>
@@ -78,34 +78,38 @@ const ModerationReports = () => {
             </div>
 
             {loading ? (
-                <p className="text-center text-sm text-gray-500">Loading...</p>
+                <p className="text-center text-sm text-gray-500 dark:text-gray-400">Loading...</p>
             ) : reports.length === 0 ? (
-                <p className="text-center text-sm text-gray-500">No reports found.</p>
+                <p className="text-center text-sm text-gray-500 dark:text-gray-400">No reports found.</p>
             ) : (
                 <div className="space-y-4">
                     {reports.map((report) => (
-                        <div key={report._id} className="border rounded-md p-4 shadow-sm bg-white">
+                        <div key={report._id} className="border rounded-md p-4 shadow-sm bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700">
                             <div className="flex justify-between items-center mb-2">
-                                <span className={`text-xs px-2 py-1 rounded-full font-semibold ${report.status === "pending"
-                                    ? "bg-yellow-100 text-yellow-800"
-                                    : report.status === "accepted"
-                                        ? "bg-green-100 text-green-700"
-                                        : "bg-red-100 text-red-700"
-                                    }`}>
+                                <span
+                                    className={`text-xs px-2 py-1 rounded-full font-semibold ${report.status === "pending"
+                                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-200 dark:text-yellow-900"
+                                        : report.status === "accepted"
+                                            ? "bg-green-100 text-green-700 dark:bg-green-200 dark:text-green-900"
+                                            : "bg-red-100 text-red-700 dark:bg-red-200 dark:text-red-900"
+                                        }`}
+                                >
                                     {report.status.toUpperCase()}
                                 </span>
-                                <span className="text-xs text-gray-500">{new Date(report.createdAt).toLocaleString()}</span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {new Date(report.createdAt).toLocaleString()}
+                                </span>
                             </div>
 
-                            <div className="text-sm text-gray-700 mb-2">
+                            <div className="text-sm text-gray-700 dark:text-gray-200 mb-2 space-y-1">
                                 <p><strong>Material:</strong> {report.materialTitle}</p>
                                 <p>
                                     <strong>Reported By:</strong> {report.reportedBy?.name}
-                                    <span className="text-gray-500 text-xs"> ({report.reportedBy?.email})</span>
+                                    <span className="text-gray-500 text-xs dark:text-gray-400"> ({report.reportedBy?.email})</span>
                                 </p>
                                 <p>
                                     <strong>Uploaded By:</strong> {report.uploadedBy?.name || report.snapshot.uploadedBy?.name}
-                                    <span className="text-gray-500 text-xs"> ({report.uploadedBy?.email || "email unavailable"})</span>
+                                    <span className="text-gray-500 text-xs dark:text-gray-400"> ({report.uploadedBy?.email || "email unavailable"})</span>
                                 </p>
                                 <p><strong>Program:</strong> {report.snapshot.program}, <strong>Branch:</strong> {report.snapshot.branch}, <strong>Semester:</strong> {report.snapshot.semester}</p>
                                 <p><strong>Reason:</strong> {report.reason}</p>
@@ -123,7 +127,7 @@ const ModerationReports = () => {
                             {report.materialId && (
                                 <button
                                     onClick={() => handlePreview(report.materialId)}
-                                    className="text-blue-600 text-sm underline hover:text-blue-800 mb-2"
+                                    className="text-blue-600 dark:text-blue-400 text-sm underline hover:text-blue-800 dark:hover:text-blue-300 mb-2"
                                 >
                                     Preview Material
                                 </button>
@@ -132,7 +136,7 @@ const ModerationReports = () => {
                             {report.status === "pending" && (
                                 <div className="space-y-2">
                                     <textarea
-                                        className="w-full border rounded p-2 text-sm"
+                                        className="w-full border rounded p-2 text-sm bg-white dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                                         placeholder="Add moderator comment... (optional)"
                                         value={comments[report._id] || ""}
                                         onChange={(e) =>
@@ -145,14 +149,14 @@ const ModerationReports = () => {
                                     <div className="flex gap-2">
                                         <button
                                             disabled={handlingId === report._id}
-                                            className="px-4 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-700"
+                                            className="px-4 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-700 disabled:opacity-70"
                                             onClick={() => handleReport(report._id, "accept")}
                                         >
                                             Accept
                                         </button>
                                         <button
                                             disabled={handlingId === report._id}
-                                            className="px-4 py-1.5 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                                            className="px-4 py-1.5 bg-red-600 text-white text-sm rounded hover:bg-red-700 disabled:opacity-70"
                                             onClick={() => handleReport(report._id, "reject")}
                                         >
                                             Reject
@@ -166,14 +170,14 @@ const ModerationReports = () => {
             )}
 
             {modalOpen && previewMaterial && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center px-4">
+                    <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
                         {/* Header */}
-                        <div className="flex justify-between items-center p-4 border-b">
-                            <h2 className="text-lg font-semibold truncate">{previewMaterial.title}</h2>
+                        <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-zinc-700">
+                            <h2 className="text-lg font-semibold truncate dark:text-white">{previewMaterial.title}</h2>
                             <button
                                 onClick={() => setModalOpen(false)}
-                                className="text-gray-500 hover:text-red-600 text-xl"
+                                className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 text-xl"
                             >
                                 ×
                             </button>
@@ -181,8 +185,8 @@ const ModerationReports = () => {
 
                         {/* Content */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                            <p className="text-sm text-gray-700 whitespace-pre-wrap">{previewMaterial.description}</p>
-                            <div className="bg-gray-100 rounded-md p-2 flex justify-center">
+                            <p className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">{previewMaterial.description}</p>
+                            <div className="bg-gray-100 dark:bg-zinc-700 rounded-md p-2 flex justify-center">
                                 {previewMaterial.fileType === "pdf" ? (
                                     <iframe
                                         src={previewMaterial.fileUrl}
@@ -202,6 +206,7 @@ const ModerationReports = () => {
                 </div>
             )}
         </div>
+
     );
 };
 
